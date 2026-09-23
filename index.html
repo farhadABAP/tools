@@ -1,668 +1,1081 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ABAP Tools</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABAP Tools — Report Generator</title>
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-abap.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-abap.min.js"></script>
 
-    <style>
-        :root {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-tertiary: #21262d;
-            --text-primary: #c9d1d9;
-            --text-secondary: #8b949e;
-            --accent: #58a6ff;
-            --accent-hover: #79c0ff;
-            --border: #30363d;
-            --success: #238636;
-            --danger: #da3633;
-            --code-bg: #1e1e1e;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-        }
-        nav {
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem;
-            position: sticky; top: 0; z-index: 100;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .logo { font-size: 1.25rem; font-weight: 700; color: var(--accent); text-decoration: none; }
-        .nav-links a { color: var(--text-secondary); text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem; transition: color 0.2s; }
-        .nav-links a:hover { color: var(--text-primary); }
+<style>
+:root {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-tertiary: #21262d;
+    --text-primary: #c9d1d9;
+    --text-secondary: #8b949e;
+    --accent: #58a6ff;
+    --border: #30363d;
+    --success: #238636;
+    --danger: #da3633;
+    --warn: #d29922;
+    --code-bg: #1e1e1e;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+nav {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    position: sticky; top: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.logo { font-size: 1.25rem; font-weight: 700; color: var(--accent); text-decoration: none; }
+.nav-links a { color: var(--text-secondary); text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem; }
+.nav-links a:hover { color: var(--text-primary); }
 
-        .hero {
-            text-align: center; padding: 5rem 2rem;
-            background: radial-gradient(circle at top, #1f242e 0%, var(--bg-primary) 100%);
-            border-bottom: 1px solid var(--border);
-        }
-        .hero h1 { font-size: 3rem; margin-bottom: 1rem; background: linear-gradient(90deg, #58a6ff, #a371f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero p { color: var(--text-secondary); font-size: 1.2rem; max-width: 700px; margin: 0 auto 2rem; }
-        .btn {
-            display: inline-block; background-color: var(--success); color: white;
-            padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none;
-            font-weight: 600; transition: background 0.2s;
-        }
-        .btn:hover { background-color: #2ea043; }
+.hero {
+    text-align: center; padding: 4rem 2rem;
+    background: radial-gradient(circle at top, #1f242e 0%, var(--bg-primary) 100%);
+    border-bottom: 1px solid var(--border);
+}
+.hero h1 { font-size: 2.75rem; margin-bottom: 1rem; background: linear-gradient(90deg, #58a6ff, #a371f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { color: var(--text-secondary); font-size: 1.1rem; max-width: 720px; margin: 0 auto 2rem; }
+.btn {
+    display: inline-block; background: var(--success); color: white;
+    padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none;
+    font-weight: 600; transition: background 0.2s;
+}
+.btn:hover { background: #2ea043; }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; }
-        .section-title { font-size: 2rem; margin-bottom: 2rem; border-left: 4px solid var(--accent); padding-left: 1rem; }
+.container { max-width: 1280px; margin: 0 auto; padding: 3rem 2rem; }
+.section-title { font-size: 1.9rem; margin-bottom: 1.5rem; border-left: 4px solid var(--accent); padding-left: 1rem; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 4rem; }
-        .card {
-            background-color: var(--bg-secondary); border: 1px solid var(--border);
-            border-radius: 8px; padding: 2rem; transition: transform 0.2s, border-color 0.2s;
-        }
-        .card:hover { transform: translateY(-5px); border-color: var(--accent); }
-        .card h3 { color: var(--accent); margin-bottom: 1rem; font-size: 1.25rem; }
-        .card p { color: var(--text-secondary); font-size: 0.95rem; }
-        .card .file-name { font-family: monospace; background: var(--bg-tertiary); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem; color: var(--text-primary); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+.card {
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1.5rem; transition: transform .2s, border-color .2s;
+}
+.card:hover { transform: translateY(-4px); border-color: var(--accent); }
+.card h3 { color: var(--accent); margin-bottom: .75rem; font-size: 1.15rem; }
+.card p { color: var(--text-secondary); font-size: .92rem; }
+.file-name { font-family: monospace; background: var(--bg-tertiary); padding: .2rem .5rem; border-radius: 4px; font-size: .82rem; }
 
-        /* ---------- Parameter Builder ---------- */
-        .builder-section { margin-bottom: 4rem; }
-        .builder-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+.gen-tabs {
+    display: flex; gap: .5rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+}
+.gen-tab {
+    padding: .8rem 1.25rem; cursor: pointer; color: var(--text-secondary);
+    font-weight: 600; font-size: .9rem; border-bottom: 3px solid transparent;
+}
+.gen-tab:hover { color: var(--text-primary); }
+.gen-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-        .builder-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
-        .builder-card h4 {
-            color: var(--accent);
-            margin-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 0.5rem;
-            font-size: 1.1rem;
-        }
-        .builder-card .hint { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; }
+.gen-panel { display: none; }
+.gen-panel.active { display: block; }
 
-        .row {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-            align-items: center;
-        }
-        .row.single { grid-template-columns: 1fr auto; }
-        .row.triple { grid-template-columns: 1fr 1fr 1fr; }
+.gen-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+@media (max-width: 1024px) { .gen-grid { grid-template-columns: 1fr; } }
 
-        .builder-card input[type="text"],
-        .builder-card input[type="number"] {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 0.5rem 0.75rem;
-            color: var(--text-primary);
-            font-family: "Fira Code", "Consolas", monospace;
-            font-size: 0.85rem;
-            width: 100%;
-        }
-        .builder-card input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(88,166,255,0.15);
-        }
-        .builder-card label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            display: block;
-            margin-bottom: 0.15rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+.gen-card {
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1.5rem;
+}
+.gen-card h4 {
+    color: var(--accent); margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border); padding-bottom: .5rem; font-size: 1.05rem;
+}
+.gen-card .hint { font-size: .82rem; color: var(--text-secondary); margin-bottom: 1rem; }
 
-        .icon-btn {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            width: 34px; height: 34px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            line-height: 1;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.15s;
-        }
-        .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
-        .icon-btn.add:hover { background: var(--success); color: white; border-color: var(--success); }
-        .icon-btn.remove:hover { background: var(--danger); color: white; border-color: var(--danger); }
+.gen-field { margin-bottom: 1rem; }
+.gen-field label {
+    display: block; font-size: .72rem; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: .05em; margin-bottom: .3rem;
+}
+.gen-field input[type="text"],
+.gen-field input[type="number"] {
+    background: var(--bg-tertiary); border: 1px solid var(--border);
+    border-radius: 4px; padding: .5rem .75rem; color: var(--text-primary);
+    font-family: "Fira Code", "Consolas", monospace; font-size: .85rem; width: 100%;
+}
+.gen-field input:focus {
+    outline: none; border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(88,166,255,.15);
+}
 
-        .builder-actions { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
-        .mini-btn {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 0.4rem 0.9rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            font-weight: 600;
-            transition: all 0.15s;
-        }
-        .mini-btn:hover { border-color: var(--accent); color: var(--accent); }
-        .mini-btn.primary { background: var(--success); border-color: var(--success); color: white; }
-        .mini-btn.primary:hover { background: #2ea043; }
+.row { display: grid; gap: .5rem; margin-bottom: .5rem; align-items: center; }
+.row.two   { grid-template-columns: 1fr auto; }
+.row.three { grid-template-columns: 1fr 1fr auto; }
+.row.four  { grid-template-columns: 1fr 1fr 1fr auto; }
 
-        .generated {
-            margin-top: 1.25rem;
-            background: var(--code-bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            overflow: hidden;
-            position: relative;
-        }
-        .generated .gen-label {
-            background: var(--bg-tertiary);
-            padding: 0.5rem 0.9rem;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .generated pre { max-height: 340px; overflow: auto; }
-        .generated pre code { font-size: 0.82rem !important; }
+.icon-btn {
+    background: var(--bg-tertiary); border: 1px solid var(--border);
+    color: var(--text-secondary); width: 34px; height: 34px;
+    border-radius: 6px; cursor: pointer; font-size: 1.1rem;
+    display: inline-flex; align-items: center; justify-content: center;
+}
+.icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+.icon-btn.add:hover { background: var(--success); color: white; border-color: var(--success); }
+.icon-btn.remove:hover { background: var(--danger); color: white; border-color: var(--danger); }
 
-        /* Code viewer (unchanged) */
-        .code-viewer { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-        .tabs { display: flex; background: var(--bg-tertiary); border-bottom: 1px solid var(--border); overflow-x: auto; }
-        .tab {
-            padding: 1rem 1.5rem; cursor: pointer; color: var(--text-secondary);
-            font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid transparent;
-            transition: all 0.2s; white-space: nowrap;
-        }
-        .tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
-        .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-        .code-content { display: none; position: relative; }
-        .code-content.active { display: block; }
-        .copy-btn {
-            position: absolute; top: 1rem; right: 1rem;
-            background: var(--bg-tertiary); border: 1px solid var(--border);
-            color: var(--text-secondary); padding: 0.5rem 1rem;
-            border-radius: 6px; cursor: pointer; font-size: 0.8rem;
-            transition: all 0.2s; z-index: 10;
-        }
-        .copy-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+.mini-btn {
+    background: var(--bg-tertiary); border: 1px solid var(--border);
+    color: var(--text-primary); padding: .45rem .9rem; border-radius: 6px;
+    cursor: pointer; font-size: .8rem; font-weight: 600;
+}
+.mini-btn:hover { border-color: var(--accent); color: var(--accent); }
+.mini-btn.primary { background: var(--success); border-color: var(--success); color: white; }
+.mini-btn.primary:hover { background: #2ea043; }
+.mini-btn.danger { background: var(--bg-tertiary); border-color: var(--border); color: var(--text-secondary); }
+.mini-btn.danger:hover { background: var(--danger); border-color: var(--danger); color: white; }
 
-        pre { margin: 0 !important; border-radius: 0 !important; background: var(--code-bg) !important; }
-        code { font-family: "Fira Code", "Consolas", monospace !important; font-size: 0.9rem !important; }
+.actions { display: flex; gap: .5rem; margin-top: 1rem; flex-wrap: wrap; }
 
-        footer { text-align: center; padding: 3rem 2rem; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 0.85rem; margin-top: 4rem; }
-    </style>
+/* Extra-table block */
+.extra-block {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--warn);
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: .75rem;
+    position: relative;
+}
+.extra-block .extra-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: .75rem;
+}
+.extra-block .extra-title {
+    font-size: .75rem; color: var(--warn); font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em;
+}
+.extra-block .extra-updates { margin-top: .5rem; }
+
+/* Suggestion dropdown */
+.suggest-wrap { position: relative; }
+.suggest-list {
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--bg-tertiary); border: 1px solid var(--border);
+    border-top: none; border-radius: 0 0 4px 4px;
+    max-height: 220px; overflow-y: auto; z-index: 50;
+    display: none;
+}
+.suggest-list.open { display: block; }
+.suggest-item {
+    padding: .4rem .75rem; cursor: pointer; font-size: .82rem;
+    font-family: "Fira Code", "Consolas", monospace;
+    display: flex; justify-content: space-between; gap: 1rem;
+}
+.suggest-item:hover, .suggest-item.active { background: rgba(88,166,255,.15); }
+.suggest-item .sf { color: var(--accent); font-weight: 600; }
+.suggest-item .st { color: var(--text-secondary); font-size: .78rem; }
+
+.generated {
+    margin-top: 1.25rem; background: var(--code-bg);
+    border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
+}
+.gen-label {
+    background: var(--bg-tertiary); padding: .5rem .9rem;
+    font-size: .75rem; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: .05em;
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+}
+.generated pre { max-height: 500px; overflow: auto; }
+.generated pre code { font-size: .82rem !important; }
+
+pre { margin: 0 !important; border-radius: 0 !important; background: var(--code-bg) !important; }
+code { font-family: "Fira Code", "Consolas", monospace !important; font-size: .9rem !important; }
+
+footer {
+    text-align: center; padding: 3rem 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-secondary); font-size: .85rem; margin-top: 4rem;
+}
+</style>
 </head>
 <body>
 
-    <nav>
-        <a href="#" class="logo">farhadABAP / tools</a>
-        <div class="nav-links">
-            <a href="#tools">Tools</a>
-            <a href="#builder">Parameter Builder</a>
-            <a href="#code">Source Code</a>
+<nav>
+    <a href="#" class="logo">farhadABAP / tools</a>
+    <div class="nav-links">
+        <a href="#tools">Tools</a>
+        <a href="#generator">Generator</a>
+    </div>
+</nav>
+
+<section class="hero">
+    <h1>ABAP Report Generator</h1>
+    <p>Pick a tool, type your table and field names, and get a complete, ready-to-paste ABAP report. Field suggestions from common SAP tables are provided as you type.</p>
+    <a href="#generator" class="btn">Start Generating</a>
+</section>
+
+<div class="container">
+
+    <h2 class="section-title" id="tools">Included Tools</h2>
+    <div class="grid">
+        <div class="card">
+            <h3>1. Dictionary Inspector</h3>
+            <p><span class="file-name">zfc_show_dict_details</span></p>
+            <p style="margin-top:.75rem;">Lists the technical structure of any DDIC table — field names, types, lengths, data elements.</p>
         </div>
-    </nav>
-
-    <section class="hero">
-        <h1>ABAP Dashboard Utility Tools</h1>
-        <p>A suite of anonymized ABAP programs designed to inspect Data Dictionary structures, read database tables, and inject test data for SAP GUI dashboard development.</p>
-        <a href="https://github.com/farhadABAP/tools" class="btn" target="_blank">View on GitHub</a>
-    </section>
-
-    <div class="container">
-
-        <h2 class="section-title" id="tools">Included Tools</h2>
-        <div class="grid">
-            <div class="card">
-                <h3>1. Dictionary Inspector</h3>
-                <p><span class="file-name">zfc_show_dict_details.abap</span></p>
-                <p style="margin-top: 1rem;">Dynamically reads the SAP Data Dictionary to display technical configurations, field structures, and domain fixed values.</p>
-            </div>
-            <div class="card">
-                <h3>2. Data Reader</h3>
-                <p><span class="file-name">zfc_read_db_data.abap</span></p>
-                <p style="margin-top: 1rem;">Reads and displays the current contents of custom database tables in the SAP GUI list output.</p>
-            </div>
-            <div class="card">
-                <h3>3. Data Injector</h3>
-                <p><span class="file-name">zfc_inject_test_data.abap</span></p>
-                <p style="margin-top: 1rem;">Updates specific existing records and adds documentation notes for dashboard testing.</p>
-            </div>
+        <div class="card">
+            <h3>2. Data Reader</h3>
+            <p><span class="file-name">zfc_read_db_data</span></p>
+            <p style="margin-top:.75rem;">Reads any table, displays a chosen set of fields, with optional WHERE filter.</p>
         </div>
-
-        <!-- ============================================================= -->
-        <!-- PARAMETER BUILDER                                              -->
-        <!-- ============================================================= -->
-        <h2 class="section-title" id="builder">Parameter Builder</h2>
-        <div class="builder-section">
-            <p style="color: var(--text-secondary); margin-bottom: 2rem;">
-                Fill in the tables, domains, and fields you want. Click <strong>+</strong> to add more rows.
-                The generated <code>PARAMETERS</code> block appears at the bottom of each card — copy it straight into your report in SE38.
-            </p>
-
-            <div class="builder-grid">
-
-                <!-- ============= BUILDER 1: Dictionary Inspector ============= -->
-                <div class="builder-card" data-builder="dict">
-                    <h4>1. Dictionary Inspector — <span style="color:var(--text-secondary);font-weight:400;font-size:0.85rem;">zfc_show_dict_details</span></h4>
-                    <p class="hint">Tables to inspect, and domains whose fixed values you want listed.</p>
-
-                    <label>Tables (P_TAB…)</label>
-                    <div id="dict-tables"></div>
-                    <button class="mini-btn" onclick="addRow('dict-tables','table')">+ Add table</button>
-
-                    <div style="margin-top:1.25rem;">
-                        <label>Domains (P_DOM…)</label>
-                        <div id="dict-domains"></div>
-                        <button class="mini-btn" onclick="addRow('dict-domains','domain')">+ Add domain</button>
-                    </div>
-
-                    <div class="builder-actions">
-                        <button class="mini-btn primary" onclick="generate('dict')">Generate parameters</button>
-                    </div>
-
-                    <div class="generated" id="dict-out" style="display:none;">
-                        <div class="gen-label"><span>Generated PARAMETERS</span>
-                            <button class="mini-btn" onclick="copyGenerated('dict')">Copy</button>
-                        </div>
-                        <pre><code class="language-abap" id="dict-code"></code></pre>
-                    </div>
-                </div>
-
-                <!-- ============= BUILDER 2: Data Reader ============= -->
-                <div class="builder-card" data-builder="reader">
-                    <h4>2. Data Reader — <span style="color:var(--text-secondary);font-weight:400;font-size:0.85rem;">zfc_read_db_data</span></h4>
-                    <p class="hint">Tables to read. Field names are discovered automatically at runtime — no need to list them.</p>
-
-                    <label>Tables (P_TAB…)</label>
-                    <div id="reader-tables"></div>
-                    <button class="mini-btn" onclick="addRow('reader-tables','table')">+ Add table</button>
-
-                    <div style="margin-top:1.25rem;" class="row single">
-                        <div>
-                            <label>Max rows per table (P_MAX)</label>
-                            <input type="number" id="reader-max" value="100">
-                        </div>
-                    </div>
-
-                    <div class="builder-actions">
-                        <button class="mini-btn primary" onclick="generate('reader')">Generate parameters</button>
-                    </div>
-
-                    <div class="generated" id="reader-out" style="display:none;">
-                        <div class="gen-label"><span>Generated PARAMETERS</span>
-                            <button class="mini-btn" onclick="copyGenerated('reader')">Copy</button>
-                        </div>
-                        <pre><code class="language-abap" id="reader-code"></code></pre>
-                    </div>
-                </div>
-
-                <!-- ============= BUILDER 3: Data Injector ============= -->
-                <div class="builder-card" data-builder="inject">
-                    <h4>3. Data Injector — <span style="color:var(--text-secondary);font-weight:400;font-size:0.85rem;">zfc_inject_test_data</span></h4>
-                    <p class="hint">Header table, notes table, record key, and any number of field = value pairs.</p>
-
-                    <div class="row">
-                        <div>
-                            <label>Header table (P_HTAB)</label>
-                            <input type="text" id="inj-htab" value="EXAMPLE_DB_01">
-                        </div>
-                        <div>
-                            <label>Notes table (P_NTAB)</label>
-                            <input type="text" id="inj-ntab" value="EXAMPLE_DB_04">
-                        </div>
-                        <div></div>
-                    </div>
-
-                    <div class="row" style="margin-top:0.75rem;">
-                        <div>
-                            <label>Key field (P_KEY)</label>
-                            <input type="text" id="inj-key" value="FIELD01">
-                        </div>
-                        <div>
-                            <label>Key value (P_KEYV)</label>
-                            <input type="text" id="inj-keyv" value="0000000105">
-                        </div>
-                        <div></div>
-                    </div>
-
-                    <div style="margin-top:1.25rem;">
-                        <label>Field → Value pairs (P_FLD… / P_VAL…)</label>
-                        <div id="inj-fields"></div>
-                        <button class="mini-btn" onclick="addRow('inj-fields','fieldpair')">+ Add field</button>
-                    </div>
-
-                    <div class="row" style="margin-top:1.25rem;">
-                        <div>
-                            <label>Note text (P_NOTE)</label>
-                            <input type="text" id="inj-note" value="Test injection">
-                        </div>
-                        <div></div>
-                        <div></div>
-                    </div>
-
-                    <details style="margin-top:1rem;">
-                        <summary style="cursor:pointer;color:var(--accent);font-size:0.85rem;">Advanced: note-column mapping</summary>
-                        <div class="row triple" style="margin-top:0.75rem;">
-                            <div><label>P_NKEY</label><input type="text" id="inj-nkey" value="FIELD01"></div>
-                            <div><label>P_NNUM</label><input type="text" id="inj-nnum" value="FIELD18"></div>
-                            <div><label>P_NDAT</label><input type="text" id="inj-ndat" value="FIELD05"></div>
-                        </div>
-                        <div class="row triple" style="margin-top:0.5rem;">
-                            <div><label>P_NTIM</label><input type="text" id="inj-ntim" value="FIELD19"></div>
-                            <div><label>P_NUSR</label><input type="text" id="inj-nusr" value="FIELD20"></div>
-                            <div><label>P_NTXT</label><input type="text" id="inj-ntxt" value="FIELD21"></div>
-                        </div>
-                    </details>
-
-                    <div class="builder-actions">
-                        <button class="mini-btn primary" onclick="generate('inject')">Generate parameters</button>
-                    </div>
-
-                    <div class="generated" id="inject-out" style="display:none;">
-                        <div class="gen-label"><span>Generated PARAMETERS</span>
-                            <button class="mini-btn" onclick="copyGenerated('inject')">Copy</button>
-                        </div>
-                        <pre><code class="language-abap" id="inject-code"></code></pre>
-                    </div>
-                </div>
-
-            </div>
+        <div class="card">
+            <h3>3. Data Injector</h3>
+            <p><span class="file-name">zfc_inject_test_data</span></p>
+            <p style="margin-top:.75rem;">Updates an existing record, inserts a log note, and can update additional related tables.</p>
         </div>
-
-        <!-- ============================================================= -->
-        <!-- SOURCE CODE (unchanged)                                        -->
-        <!-- ============================================================= -->
-        <h2 class="section-title" id="code">Source Code</h2>
-        <div class="code-viewer">
-            <div class="tabs">
-                <div class="tab active" onclick="openTab(event, 'code1')">show_dict_details.abap</div>
-                <div class="tab" onclick="openTab(event, 'code2')">read_db_data.abap</div>
-                <div class="tab" onclick="openTab(event, 'code3')">inject_test_data.abap</div>
-            </div>
-
-            <!-- Paste your existing three <div id="code1|2|3"> blocks here, unchanged. -->
-            <div id="code1" class="code-content active">
-                <button class="copy-btn" onclick="copyCode('code1')">Copy Code</button>
-                <pre><code class="language-abap">*&amp;---------------------------------------------------------------------*
-*&amp; Report: zfc_show_dict_details
-*&amp; Purpose: Display DDIC table fields and domain fixed values
-*&amp;---------------------------------------------------------------------*
-REPORT zfc_show_dict_details.
-" ... (paste the dynamic version from the previous answer here) ...
-</code></pre>
-            </div>
-
-            <div id="code2" class="code-content">
-                <button class="copy-btn" onclick="copyCode('code2')">Copy Code</button>
-                <pre><code class="language-abap">*&amp;---------------------------------------------------------------------*
-*&amp; Report: zfc_read_db_data
-*&amp;---------------------------------------------------------------------*
-REPORT zfc_read_db_data.
-" ... (paste the dynamic version here) ...
-</code></pre>
-            </div>
-
-            <div id="code3" class="code-content">
-                <button class="copy-btn" onclick="copyCode('code3')">Copy Code</button>
-                <pre><code class="language-abap">*&amp;---------------------------------------------------------------------*
-*&amp; Report: zfc_inject_test_data
-*&amp;---------------------------------------------------------------------*
-REPORT zfc_inject_test_data.
-" ... (paste the dynamic version here) ...
-</code></pre>
-            </div>
-        </div>
-
     </div>
 
-    <footer>
-        <p>Disclaimer: These tools are provided for development and testing purposes only. The data injection tool modifies existing database records. Always test in a development or quality assurance environment.</p>
-        <p style="margin-top: 1rem;">&copy; 2026 farhadABAP. Built for the SAP Community.</p>
-    </footer>
+    <h2 class="section-title" id="generator">Report Generator</h2>
 
-    <script>
-        /* ===================== Tabs & Copy (unchanged) ===================== */
-        function openTab(evt, tabName) {
-            document.querySelectorAll(".code-content").forEach(el => el.classList.remove("active"));
-            document.querySelectorAll(".tab").forEach(el => el.classList.remove("active"));
-            document.getElementById(tabName).classList.add("active");
-            evt.currentTarget.classList.add("active");
-        }
-        function copyCode(containerId) {
-            const codeBlock = document.querySelector(`#${containerId} code`);
-            navigator.clipboard.writeText(codeBlock.innerText).then(() => flashButton(containerId, 'Copy Code'));
-        }
-        function flashButton(containerId, originalText) {
-            const btn = document.querySelector(`#${containerId} .copy-btn, #${containerId} .mini-btn`);
-            if (!btn) return;
-            const prev = btn.innerText;
-            btn.innerText = 'Copied!';
-            btn.style.background = 'var(--success)';
-            btn.style.color = 'white';
-            setTimeout(() => {
-                btn.innerText = prev;
-                btn.style.background = '';
-                btn.style.color = '';
-            }, 1500);
-        }
+    <div class="gen-tabs">
+        <div class="gen-tab active" onclick="switchGen(event, 'gen-dict')">Dictionary Inspector</div>
+        <div class="gen-tab" onclick="switchGen(event, 'gen-reader')">Data Reader</div>
+        <div class="gen-tab" onclick="switchGen(event, 'gen-inject')">Data Injector</div>
+    </div>
 
-        /* ===================== Dynamic Row Builder ===================== */
-        // row kinds: 'table', 'domain', 'fieldpair'
-        let counters = { table: 0, domain: 0, fieldpair: 0 };
+    <!-- ============== GENERATOR 1 — DICTIONARY INSPECTOR ============== -->
+    <div class="gen-panel active" id="gen-dict">
+        <div class="gen-grid">
+            <div class="gen-card">
+                <h4>Input — Table to inspect</h4>
+                <p class="hint">Enter the DDIC table name. The generated report lists every field with its technical details.</p>
 
-        function addRow(containerId, kind, initial) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
+                <div class="gen-field">
+                    <label>Table name</label>
+                    <input type="text" id="dict-table" class="suggest-input"
+                           placeholder="e.g. BKPF, BSEG, MARA, VBAK…" value="BKPF">
+                </div>
 
-            const row = document.createElement('div');
-            row.className = 'row' + (kind === 'fieldpair' ? '' : ' single');
-            row.dataset.kind = kind;
+                <div class="gen-field">
+                    <label>Report name (program ID)</label>
+                    <input type="text" id="dict-prog" value="zfc_show_dict_details">
+                </div>
 
-            if (kind === 'table' || kind === 'domain') {
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.placeholder = kind === 'table' ? 'e.g. EXAMPLE_DB_01' : 'e.g. EXAMPLE_DOM_01';
-                if (initial) input.value = initial;
-                input.dataset.role = kind;
-                row.appendChild(input);
-            } else if (kind === 'fieldpair') {
-                const f = document.createElement('input');
-                f.type = 'text';
-                f.placeholder = 'Field (e.g. FIELD05)';
-                f.dataset.role = 'field';
-                const v = document.createElement('input');
-                v.type = 'text';
-                v.placeholder = 'Value (or TODAY)';
-                v.dataset.role = 'value';
-                row.appendChild(f);
-                row.appendChild(v);
-            }
+                <div class="actions">
+                    <button class="mini-btn primary" onclick="genDict()">Generate Report</button>
+                    <button class="mini-btn" onclick="resetDict()">Reset</button>
+                </div>
+            </div>
 
-            // Remove button
-            const rm = document.createElement('button');
-            rm.className = 'icon-btn remove';
-            rm.innerText = '−';
-            rm.title = 'Remove row';
-            rm.onclick = () => row.remove();
-            row.appendChild(rm);
+            <div class="gen-card">
+                <h4>Generated Report</h4>
+                <p class="hint">Click <strong>Generate Report</strong> to build the full ABAP source.</p>
+                <div class="generated" id="dict-out" style="display:none;">
+                    <div class="gen-label">
+                        <span>zfc_show_dict_details.abap</span>
+                        <button class="mini-btn" onclick="copyGen('dict')">Copy</button>
+                    </div>
+                    <pre><code class="language-abap" id="dict-code"></code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            // Insert "+" add button on the last row of this container
-            container.appendChild(row);
-            renumberAddButtons(container);
-        }
+    <!-- ============== GENERATOR 2 — DATA READER ============== -->
+    <div class="gen-panel" id="gen-reader">
+        <div class="gen-grid">
+            <div class="gen-card">
+                <h4>Input — Table, fields, filter</h4>
+                <p class="hint">Type the table name, then add the fields you want to display.</p>
 
-        // Keep a single "+" button visible after the last row of each container
-        function renumberAddButtons(container) {
-            container.querySelectorAll('.icon-btn.add').forEach(b => b.remove());
-            const rows = container.querySelectorAll('.row');
-            if (rows.length === 0) return;
-            const last = rows[rows.length - 1];
-            const kind = last.dataset.kind;
-            const add = document.createElement('button');
-            add.className = 'icon-btn add';
-            add.innerText = '+';
-            add.title = 'Add another row';
-            add.onclick = () => addRow(container.id, kind);
-            last.appendChild(add);
-        }
+                <div class="gen-field">
+                    <label>Table name</label>
+                    <input type="text" id="read-table" class="suggest-input"
+                           placeholder="e.g. BKPF, BSEG, MARA…" value="BKPF">
+                </div>
 
-        /* ===================== Generate PARAMETERS ===================== */
-        function generate(which) {
-            let code = '';
-            if (which === 'dict') {
-                const tabs = readInputs('dict-tables', 'table');
-                const doms = readInputs('dict-domains', 'domain');
-                const lines = [];
-                lines.push('SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.');
-                tabs.forEach((t, i) => {
-                    lines.push(`  PARAMETERS: p_tab${i + 1} TYPE tabname DEFAULT '${t || 'EXAMPLE_DB_0' + (i + 1)}'${i === tabs.length - 1 ? '.' : ','}`);
-                });
-                lines.push('SELECTION-SCREEN END OF BLOCK b1.');
-                lines.push('');
-                lines.push('SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE TEXT-002.');
-                doms.forEach((d, i) => {
-                    lines.push(`  PARAMETERS: p_dom${i + 1} TYPE domname DEFAULT '${d || 'EXAMPLE_DOM_0' + (i + 1)}'${i === doms.length - 1 ? '.' : ','}`);
-                });
-                lines.push('SELECTION-SCREEN END OF BLOCK b2.');
-                code = lines.join('\n');
-                writeOut('dict', code);
-            }
+                <div class="gen-field">
+                    <label>Report name (program ID)</label>
+                    <input type="text" id="read-prog" value="zfc_read_db_data">
+                </div>
 
-            if (which === 'reader') {
-                const tabs = readInputs('reader-tables', 'table');
-                const max = document.getElementById('reader-max').value || '100';
-                const lines = [];
-                lines.push('SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.');
-                tabs.forEach((t, i) => {
-                    lines.push(`  PARAMETERS: p_tab${i + 1} TYPE tabname DEFAULT '${t || 'EXAMPLE_DB_0' + (i + 1)}'${i === tabs.length - 1 ? '.' : ','}`);
-                });
-                lines.push('SELECTION-SCREEN END OF BLOCK b1.');
-                lines.push('');
-                lines.push('SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE TEXT-002.');
-                lines.push(`  PARAMETERS: p_max TYPE i DEFAULT ${max}.`);
-                lines.push('SELECTION-SCREEN END OF BLOCK b2.');
-                code = lines.join('\n');
-                writeOut('reader', code);
-            }
+                <div class="gen-field">
+                    <label>Fields to display</label>
+                    <div id="read-fields"></div>
+                    <button class="mini-btn" style="margin-top:.4rem;" onclick="addFieldRow('read-fields')">+ Add field</button>
+                </div>
 
-            if (which === 'inject') {
-                const htab = document.getElementById('inj-htab').value || 'EXAMPLE_DB_01';
-                const ntab = document.getElementById('inj-ntab').value || 'EXAMPLE_DB_04';
-                const key  = document.getElementById('inj-key').value  || 'FIELD01';
-                const keyv = document.getElementById('inj-keyv').value || '0000000105';
-                const note = document.getElementById('inj-note').value || 'Test injection';
-                const pairs = readPairs('inj-fields');
+                <div class="gen-field">
+                    <label>Optional filter (WHERE)</label>
+                    <div id="read-filters"></div>
+                    <button class="mini-btn" style="margin-top:.4rem;" onclick="addFilterRow('read-filters')">+ Add filter</button>
+                </div>
 
-                const lines = [];
-                lines.push('SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.');
-                lines.push(`  PARAMETERS: p_htab TYPE tabname DEFAULT '${htab}' OBLIGATORY.`);
-                lines.push(`  PARAMETERS: p_ntab TYPE tabname DEFAULT '${ntab}' OBLIGATORY.`);
-                lines.push('SELECTION-SCREEN END OF BLOCK b1.');
-                lines.push('');
-                lines.push('SELECTION-SCREEN BEGIN OF BLOCK b2 WITH FRAME TITLE TEXT-002.');
-                lines.push(`  PARAMETERS: p_key  TYPE string DEFAULT '${key}' OBLIGATORY,`);
-                lines.push(`              p_keyv TYPE string DEFAULT '${keyv}' OBLIGATORY.`);
-                lines.push('SELECTION-SCREEN END OF BLOCK b2.');
-                lines.push('');
-                lines.push('SELECTION-SCREEN BEGIN OF BLOCK b3 WITH FRAME TITLE TEXT-003.');
-                if (pairs.length === 0) {
-                    lines.push(`  PARAMETERS: p_fld1 TYPE string DEFAULT 'FIELD05',`);
-                    lines.push(`              p_val1 TYPE string DEFAULT 'TODAY'.`);
-                } else {
-                    pairs.forEach((p, i) => {
-                        const end = i === pairs.length - 1;
-                        lines.push(`  PARAMETERS: p_fld${i + 1} TYPE string DEFAULT '${p.f || ''}'${end ? ',' : ','}`);
-                        lines.push(`              p_val${i + 1} TYPE string DEFAULT '${p.v || ''}'${end ? '.' : ','}`);
-                    });
-                }
-                lines.push('SELECTION-SCREEN END OF BLOCK b3.');
-                lines.push('');
-                lines.push('SELECTION-SCREEN BEGIN OF BLOCK b4 WITH FRAME TITLE TEXT-004.');
-                lines.push(`  PARAMETERS: p_note TYPE string LOWER CASE DEFAULT '${note}'.`);
-                lines.push(`  PARAMETERS: p_nkey TYPE string DEFAULT '${v('inj-nkey')}',`);
-                lines.push(`              p_nnum TYPE string DEFAULT '${v('inj-nnum')}',`);
-                lines.push(`              p_ndat TYPE string DEFAULT '${v('inj-ndat')}',`);
-                lines.push(`              p_ntim TYPE string DEFAULT '${v('inj-ntim')}',`);
-                lines.push(`              p_nusr TYPE string DEFAULT '${v('inj-nusr')}',`);
-                lines.push(`              p_ntxt TYPE string DEFAULT '${v('inj-ntxt')}'.`);
-                lines.push('SELECTION-SCREEN END OF BLOCK b4.');
-                code = lines.join('\n');
-                writeOut('inject', code);
-            }
-        }
+                <div class="gen-field">
+                    <label>Max rows</label>
+                    <input type="number" id="read-max" value="100">
+                </div>
 
-        function readInputs(containerId, role) {
-            const container = document.getElementById(containerId);
-            return Array.from(container.querySelectorAll(`input[data-role="${role}"]`))
-                        .map(i => i.value.trim())
-                        .filter(Boolean);
-        }
-        function readPairs(containerId) {
-            const container = document.getElementById(containerId);
-            const fields = container.querySelectorAll('input[data-role="field"]');
-            const vals   = container.querySelectorAll('input[data-role="value"]');
-            const out = [];
-            fields.forEach((f, i) => out.push({ f: f.value.trim(), v: (vals[i] || {}).value || '' }));
-            return out.filter(p => p.f);
-        }
-        function v(id) { return (document.getElementById(id) || {}).value || ''; }
+                <div class="actions">
+                    <button class="mini-btn primary" onclick="genReader()">Generate Report</button>
+                    <button class="mini-btn" onclick="resetReader()">Reset</button>
+                </div>
+            </div>
 
-        function writeOut(key, code) {
-            const out = document.getElementById(key + '-out');
-            const el  = document.getElementById(key + '-code');
-            el.textContent = code;
-            if (window.Prism) Prism.highlightElement(el);
-            out.style.display = 'block';
-        }
+            <div class="gen-card">
+                <h4>Generated Report</h4>
+                <p class="hint">Complete ABAP source with your table and fields written in directly.</p>
+                <div class="generated" id="reader-out" style="display:none;">
+                    <div class="gen-label">
+                        <span>zfc_read_db_data.abap</span>
+                        <button class="mini-btn" onclick="copyGen('reader')">Copy</button>
+                    </div>
+                    <pre><code class="language-abap" id="reader-code"></code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        function copyGenerated(key) {
-            const el = document.getElementById(key + '-code');
-            navigator.clipboard.writeText(el.textContent).then(() => {
-                const btn = document.querySelector(`#${key}-out .mini-btn`);
-                const prev = btn.innerText;
-                btn.innerText = 'Copied!';
-                btn.style.background = 'var(--success)';
-                btn.style.color = 'white';
-                setTimeout(() => { btn.innerText = prev; btn.style.background = ''; btn.style.color = ''; }, 1500);
-            });
-        }
+    <!-- ============== GENERATOR 3 — DATA INJECTOR ============== -->
+    <div class="gen-panel" id="gen-inject">
+        <div class="gen-grid">
+            <div class="gen-card">
+                <h4>Input — Header, notes, updates</h4>
+                <p class="hint">Updates one record in the header table, logs a note, and optionally updates additional related tables.</p>
 
-        /* ===================== Initial rows ===================== */
-        window.addEventListener('DOMContentLoaded', () => {
-            // Dictionary Inspector defaults
-            addRow('dict-tables', 'table', 'EXAMPLE_DB_01');
-            addRow('dict-tables', 'table', 'EXAMPLE_DB_02');
-            addRow('dict-domains', 'domain', 'EXAMPLE_DOM_01');
+                <div class="gen-field">
+                    <label>Report name (program ID)</label>
+                    <input type="text" id="inj-prog" value="zfc_inject_test_data">
+                </div>
 
-            // Reader defaults
-            addRow('reader-tables', 'table', 'EXAMPLE_DB_01');
-            addRow('reader-tables', 'table', 'EXAMPLE_DB_02');
-            addRow('reader-tables', 'table', 'EXAMPLE_DB_03');
+                <div class="gen-field">
+                    <label>Header table</label>
+                    <input type="text" id="inj-htab" class="suggest-input"
+                           placeholder="e.g. BKPF" value="BKPF">
+                </div>
 
-            // Injector defaults
-            addRow('inj-fields', 'fieldpair');
-            document.querySelector('#inj-fields .row input[data-role="field"]').value = 'FIELD05';
-            document.querySelector('#inj-fields .row input[data-role="value"]').value = 'TODAY';
-            addRow('inj-fields', 'fieldpair');
-            const rows = document.querySelectorAll('#inj-fields .row');
-            rows[1].querySelector('input[data-role="field"]').value = 'FIELD02';
-            rows[1].querySelector('input[data-role="value"]').value = 'A';
+                <div class="gen-field">
+                    <label>Notes table (for documentation)</label>
+                    <input type="text" id="inj-ntab" class="suggest-input"
+                           placeholder="e.g. ZNOTES" value="ZNOTES">
+                </div>
+
+                <div class="gen-field">
+                    <label>Key field + value (header)</label>
+                    <div class="row three">
+                        <input type="text" id="inj-key" placeholder="Key field" value="BELNR">
+                        <input type="text" id="inj-keyv" placeholder="Key value" value="0000000105">
+                        <div></div>
+                    </div>
+                </div>
+
+                <div class="gen-field">
+                    <label>Header field updates (field = new value)</label>
+                    <div id="inj-fields"></div>
+                    <button class="mini-btn" style="margin-top:.4rem;" onclick="addUpdateRow('inj-fields')">+ Add update</button>
+                </div>
+
+                <div class="gen-field">
+                    <label>Note text</label>
+                    <input type="text" id="inj-note" value="Test injection">
+                </div>
+
+                <div class="gen-field">
+                    <label>Notes table columns (link / number / date / user / text)</label>
+                    <div class="row four" style="margin-bottom:.4rem;">
+                        <input type="text" id="inj-nkey" value="BELNR"       placeholder="Link key">
+                        <input type="text" id="inj-nnum" value="NOTE_NO"     placeholder="Note number">
+                        <input type="text" id="inj-ndat" value="NOTE_DATE"   placeholder="Note date">
+                        <div></div>
+                    </div>
+                    <div class="row three">
+                        <input type="text" id="inj-nusr" value="NOTE_USER"   placeholder="Note user">
+                        <input type="text" id="inj-ntxt" value="NOTE_TEXT"   placeholder="Note text">
+                        <div></div>
+                    </div>
+                </div>
+
+                <!-- ============ EXTRA TABLES ============ -->
+                <div class="gen-field">
+                    <label style="color:var(--warn);">Extra tables (optional)</label>
+                    <p class="hint" style="margin-bottom:.5rem;">
+                        Add any additional tables to update, each with its own key and field changes.
+                    </p>
+                    <div id="inj-extras"></div>
+                    <button class="mini-btn" style="margin-top:.4rem;" onclick="addExtraTable()">+ Add extra table</button>
+                </div>
+
+                <div class="actions">
+                    <button class="mini-btn primary" onclick="genInject()">Generate Report</button>
+                    <button class="mini-btn" onclick="resetInject()">Reset</button>
+                </div>
+            </div>
+
+            <div class="gen-card">
+                <h4>Generated Report</h4>
+                <p class="hint">Complete ABAP source with your tables and fields written in directly.</p>
+                <div class="generated" id="inject-out" style="display:none;">
+                    <div class="gen-label">
+                        <span>zfc_inject_test_data.abap</span>
+                        <button class="mini-btn" onclick="copyGen('inject')">Copy</button>
+                    </div>
+                    <pre><code class="language-abap" id="inject-code"></code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    <p>These tools modify database records. Always test in a development or QA client first.</p>
+    <p style="margin-top:1rem;">&copy; 2026 farhadABAP. Built for the SAP Community.</p>
+</footer>
+
+<script>
+/* ============================================================
+   TAB SWITCHING
+   ============================================================ */
+function switchGen(evt, panelId) {
+    document.querySelectorAll('.gen-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.gen-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(panelId).classList.add('active');
+    evt.currentTarget.classList.add('active');
+}
+
+/* ============================================================
+   SUGGESTION LIBRARY
+   ============================================================ */
+const FIELD_SUGGESTIONS = {
+    BKPF: [
+        ['MANDT', 'Client'], ['BUKRS', 'Company Code'], ['BELNR', 'Accounting Document Number'],
+        ['GJAHR', 'Fiscal Year'], ['BLART', 'Document Type'], ['BLDAT', 'Document Date'],
+        ['BUDAT', 'Posting Date'], ['MONAT', 'Fiscal Period'], ['CPUDT', 'Entry Date'],
+        ['CPUTM', 'Entry Time'], ['USNAM', 'User Name'], ['XBLNR', 'Reference Document Number'],
+        ['BKTXT', 'Document Header Text'], ['WAERS', 'Currency Key'], ['KURSF', 'Exchange Rate']
+    ],
+    BSEG: [
+        ['MANDT', 'Client'], ['BUKRS', 'Company Code'], ['BELNR', 'Accounting Document Number'],
+        ['GJAHR', 'Fiscal Year'], ['BUZEI', 'Line Item Number'], ['BSCHL', 'Posting Key'],
+        ['KOART', 'Account Type'], ['SHKZG', 'Debit/Credit Indicator'], ['DMBTR', 'Amount in Local Currency'],
+        ['WRBTR', 'Amount in Document Currency'], ['WAERS', 'Currency Key'], ['HKONT', 'GL Account'],
+        ['KUNNR', 'Customer Number'], ['LIFNR', 'Vendor Number'], ['SGTXT', 'Item Text']
+    ],
+    MARA: [
+        ['MANDT', 'Client'], ['MATNR', 'Material Number'], ['MTART', 'Material Type'],
+        ['MATKL', 'Material Group'], ['MEINS', 'Base Unit of Measure'], ['BRGEW', 'Gross Weight'],
+        ['NTGEW', 'Net Weight'], ['GEWEI', 'Weight Unit'], ['VOLUM', 'Volume'], ['VOLEH', 'Volume Unit'],
+        ['ERSDA', 'Created On'], ['ERNAM', 'Created By'], ['LAEDA', 'Last Changed On'], ['AENAM', 'Changed By']
+    ],
+    VBAK: [
+        ['MANDT', 'Client'], ['VBELN', 'Sales Document'], ['ERDAT', 'Created On'],
+        ['ERNAM', 'Created By'], ['AUDAT', 'Document Date'], ['KUNNR', 'Sold-to Party'],
+        ['BSTNK', 'Customer Reference'], ['VBTYP', 'SD Document Category'], ['AUART', 'Sales Document Type'],
+        ['WAERK', 'Document Currency'], ['NETWR', 'Net Value'], ['KURRF', 'Exchange Rate']
+    ],
+    LIKP: [
+        ['MANDT', 'Client'], ['VBELN', 'Delivery'], ['ERDAT', 'Created On'], ['ERNAM', 'Created By'],
+        ['LFART', 'Delivery Type'], ['KUNNR', 'Ship-to Party'], ['WADAT', 'Goods Issue Date'],
+        ['LFDAT', 'Delivery Date'], ['VSTEL', 'Shipping Point']
+    ],
+    EKKO: [
+        ['MANDT', 'Client'], ['EBELN', 'Purchasing Document'], ['BUKRS', 'Company Code'],
+        ['BSTYP', 'Purchasing Document Category'], ['BSART', 'Purchasing Document Type'],
+        ['LIFNR', 'Vendor'], ['EKORG', 'Purchasing Organization'], ['EKGRP', 'Purchasing Group'],
+        ['BEDAT', 'Purchasing Document Date'], ['WAERS', 'Currency Key']
+    ]
+};
+
+const ALL_SUGGESTIONS = [];
+Object.keys(FIELD_SUGGESTIONS).forEach(tab => {
+    FIELD_SUGGESTIONS[tab].forEach(([f, t]) => ALL_SUGGESTIONS.push({ field: f, text: t, table: tab }));
+});
+
+/* ============================================================
+   SUGGESTION ENGINE
+   ============================================================ */
+function attachSuggest(input) {
+    if (input.dataset.suggestAttached === '1') return;
+    input.dataset.suggestAttached = '1';
+
+    const wrap = document.createElement('div');
+    wrap.className = 'suggest-wrap';
+    input.parentNode.insertBefore(wrap, input);
+    wrap.appendChild(input);
+
+    const list = document.createElement('div');
+    list.className = 'suggest-list';
+    wrap.appendChild(list);
+
+    let activeIdx = -1;
+    const close = () => { list.classList.remove('open'); activeIdx = -1; };
+    const render = (matches) => {
+        list.innerHTML = '';
+        if (matches.length === 0) { close(); return; }
+        matches.slice(0, 30).forEach(m => {
+            const it = document.createElement('div');
+            it.className = 'suggest-item';
+            it.innerHTML = `<span class="sf">${m.field}</span><span class="st">${m.text} · ${m.table}</span>`;
+            it.onmousedown = (e) => { e.preventDefault(); input.value = m.field; close(); };
+            list.appendChild(it);
         });
-    </script>
+        list.classList.add('open');
+        activeIdx = -1;
+    };
+
+    input.addEventListener('input', () => {
+        const q = input.value.trim().toUpperCase();
+        const matches = q.length === 0 ? ALL_SUGGESTIONS
+            : ALL_SUGGESTIONS.filter(s => s.field.startsWith(q) || s.text.toUpperCase().includes(q));
+        render(matches);
+    });
+    input.addEventListener('focus', () => {
+        const q = input.value.trim().toUpperCase();
+        const matches = q.length === 0 ? ALL_SUGGESTIONS
+            : ALL_SUGGESTIONS.filter(s => s.field.startsWith(q) || s.text.toUpperCase().includes(q));
+        render(matches);
+    });
+    input.addEventListener('blur', () => setTimeout(close, 150));
+    input.addEventListener('keydown', (e) => {
+        const items = list.querySelectorAll('.suggest-item');
+        if (!list.classList.contains('open') || items.length === 0) return;
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            activeIdx = Math.min(activeIdx + 1, items.length - 1);
+            items.forEach((el, i) => el.classList.toggle('active', i === activeIdx));
+            items[activeIdx].scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            activeIdx = Math.max(activeIdx - 1, 0);
+            items.forEach((el, i) => el.classList.toggle('active', i === activeIdx));
+            items[activeIdx].scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'Enter' && activeIdx >= 0) {
+            e.preventDefault();
+            input.value = items[activeIdx].querySelector('.sf').textContent;
+            close();
+        } else if (e.key === 'Escape') close();
+    });
+}
+
+/* ============================================================
+   ROW BUILDERS
+   ============================================================ */
+function addFieldRow(containerId, value) {
+    const c = document.getElementById(containerId);
+    const row = document.createElement('div');
+    row.className = 'row two';
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.placeholder = 'Field name (e.g. BELNR)';
+    inp.className = 'suggest-input';
+    inp.value = value || '';
+    const rm = document.createElement('button');
+    rm.className = 'icon-btn remove';
+    rm.innerText = '−';
+    rm.onclick = () => row.remove();
+    row.appendChild(inp); row.appendChild(rm);
+    c.appendChild(row);
+    attachSuggest(inp);
+    c.querySelectorAll('.icon-btn.add').forEach(b => b.remove());
+    const add = document.createElement('button');
+    add.className = 'icon-btn add';
+    add.innerText = '+';
+    add.onclick = () => addFieldRow(containerId);
+    row.appendChild(add);
+}
+
+function addFilterRow(containerId, f, v) {
+    const c = document.getElementById(containerId);
+    const row = document.createElement('div');
+    row.className = 'row three';
+    const fi = document.createElement('input');
+    fi.type = 'text'; fi.placeholder = 'Filter field'; fi.className = 'suggest-input'; fi.value = f || '';
+    const vi = document.createElement('input');
+    vi.type = 'text'; vi.placeholder = 'Value'; vi.value = v || '';
+    const rm = document.createElement('button');
+    rm.className = 'icon-btn remove'; rm.innerText = '−'; rm.onclick = () => row.remove();
+    row.appendChild(fi); row.appendChild(vi); row.appendChild(rm);
+    c.appendChild(row); attachSuggest(fi);
+    c.querySelectorAll('.icon-btn.add').forEach(b => b.remove());
+    const add = document.createElement('button');
+    add.className = 'icon-btn add'; add.innerText = '+';
+    add.onclick = () => addFilterRow(containerId);
+    row.appendChild(add);
+}
+
+function addUpdateRow(containerId, f, v) {
+    const c = document.getElementById(containerId);
+    const row = document.createElement('div');
+    row.className = 'row three';
+    const fi = document.createElement('input');
+    fi.type = 'text'; fi.placeholder = 'Field (e.g. BLDAT)'; fi.className = 'suggest-input'; fi.value = f || '';
+    const vi = document.createElement('input');
+    vi.type = 'text'; vi.placeholder = 'Value (or TODAY)'; vi.value = v || '';
+    const rm = document.createElement('button');
+    rm.className = 'icon-btn remove'; rm.innerText = '−'; rm.onclick = () => row.remove();
+    row.appendChild(fi); row.appendChild(vi); row.appendChild(rm);
+    c.appendChild(row); attachSuggest(fi);
+    c.querySelectorAll('.icon-btn.add').forEach(b => b.remove());
+    const add = document.createElement('button');
+    add.className = 'icon-btn add'; add.innerText = '+';
+    add.onclick = () => addUpdateRow(containerId);
+    row.appendChild(add);
+}
+
+/* ============================================================
+   EXTRA-TABLE BLOCK BUILDER
+   ============================================================ */
+let extraCounter = 0;
+
+function addExtraTable(preset) {
+    extraCounter++;
+    const id = 'extra-' + extraCounter;
+    const container = document.getElementById('inj-extras');
+
+    const block = document.createElement('div');
+    block.className = 'extra-block';
+    block.id = id;
+    block.innerHTML = `
+        <div class="extra-head">
+            <span class="extra-title">Extra table #${extraCounter}</span>
+            <button class="mini-btn danger" onclick="document.getElementById('${id}').remove()">Remove</button>
+        </div>
+        <div class="gen-field">
+            <label>Table name</label>
+            <input type="text" class="extra-tab suggest-input" placeholder="e.g. BSEG" value="${preset && preset.tab ? preset.tab : ''}">
+        </div>
+        <div class="gen-field">
+            <label>Key field + value</label>
+            <div class="row three">
+                <input type="text" class="extra-key suggest-input" placeholder="Key field" value="${preset && preset.key ? preset.key : ''}">
+                <input type="text" class="extra-keyv" placeholder="Key value" value="${preset && preset.keyv ? preset.keyv : ''}">
+                <div></div>
+            </div>
+        </div>
+        <div class="gen-field">
+            <label>Field updates</label>
+            <div class="extra-updates"></div>
+            <button class="mini-btn" style="margin-top:.4rem;" onclick="addExtraUpdateRow('${id}')">+ Add update</button>
+        </div>
+    `;
+    container.appendChild(block);
+
+    // Attach suggestion engine to this block's text inputs
+    block.querySelectorAll('.suggest-input').forEach(attachSuggest);
+
+    // Seed updates from preset, or add one empty row
+    if (preset && preset.updates && preset.updates.length) {
+        preset.updates.forEach(u => addExtraUpdateRow(id, u.field, u.value));
+    } else {
+        addExtraUpdateRow(id);
+    }
+}
+
+function addExtraUpdateRow(blockId, f, v) {
+    const block = document.getElementById(blockId);
+    const container = block.querySelector('.extra-updates');
+    const row = document.createElement('div');
+    row.className = 'row three';
+    const fi = document.createElement('input');
+    fi.type = 'text'; fi.placeholder = 'Field'; fi.className = 'suggest-input extra-upd-field'; fi.value = f || '';
+    const vi = document.createElement('input');
+    vi.type = 'text'; vi.placeholder = 'Value (or TODAY)'; vi.className = 'extra-upd-value'; vi.value = v || '';
+    const rm = document.createElement('button');
+    rm.className = 'icon-btn remove'; rm.innerText = '−'; rm.onclick = () => row.remove();
+    row.appendChild(fi); row.appendChild(vi); row.appendChild(rm);
+    container.appendChild(row);
+    attachSuggest(fi);
+}
+
+function readExtraTables() {
+    const out = [];
+    document.querySelectorAll('#inj-extras .extra-block').forEach(block => {
+        const tab  = block.querySelector('.extra-tab').value.trim().toUpperCase();
+        const key  = block.querySelector('.extra-key').value.trim().toUpperCase();
+        const keyv = block.querySelector('.extra-keyv').value.trim();
+        const updates = [];
+        block.querySelectorAll('.extra-updates .row').forEach(row => {
+            const f = row.querySelector('.extra-upd-field').value.trim().toUpperCase();
+            const v = row.querySelector('.extra-upd-value').value.trim();
+            if (f && v) updates.push({ field: f, value: v });
+        });
+        if (tab) out.push({ tab, key, keyv, updates });
+    });
+    return out;
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const toLower = s => (s || '').toLowerCase().trim();
+const toUpper = s => (s || '').toUpperCase().trim();
+
+function readRows(containerId, roles) {
+    const c = document.getElementById(containerId);
+    if (!c) return [];
+    const out = [];
+    c.querySelectorAll('.row').forEach(row => {
+        const inputs = row.querySelectorAll('input');
+        const obj = {};
+        roles.forEach((r, i) => obj[r] = (inputs[i] ? inputs[i].value.trim() : ''));
+        if (Object.values(obj).some(v => v)) out.push(obj);
+    });
+    return out;
+}
+
+function writeOutput(key, code) {
+    const out = document.getElementById(key + '-out');
+    const el = document.getElementById(key + '-code');
+    el.textContent = code;
+    if (window.Prism) Prism.highlightElement(el);
+    out.style.display = 'block';
+}
+
+function copyGen(key) {
+    const el = document.getElementById(key + '-code');
+    navigator.clipboard.writeText(el.textContent).then(() => {
+        const btn = document.querySelector(`#${key}-out .mini-btn`);
+        const prev = btn.innerText;
+        btn.innerText = 'Copied!';
+        btn.style.background = 'var(--success)';
+        btn.style.color = 'white';
+        setTimeout(() => { btn.innerText = prev; btn.style.background = ''; btn.style.color = ''; }, 1500);
+    });
+}
+
+/* ============================================================
+   GENERATOR 1 — DICTIONARY INSPECTOR
+   ============================================================ */
+function genDict() {
+    const tab  = toUpper(document.getElementById('dict-table').value) || 'BKPF';
+    const prog = toLower(document.getElementById('dict-prog').value) || 'zfc_show_dict_details';
+
+    const code =
+`*&---------------------------------------------------------------------*
+*& Report: ${prog}
+*& Purpose: Display technical structure of DDIC table ${tab}
+*& Generated by farhadABAP / tools
+*&---------------------------------------------------------------------*
+REPORT ${prog}.
+
+DATA: lt_dfies TYPE TABLE OF dfies,
+      ls_dfies TYPE dfies.
+
+START-OF-SELECTION.
+  CALL FUNCTION 'DDIF_TABL_GET'
+    EXPORTING
+      name      = '${tab}'
+    TABLES
+      dfies_tab = lt_dfies
+    EXCEPTIONS
+      OTHERS    = 1.
+
+  IF sy-subrc <> 0.
+    WRITE: / 'Table ${tab} not found in DDIC.'.
+    RETURN.
+  ENDIF.
+
+  WRITE: / '================================================================================'.
+  WRITE: / 'TABLE STRUCTURE:', '${tab}'.
+  WRITE: / '--------------------------------------------------------------------------------'.
+  WRITE: / 'Pos', 5 'Field', 30 'Data Element', 20 'Domain', 10 'Type', 5 'Len'.
+  WRITE: / '--------------------------------------------------------------------------------'.
+
+  LOOP AT lt_dfies INTO ls_dfies.
+    WRITE: / ls_dfies-position,
+           5  ls_dfies-fieldname,
+           30 ls_dfies-rollname,
+           20 ls_dfies-domname,
+           10 ls_dfies-datatype,
+           5  ls_dfies-leng.
+  ENDLOOP.
+
+  ULINE.
+  WRITE: / 'Total fields:', lines( lt_dfies ).`;
+
+    writeOutput('dict', code);
+}
+
+function resetDict() {
+    document.getElementById('dict-table').value = 'BKPF';
+    document.getElementById('dict-prog').value  = 'zfc_show_dict_details';
+    document.getElementById('dict-out').style.display = 'none';
+}
+
+/* ============================================================
+   GENERATOR 2 — DATA READER
+   ============================================================ */
+function genReader() {
+    const tab  = toUpper(document.getElementById('read-table').value) || 'BKPF';
+    const prog = toLower(document.getElementById('read-prog').value)  || 'zfc_read_db_data';
+    const max  = document.getElementById('read-max').value || '100';
+
+    const fields  = readRows('read-fields',  ['name']).map(r => toUpper(r.name)).filter(Boolean);
+    const filters = readRows('read-filters', ['field', 'value']).filter(r => r.field && r.value);
+
+    if (fields.length === 0) { alert('Please add at least one field.'); return; }
+
+    const structName = `ls_${toLower(tab)}`;
+    const tableName  = `lt_${toLower(tab)}`;
+    const typeName   = toLower(tab);
+
+    const selectStmt =
+`    SELECT ${fields.map(f => `\n             ${f}`).join('')}
+      FROM ${typeName}
+      INTO CORRESPONDING FIELDS OF TABLE ${tableName}
+      UP TO ${max} ROWS.`;
+
+    let whereStmt = '';
+    if (filters.length > 0) {
+        whereStmt = '\n      WHERE ' +
+            filters.map(f => `(${f.field} = '${f.value}')`).join('\n        AND ');
+    }
+
+    const headerLine = fields.map(f => `'${f}'`).join(', ');
+    const writeBlock = fields.map(f => `    WRITE: / ${structName}-${f.toLowerCase()}.`).join('\n');
+
+    const code =
+`*&---------------------------------------------------------------------*
+*& Report: ${prog}
+*& Purpose: Read table ${tab} and display selected fields
+*& Generated by farhadABAP / tools
+*&---------------------------------------------------------------------*
+REPORT ${prog}.
+
+DATA: ${tableName} TYPE STANDARD TABLE OF ${typeName},
+      ${structName} TYPE ${typeName},
+      lv_count     TYPE i.
+
+START-OF-SELECTION.
+${selectStmt}${whereStmt}
+
+  IF ${tableName} IS INITIAL.
+    WRITE: / 'No data found in ${tab}.'.
+    RETURN.
+  ENDIF.
+
+  WRITE: / '================================================================================'.
+  WRITE: / 'TABLE: ${tab}'.
+  WRITE: / '================================================================================'.
+
+  WRITE: / ${headerLine}.
+  ULINE.
+
+  LOOP AT ${tableName} INTO ${structName}.
+${writeBlock}
+    ULINE.
+    lv_count = lv_count + 1.
+  ENDLOOP.
+
+  WRITE: / 'Total records: ', lv_count.`;
+
+    writeOutput('reader', code);
+}
+
+function resetReader() {
+    document.getElementById('read-table').value = 'BKPF';
+    document.getElementById('read-prog').value  = 'zfc_read_db_data';
+    document.getElementById('read-max').value   = '100';
+    document.getElementById('read-fields').innerHTML  = '';
+    document.getElementById('read-filters').innerHTML = '';
+    document.getElementById('reader-out').style.display = 'none';
+    addFieldRow('read-fields', 'BUKRS');
+    addFieldRow('read-fields', 'BELNR');
+    addFieldRow('read-fields', 'GJAHR');
+    addFieldRow('read-fields', 'BLDAT');
+    addFilterRow('read-filters');
+}
+
+/* ============================================================
+   GENERATOR 3 — DATA INJECTOR (with extra tables)
+   ============================================================ */
+function genInject() {
+    const prog = toLower(document.getElementById('inj-prog').value) || 'zfc_inject_test_data';
+    const htab = toUpper(document.getElementById('inj-htab').value) || 'BKPF';
+    const ntab = toUpper(document.getElementById('inj-ntab').value) || 'ZNOTES';
+    const key  = toUpper(document.getElementById('inj-key').value)  || 'BELNR';
+    const keyv = document.getElementById('inj-keyv').value.trim()  || '0000000105';
+    const note = document.getElementById('inj-note').value.trim()  || 'Test injection';
+    const nkey = toUpper(document.getElementById('inj-nkey').value) || 'BELNR';
+    const nnum = toUpper(document.getElementById('inj-nnum').value) || 'NOTE_NO';
+    const ndat = toUpper(document.getElementById('inj-ndat').value) || 'NOTE_DATE';
+    const nusr = toUpper(document.getElementById('inj-nusr').value) || 'NOTE_USER';
+    const ntxt = toUpper(document.getElementById('inj-ntxt').value) || 'NOTE_TEXT';
+
+    const updates = readRows('inj-fields', ['field', 'value']).filter(r => r.field && r.value);
+    if (updates.length === 0) { alert('Please add at least one header field update.'); return; }
+
+    const extras = readExtraTables();
+
+    const hStruct = `ls_${toLower(htab)}`;
+    const nStruct = `ls_${toLower(ntab)}`;
+    const hType   = toLower(htab);
+    const nType   = toLower(ntab);
+
+    const updateBlock = updates.map(u => {
+        const f = toUpper(u.field).toLowerCase();
+        const v = u.value.trim();
+        if (v.toUpperCase() === 'TODAY') return `    ${hStruct}-${f} = lv_today.`;
+        return `    ${hStruct}-${f} = '${v}'.`;
+    }).join('\n');
+
+    // --- Build extra-table blocks ---
+    let extraDataDecls = '';
+    let extraUpdateCode = '';
+    let extraCounters   = '';
+    let extraReportLines = '';
+
+    extras.forEach((ex, idx) => {
+        const n   = idx + 1;
+        const st  = `ls_extra_${n}`;
+        const ty  = toLower(ex.tab);
+        const keyF = ex.key.toLowerCase();
+
+        extraDataDecls +=
+`      ${st}        TYPE ${ty},\n`;
+        extraCounters +=
+`      lv_upd_${n}    TYPE i,\n`;
+
+        const updBlock = (ex.updates.length ? ex.updates.map(u => {
+            const f = toUpper(u.field).toLowerCase();
+            const v = u.value.trim();
+            if (v.toUpperCase() === 'TODAY') return `    ${st}-${f} = lv_today.`;
+            return `    ${st}-${f} = '${v}'.`;
+        }).join('\n') : '    " (no updates defined)');
+
+        extraUpdateCode +=
+`
+  " ---------- EXTRA TABLE ${n}: ${ex.tab} ----------
+  SELECT SINGLE *
+    FROM ${ty}
+    INTO ${st}
+    WHERE ${keyF} = '${ex.keyv}'.
+
+  IF sy-subrc = 0.
+${updBlock}
+
+    MODIFY ${ty} FROM ${st}.
+    IF sy-subrc = 0.
+      lv_upd_${n} = 1.
+      COMMIT WORK.
+    ENDIF.
+  ELSE.
+    WRITE: / 'Warning: no record in ${ex.tab} where ${ex.key} = ${ex.keyv}.'.
+  ENDIF.
+`;
+
+        extraReportLines +=
+`  WRITE: / 'Extra table ${ex.tab} updated:', lv_upd_${n}.\n`;
+    });
+
+    const code =
+`*&---------------------------------------------------------------------*
+*& Report: ${prog}
+*& Purpose: Update one record in ${htab}, log a note in ${ntab}${extras.length ? ', and update ' + extras.length + ' extra table(s)' : ''}
+*& Generated by farhadABAP / tools
+*& WARNING: This program MODIFIES database records.
+*&---------------------------------------------------------------------*
+REPORT ${prog}.
+
+DATA: ${hStruct}       TYPE ${hType},
+      ${nStruct}       TYPE ${nType},
+${extraDataDecls}      lv_today       TYPE datum,
+      lv_max_note    TYPE n LENGTH 10,
+      lv_count_upd   TYPE i,
+      lv_count_notes TYPE i,
+${extraCounters}      lv_dummy       TYPE i.
+
+START-OF-SELECTION.
+  lv_today = sy-datum.
+
+  " ---------- 1. Read the header record ----------
+  SELECT SINGLE *
+    FROM ${hType}
+    INTO ${hStruct}
+    WHERE ${key.toLowerCase()} = '${keyv}'.
+
+  IF sy-subrc <> 0.
+    WRITE: / 'Record not found in ${htab} where ${key} = ${keyv}.'.
+    RETURN.
+  ENDIF.
+
+  " ---------- 2. Apply header field updates ----------
+${updateBlock}
+
+  MODIFY ${hType} FROM ${hStruct}.
+  IF sy-subrc = 0.
+    lv_count_upd = 1.
+    COMMIT WORK.
+  ENDIF.
+${extraUpdateCode}
+  " ---------- 3. Log a documentation note ----------
+  SELECT MAX( ${nnum.toLowerCase()} )
+    FROM ${nType}
+    WHERE ${nkey.toLowerCase()} = '${keyv}'
+    INTO lv_max_note.
+
+  lv_max_note = lv_max_note + 1.
+  IF lv_max_note IS INITIAL.
+    lv_max_note = 1.
+  ENDIF.
+
+  CLEAR ${nStruct}.
+  ${nStruct}-${nkey.toLowerCase()} = '${keyv}'.
+  ${nStruct}-${nnum.toLowerCase()} = lv_max_note.
+  ${nStruct}-${ndat.toLowerCase()} = lv_today.
+  ${nStruct}-${nusr.toLowerCase()} = sy-uname.
+  ${nStruct}-${ntxt.toLowerCase()} = '${note}'.
+
+  INSERT ${nType} FROM ${nStruct}.
+  IF sy-subrc = 0.
+    lv_count_notes = 1.
+    COMMIT WORK.
+  ENDIF.
+
+  " ---------- 4. Report ----------
+  WRITE: / '================================================================'.
+  WRITE: / 'INJECTION COMPLETE'.
+  WRITE: / '----------------------------------------------------------------'.
+  WRITE: / 'Header table   :', '${htab}'.
+  WRITE: / 'Key            :', '${key}', '=', '${keyv}'.
+  WRITE: / 'Header updated :', lv_count_upd.
+  WRITE: / 'Notes written  :', lv_count_notes, '->', '${ntab}'.
+${extraReportLines}  WRITE: / '================================================================'.`;
+
+    writeOutput('inject', code);
+}
+
+function resetInject() {
+    document.getElementById('inj-prog').value = 'zfc_inject_test_data';
+    document.getElementById('inj-htab').value = 'BKPF';
+    document.getElementById('inj-ntab').value = 'ZNOTES';
+    document.getElementById('inj-key').value  = 'BELNR';
+    document.getElementById('inj-keyv').value = '0000000105';
+    document.getElementById('inj-note').value = 'Test injection';
+    document.getElementById('inj-nkey').value = 'BELNR';
+    document.getElementById('inj-nnum').value = 'NOTE_NO';
+    document.getElementById('inj-ndat').value = 'NOTE_DATE';
+    document.getElementById('inj-nusr').value = 'NOTE_USER';
+    document.getElementById('inj-ntxt').value = 'NOTE_TEXT';
+    document.getElementById('inj-fields').innerHTML = '';
+    document.getElementById('inj-extras').innerHTML = '';
+    document.getElementById('inject-out').style.display = 'none';
+    extraCounter = 0;
+    addUpdateRow('inj-fields', 'BLDAT', 'TODAY');
+    addUpdateRow('inj-fields', 'BUDAT', 'TODAY');
+}
+
+/* ============================================================
+   INITIALIZE
+   ============================================================ */
+window.addEventListener('DOMContentLoaded', () => {
+    resetReader();
+    resetInject();
+});
+</script>
 </body>
 </html>
