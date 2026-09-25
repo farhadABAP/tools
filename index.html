@@ -3,30 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ABAP Table Creator Code Generator</title>
+    <title>ABAP Table Creator Code Generator with Foreign Keys</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 900px; margin: auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .container { max-width: 1050px; margin: auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         h1 { color: #005b96; font-size: 24px; margin-top: 0; }
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; }
         input, select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
         table.field-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        table.field-table th, table.field-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        table.field-table th, table.field-table td { border: 1px solid #ddd; padding: 6px; text-align: left; font-size: 13px; }
         table.field-table th { background-color: #f8f9fa; }
         button { background-color: #005b96; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 14px; margin-top: 10px; }
         button:hover { background-color: #003f6b; }
         .btn-danger { background-color: #d9534f; padding: 5px 10px; margin: 0; }
         .btn-danger:hover { background-color: #c9302c; }
-        pre { background: #272822; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: Consolas, monospace; }
+        pre { background: #272822; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; font-family: Consolas, monospace; font-size: 13px; }
         .section-title { margin-top: 25px; border-bottom: 2px solid #005b96; padding-bottom: 5px; color: #005b96; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>ABAP DDIC Table Generator</h1>
-    <p>Configure your database table attributes and fields below to instantly generate the ABAP program code.</p>
+    <h1>ABAP DDIC Table Generator (with Foreign Keys)</h1>
+    <p>Configure table attributes and fields below. Add check tables and fields to automatically include foreign key definitions.</p>
 
     <!-- Table Metadata Form -->
     <div class="form-group">
@@ -35,7 +35,7 @@
     </div>
     <div class="form-group">
         <label for="tableDesc">Table Description:</label>
-        <input type="text" id="tableDesc" value="test table" oninput="generateCode()">
+        <input type="text" id="tableDesc" value="Table with Foreign Keys" oninput="generateCode()">
     </div>
     <div class="form-group">
         <label for="tableClass">Table Type (Category):</label>
@@ -55,6 +55,8 @@
                 <th>Data Type</th>
                 <th>Length</th>
                 <th>Decimals</th>
+                <th>Check Table (Opt)</th>
+                <th>Check Field (Opt)</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -66,22 +68,18 @@
                 <td><input type="text" value="MANDT" class="f-type" oninput="generateCode()"></td>
                 <td><input type="number" value="3" class="f-len" oninput="generateCode()"></td>
                 <td><input type="number" value="0" class="f-dec" oninput="generateCode()"></td>
+                <td><input type="text" value="" placeholder="e.g. T000" class="f-chk-tbl" oninput="generateCode()"></td>
+                <td><input type="text" value="" placeholder="e.g. MANDT" class="f-chk-fld" oninput="generateCode()"></td>
                 <td><button class="btn-danger" onclick="removeRow(this)">Remove</button></td>
             </tr>
             <tr>
                 <td><input type="text" value="FIELD1" class="f-name" oninput="generateCode()"></td>
                 <td><input type="checkbox" checked class="f-key" onchange="generateCode()"></td>
                 <td><input type="text" value="CHAR" class="f-type" oninput="generateCode()"></td>
-                <td><input type="number" value="30" class="f-len" oninput="generateCode()"></td>
+                <td><input type="number" value="10" class="f-len" oninput="generateCode()"></td>
                 <td><input type="number" value="0" class="f-dec" oninput="generateCode()"></td>
-                <td><button class="btn-danger" onclick="removeRow(this)">Remove</button></td>
-            </tr>
-            <tr>
-                <td><input type="text" value="FIELD5" class="f-name" oninput="generateCode()"></td>
-                <td><input type="checkbox" class="f-key" onchange="generateCode()"></td>
-                <td><input type="text" value="CURR" class="f-type" oninput="generateCode()"></td>
-                <td><input type="number" value="13" class="f-len" oninput="generateCode()"></td>
-                <td><input type="number" value="2" class="f-dec" oninput="generateCode()"></td>
+                <td><input type="text" value="KNA1" class="f-chk-tbl" oninput="generateCode()"></td>
+                <td><input type="text" value="KUNNR" class="f-chk-fld" oninput="generateCode()"></td>
                 <td><button class="btn-danger" onclick="removeRow(this)">Remove</button></td>
             </tr>
         </tbody>
@@ -102,6 +100,8 @@ function addRow() {
         <td><input type="text" value="CHAR" class="f-type" oninput="generateCode()"></td>
         <td><input type="number" value="10" class="f-len" oninput="generateCode()"></td>
         <td><input type="number" value="0" class="f-dec" oninput="generateCode()"></td>
+        <td><input type="text" value="" placeholder="e.g. KNA1" class="f-chk-tbl" oninput="generateCode()"></td>
+        <td><input type="text" value="" placeholder="e.g. KUNNR" class="f-chk-fld" oninput="generateCode()"></td>
         <td><button class="btn-danger" onclick="removeRow(this)">Remove</button></td>
     `;
     tbody.appendChild(row);
@@ -122,6 +122,10 @@ function generateCode() {
     code += `DATA: ls_header  TYPE dd02v,\n`;
     code += `      lt_fields  TYPE STANDARD TABLE OF dd03p,\n`;
     code += `      ls_field   TYPE dd03p,\n`;
+    code += `      lt_dd05p   TYPE STANDARD TABLE OF dd05p,\n`;
+    code += `      ls_dd05p   TYPE dd05p,\n`;
+    code += `      lt_dd08v   TYPE STANDARD TABLE OF dd08v,\n`;
+    code += `      ls_dd08v   TYPE dd08v,\n`;
     code += `      lv_rc      TYPE sy-subrc.\n\n`;
 
     code += `* 1. Define Table Header\n`;
@@ -133,15 +137,19 @@ function generateCode() {
     code += `ls_header-mainflag   = 'X'.\n`;
     code += `ls_header-tabart     = 'APPL0'.\n\n`;
 
-    code += `* 2. Define Table Fields\n`;
+    code += `* 2. Define Table Fields & Foreign Keys\n`;
 
     const rows = document.querySelectorAll('#fieldsBody tr');
+    let fkCount = 0;
+
     rows.forEach((row, index) => {
         const name = row.querySelector('.f-name').value.trim().toUpperCase() || `FIELD${index+1}`;
         const isKey = row.querySelector('.f-key').checked ? 'X' : '';
         const type = row.querySelector('.f-type').value.trim().toUpperCase();
         const len = row.querySelector('.f-len').value;
         const dec = row.querySelector('.f-dec').value;
+        const chkTbl = row.querySelector('.f-chk-tbl').value.trim().toUpperCase();
+        const chkFld = row.querySelector('.f-chk-fld').value.trim().toUpperCase();
         const pos = index + 1;
 
         code += `CLEAR ls_field.\n`;
@@ -156,11 +164,34 @@ function generateCode() {
         } else {
             code += `ls_field-datatype  = '${type}'.\n`;
             code += `ls_field-leng      = ${len}.\n`;
-            if (dec > 0 && type === 'CURR' || type === 'DEC') {
+            if (dec > 0 && (type === 'CURR' || type === 'DEC')) {
                 code += `ls_field-decimals  = ${dec}.\n`;
             }
         }
-        code += `APPEND ls_field TO lt_fields.\n\n`;
+        code += `APPEND ls_field TO lt_fields.\n`;
+
+        // If Foreign Key is defined for this field
+        if (chkTbl && chkFld) {
+            fkCount++;
+            code += `\n* Foreign Key mapping for ${name}\n`;
+            code += `CLEAR ls_dd08v.\n`;
+            code += `ls_dd08v-tabname    = '${tName}'.\n`;
+            code += `ls_dd08v-fieldname  = '${name}'.\n`;
+            code += `ls_dd08v-checked    = '${chkTbl}'.\n`;
+            code += `ls_dd08v-frkart     = 'KEY'.\n`;
+            code += `ls_dd08v-card       = 'CN'.\n`;
+            code += `ls_dd08v-checkfield = '${chkFld}'.\n`;
+            code += `APPEND ls_dd08v TO lt_dd08v.\n`;
+
+            code += `CLEAR ls_dd05p.\n`;
+            code += `ls_dd05p-tabname    = '${tName}'.\n`;
+            code += `ls_dd05p-fieldname  = '${name}'.\n`;
+            code += `ls_dd05p-checktable = '${chkTbl}'.\n`;
+            code += `ls_dd05p-checkfield = '${chkFld}'.\n`;
+            code += `ls_dd05p-frkfield   = '${name}'.\n`;
+            code += `APPEND ls_dd05p TO lt_dd05p.\n`;
+        }
+        code += `\n`;
     });
 
     code += `* 3. Write Table Definition to Repository\n`;
@@ -170,6 +201,10 @@ function generateCode() {
     code += `    dd_header          = ls_header\n`;
     code += `  TABLES\n`;
     code += `    dd_03p             = lt_fields\n`;
+    if (fkCount > 0) {
+        code += `    dd_05p             = lt_dd05p\n`;
+        code += `    dd_08v             = lt_dd08v\n`;
+    }
     code += `  EXCEPTIONS\n`;
     code += `    not_found          = 1\n`;
     code += `    permission_failure = 2\n`;
