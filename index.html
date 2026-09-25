@@ -1,754 +1,2829 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ABAP Code Patterns & Reference</title>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-abap.min.js"></script>
+
+<title>C_ABAPD Exam Preparation | ABAP Cloud</title>
+
+<meta
+    name="description"
+    content="C_ABAPD SAP ABAP Cloud certification preparation - ABAP, ABAP OO, SQL, CDS, RAP, Clean Core and exam practice."
+>
+
 <style>
+
 :root {
-    --bg-primary: #0d1117; --bg-secondary: #161b22; --bg-tertiary: #21262d;
-    --text-primary: #c9d1d9; --text-secondary: #8b949e; --accent: #58a6ff;
-    --accent-glow: rgba(88, 166, 255, 0.15); --border: #30363d;
-    --success: #238636; --danger: #da3633; --warn: #d29922; --purple: #a371f7;
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-tertiary: #21262d;
+    --text-primary: #c9d1d9;
+    --text-secondary: #8b949e;
+    --accent: #58a6ff;
+    --accent-glow: rgba(88,166,255,0.15);
+    --border: #30363d;
+    --success: #238636;
+    --danger: #da3633;
+    --warn: #d29922;
+    --purple: #a371f7;
     --code-bg: #1e1e1e;
-    --sidebar-width: 260px;
+    --sidebar-width: 280px;
 }
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.5; min-height: 100vh; display: flex; flex-direction: column; }
 
-/* NAV */
-nav { background: var(--bg-secondary); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; position: sticky; top: 0; z-index: 50; }
-.logo { font-size: 1.1rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
-.version { background: var(--bg-tertiary); color: var(--text-secondary); padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-/* HAMBURGER - hidden on desktop */
-.hamburger { display: none; background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-primary); width: 40px; height: 40px; border-radius: 6px; cursor: pointer; font-size: 1.2rem; align-items: center; justify-content: center; margin-right: 0.75rem; }
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        sans-serif;
 
-/* APP LAYOUT */
-.app-container { display: flex; flex: 1; overflow: hidden; }
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.55;
+    min-height: 100vh;
 
-/* SIDEBAR */
-.sidebar { width: var(--sidebar-width); background: var(--bg-secondary); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; height: calc(100vh - 57px); position: sticky; top: 57px; }
-.nav-section { padding: 1rem 0; border-bottom: 1px solid var(--border); }
-.nav-title { padding: 0 1.5rem; font-size: 0.7rem; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
-.nav-item { padding: 0.75rem 1.5rem; cursor: pointer; color: var(--text-secondary); font-size: 0.85rem; display: flex; align-items: center; gap: 0.75rem; transition: all 0.2s; border-left: 3px solid transparent; min-height: 44px; }
-.nav-item:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-.nav-item.active { background: var(--accent-glow); color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
-.nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+    display: flex;
+    flex-direction: column;
+}
 
-/* BACKDROP - mobile only */
-.backdrop { display: none; position: fixed; top: 57px; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 40; }
-.backdrop.show { display: block; }
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
 
-/* MAIN */
-.main-content { flex: 1; overflow-y: auto; padding: 2rem; min-width: 0; }
-.panel { display: none; max-width: 1100px; margin: 0 auto; }
-.panel.active { display: block; }
+nav {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 1.5rem;
 
-.module-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
-.module-header h2 { font-size: 1.5rem; }
-.module-content { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; }
-.module-content h3 { color: var(--accent); margin: 1.5rem 0 0.75rem; font-size: 1.1rem; }
-.module-content h3:first-child { margin-top: 0; }
-.module-content p { margin-bottom: 1rem; color: var(--text-primary); word-wrap: break-word; }
-.module-content ul { margin-bottom: 1rem; padding-left: 1.5rem; }
-.module-content li { margin-bottom: 0.5rem; color: var(--text-secondary); }
-.module-content code:not([class*="language-"]) { background: var(--bg-tertiary); padding: 0.1rem 0.4rem; border-radius: 4px; font-family: "Fira Code", monospace; font-size: 0.85rem; color: var(--warn); word-break: break-all; }
-.module-content pre { margin-bottom: 1.5rem; border-radius: 6px; border: 1px solid var(--border); overflow-x: auto; -webkit-overflow-scrolling: touch; }
-.module-content pre code { font-size: 0.82rem !important; }
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-.task-card { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid var(--accent); }
-.task-card h4 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.05rem; }
-.task-card .grading { background: rgba(218, 54, 51, 0.1); border: 1px solid var(--danger); padding: 0.75rem; border-radius: 4px; margin-top: 1rem; font-size: 0.85rem; color: var(--danger); }
-.task-card .grading strong { display: block; margin-bottom: 0.25rem; }
+    flex-shrink: 0;
 
-.gotcha-card { background: var(--bg-secondary); border: 1px solid var(--warn); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
-.gotcha-card h4 { color: var(--warn); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
 
-.info-box { background: rgba(88, 166, 255, 0.1); border-left: 3px solid var(--accent); padding: 1rem; border-radius: 0 6px 6px 0; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-primary); }
-.info-box strong { color: var(--accent); }
+.logo {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
 
-.search-bar { position: sticky; top: 0; z-index: 10; background: var(--bg-primary); padding-bottom: 1rem; margin-bottom: 1rem; }
-.search-input { width: 100%; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; color: var(--text-primary); font-size: 1rem; outline: none; min-height: 44px; }
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
 
-.snippet-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1.5rem; overflow: hidden; }
-.snippet-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-tertiary); gap: 0.5rem; flex-wrap: wrap; }
-.snippet-header h3 { font-size: 1rem; color: var(--accent); }
-.snippet-body { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-.snippet-body pre { margin: 0 !important; border-radius: 0 !important; max-height: 400px; overflow: auto; }
-.snippet-body code { font-family: "Fira Code", "Consolas", monospace !important; font-size: 0.82rem !important; }
-.copy-btn { background: var(--bg-primary); border: 1px solid var(--border); color: var(--text-secondary); padding: 0.5rem 0.9rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; min-height: 36px; white-space: nowrap; }
-.copy-btn:hover { border-color: var(--success); color: var(--success); }
+.version {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    padding: 0.2rem 0.65rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
 
-.tag { display: inline-block; background: var(--accent-glow); color: var(--accent); padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; margin-left: 0.5rem; }
+.hamburger {
+    display: none;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
 
-.learning-path { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; }
-.learning-path h4 { color: var(--purple); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
-.learning-path .priority { background: var(--danger); color: white; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; }
-.learning-path .hours { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem; }
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
 
-pre { margin: 0 !important; border-radius: 0 !important; background: var(--code-bg) !important; }
-code { font-family: "Fira Code", "Consolas", monospace !important; }
+    cursor: pointer;
+    font-size: 1.2rem;
 
-/* ============================================
-   MOBILE RESPONSIVE STYLES
-   ============================================ */
+    align-items: center;
+    justify-content: center;
 
-/* Tablet (768px and below) */
+    margin-right: 0.75rem;
+}
+
+/* =========================================================
+   APP
+   ========================================================= */
+
+.app-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.sidebar {
+    width: var(--sidebar-width);
+
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border);
+
+    display: flex;
+    flex-direction: column;
+
+    overflow-y: auto;
+
+    flex-shrink: 0;
+
+    height: calc(100vh - 57px);
+
+    position: sticky;
+    top: 57px;
+}
+
+.nav-section {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.nav-title {
+    padding: 0 1.35rem;
+
+    font-size: 0.68rem;
+    text-transform: uppercase;
+
+    color: var(--text-secondary);
+
+    font-weight: 700;
+    letter-spacing: 0.06em;
+
+    margin-bottom: 0.5rem;
+}
+
+.nav-item {
+    padding: 0.72rem 1.35rem;
+
+    cursor: pointer;
+
+    color: var(--text-secondary);
+
+    font-size: 0.84rem;
+
+    display: flex;
+    align-items: center;
+
+    gap: 0.7rem;
+
+    transition: all 0.2s;
+
+    border-left: 3px solid transparent;
+
+    min-height: 44px;
+}
+
+.nav-item:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.nav-item.active {
+    background: var(--accent-glow);
+    color: var(--accent);
+    border-left-color: var(--accent);
+    font-weight: 600;
+}
+
+.nav-icon {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.backdrop {
+    display: none;
+
+    position: fixed;
+
+    top: 57px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background: rgba(0,0,0,0.6);
+
+    z-index: 40;
+}
+
+.backdrop.show {
+    display: block;
+}
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+.main-content {
+    flex: 1;
+    overflow-y: auto;
+
+    padding: 2rem;
+
+    min-width: 0;
+}
+
+.panel {
+    display: none;
+
+    max-width: 1150px;
+
+    margin: 0 auto;
+}
+
+.panel.active {
+    display: block;
+}
+
+.module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 1.5rem;
+
+    border-bottom: 1px solid var(--border);
+
+    padding-bottom: 1rem;
+
+    flex-wrap: wrap;
+
+    gap: 0.5rem;
+}
+
+.module-header h2 {
+    font-size: 1.45rem;
+}
+
+.module-content {
+    background: var(--bg-secondary);
+
+    border: 1px solid var(--border);
+
+    border-radius: 8px;
+
+    padding: 2rem;
+}
+
+.module-content h3 {
+    color: var(--accent);
+
+    margin: 1.5rem 0 0.75rem;
+
+    font-size: 1.1rem;
+}
+
+.module-content h3:first-child {
+    margin-top: 0;
+}
+
+.module-content p {
+    margin-bottom: 1rem;
+
+    color: var(--text-primary);
+
+    word-wrap: break-word;
+}
+
+.module-content ul {
+    margin-bottom: 1rem;
+
+    padding-left: 1.5rem;
+}
+
+.module-content li {
+    margin-bottom: 0.45rem;
+
+    color: var(--text-secondary);
+}
+
+.module-content code:not([class*="language-"]) {
+    background: var(--bg-tertiary);
+
+    padding: 0.1rem 0.4rem;
+
+    border-radius: 4px;
+
+    font-family: "Fira Code", "Consolas", monospace;
+
+    font-size: 0.85rem;
+
+    color: var(--warn);
+
+    word-break: break-word;
+}
+
+pre {
+    margin: 0 !important;
+
+    border-radius: 6px !important;
+
+    background: var(--code-bg) !important;
+
+    overflow-x: auto;
+}
+
+code {
+    font-family: "Fira Code", "Consolas", monospace !important;
+}
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.info-box {
+    background: rgba(88,166,255,0.1);
+
+    border-left: 3px solid var(--accent);
+
+    padding: 1rem;
+
+    border-radius: 0 6px 6px 0;
+
+    margin-bottom: 1.5rem;
+
+    font-size: 0.9rem;
+}
+
+.info-box strong {
+    color: var(--accent);
+}
+
+.priority-card {
+    background: var(--bg-tertiary);
+
+    border: 1px solid var(--border);
+
+    border-radius: 8px;
+
+    padding: 1.35rem;
+
+    margin-bottom: 1rem;
+
+    border-left: 4px solid var(--accent);
+}
+
+.priority-card h4 {
+    color: var(--accent);
+
+    margin-bottom: 0.45rem;
+
+    font-size: 1rem;
+}
+
+.priority-card .priority {
+    display: inline-block;
+
+    background: var(--danger);
+
+    color: white;
+
+    padding: 0.1rem 0.4rem;
+
+    border-radius: 4px;
+
+    font-size: 0.65rem;
+
+    font-weight: 700;
+
+    margin-right: 0.4rem;
+}
+
+.topic-card {
+    background: var(--bg-tertiary);
+
+    border: 1px solid var(--border);
+
+    border-radius: 8px;
+
+    padding: 1.35rem;
+
+    margin-bottom: 1.2rem;
+}
+
+.topic-card h4 {
+    color: var(--accent);
+
+    margin-bottom: 0.7rem;
+}
+
+.topic-card .exam {
+    color: var(--warn);
+
+    font-size: 0.8rem;
+
+    font-weight: 700;
+
+    margin-bottom: 0.5rem;
+}
+
+.exam-tip {
+    background: rgba(210,153,34,0.1);
+
+    border-left: 3px solid var(--warn);
+
+    padding: 0.9rem;
+
+    margin-top: 1rem;
+
+    border-radius: 0 5px 5px 0;
+}
+
+.exam-tip strong {
+    color: var(--warn);
+}
+
+.good {
+    color: #3fb950;
+}
+
+.bad {
+    color: #f85149;
+}
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.table-wrap {
+    overflow-x: auto;
+
+    margin: 1rem 0;
+}
+
+table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    font-size: 0.86rem;
+}
+
+th,
+td {
+    border: 1px solid var(--border);
+
+    padding: 0.7rem;
+
+    text-align: left;
+}
+
+th {
+    background: var(--bg-tertiary);
+
+    color: var(--accent);
+}
+
+td {
+    color: var(--text-secondary);
+}
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.search-bar {
+    position: sticky;
+
+    top: 0;
+
+    z-index: 10;
+
+    background: var(--bg-primary);
+
+    padding-bottom: 1rem;
+
+    margin-bottom: 1rem;
+}
+
+.search-input {
+    width: 100%;
+
+    background: var(--bg-secondary);
+
+    border: 1px solid var(--border);
+
+    border-radius: 8px;
+
+    padding: 0.75rem 1rem;
+
+    color: var(--text-primary);
+
+    font-size: 1rem;
+
+    outline: none;
+
+    min-height: 44px;
+}
+
+/* =========================================================
+   CODE CARDS
+   ========================================================= */
+
+.snippet-card {
+    background: var(--bg-secondary);
+
+    border: 1px solid var(--border);
+
+    border-radius: 8px;
+
+    margin-bottom: 1.4rem;
+
+    overflow: hidden;
+}
+
+.snippet-header {
+    padding: 0.9rem 1.15rem;
+
+    border-bottom: 1px solid var(--border);
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    background: var(--bg-tertiary);
+
+    gap: 0.5rem;
+}
+
+.snippet-header h3 {
+    font-size: 0.95rem;
+
+    color: var(--accent);
+}
+
+.snippet-body {
+    overflow-x: auto;
+}
+
+.snippet-body pre {
+    border-radius: 0 !important;
+}
+
+.snippet-body code {
+    font-size: 0.8rem !important;
+}
+
+.copy-btn {
+    background: var(--bg-primary);
+
+    border: 1px solid var(--border);
+
+    color: var(--text-secondary);
+
+    padding: 0.45rem 0.8rem;
+
+    border-radius: 4px;
+
+    cursor: pointer;
+
+    font-size: 0.72rem;
+
+    font-weight: 600;
+
+    min-height: 34px;
+
+    white-space: nowrap;
+}
+
+.copy-btn:hover {
+    border-color: var(--success);
+
+    color: var(--success);
+}
+
+/* =========================================================
+   QUESTION CARDS
+   ========================================================= */
+
+.question {
+    background: var(--bg-tertiary);
+
+    border: 1px solid var(--border);
+
+    border-radius: 8px;
+
+    padding: 1.3rem;
+
+    margin-bottom: 1.2rem;
+}
+
+.question h4 {
+    color: var(--accent);
+
+    margin-bottom: 0.7rem;
+}
+
+.answer {
+    margin-top: 0.8rem;
+
+    padding: 0.8rem;
+
+    background: rgba(35,134,54,0.08);
+
+    border-left: 3px solid var(--success);
+
+    border-radius: 0 5px 5px 0;
+}
+
+.answer strong {
+    color: var(--success);
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 @media (max-width: 768px) {
-    nav { padding: 0.75rem 1rem; }
-    .logo { font-size: 1rem; }
-    .hamburger { display: inline-flex; }
-    
+
+    nav {
+        padding: 0.75rem 1rem;
+    }
+
+    .hamburger {
+        display: inline-flex;
+    }
+
     .sidebar {
         position: fixed;
+
         top: 57px;
+
         left: 0;
+
         bottom: 0;
+
         width: var(--sidebar-width);
+
         z-index: 45;
+
         transform: translateX(-100%);
+
         transition: transform 0.3s ease;
+
         height: calc(100vh - 57px);
     }
-    .sidebar.open { transform: translateX(0); }
-    
-    .main-content { padding: 1.25rem; }
-    .module-content { padding: 1.25rem; }
-    .task-card, .gotcha-card, .learning-path { padding: 1.25rem; }
-    .module-header h2 { font-size: 1.25rem; }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        padding: 1.25rem;
+    }
+
+    .module-content {
+        padding: 1.25rem;
+    }
 }
 
-/* Phone (480px and below) */
 @media (max-width: 480px) {
-    nav { padding: 0.6rem 0.75rem; }
-    .logo { font-size: 0.9rem; gap: 0.35rem; }
-    .logo span { display: none; }
-    .version { font-size: 0.65rem; padding: 0.15rem 0.5rem; }
-    
-    .sidebar { width: 85%; max-width: 300px; }
-    
-    .main-content { padding: 1rem; }
-    .module-content { padding: 1rem; border-radius: 6px; }
-    .task-card, .gotcha-card, .learning-path { padding: 1rem; border-radius: 6px; }
-    .module-header h2 { font-size: 1.1rem; }
-    .module-header { margin-bottom: 1rem; padding-bottom: 0.75rem; }
-    
-    .info-box { padding: 0.75rem; font-size: 0.85rem; }
-    .snippet-header { padding: 0.75rem 1rem; }
-    .snippet-header h3 { font-size: 0.9rem; }
-    .copy-btn { padding: 0.4rem 0.7rem; font-size: 0.7rem; }
-    
-    .module-content code:not([class*="language-"]) { font-size: 0.78rem; }
-    .module-content pre code { font-size: 0.75rem !important; }
-    
-    .nav-item { padding: 0.75rem 1.25rem; min-height: 48px; }
-    
-    .learning-path h4 { font-size: 0.95rem; }
-    .task-card h4 { font-size: 1rem; }
-    .gotcha-card h4 { font-size: 1rem; }
+
+    nav {
+        padding: 0.6rem 0.75rem;
+    }
+
+    .logo {
+        font-size: 0.9rem;
+    }
+
+    .logo span {
+        display: none;
+    }
+
+    .sidebar {
+        width: 85%;
+
+        max-width: 300px;
+    }
+
+    .main-content {
+        padding: 1rem;
+    }
+
+    .module-content {
+        padding: 1rem;
+    }
+
+    .module-header h2 {
+        font-size: 1.1rem;
+    }
+
+    .snippet-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .snippet-body code {
+        font-size: 0.72rem !important;
+    }
 }
 
-/* Very small phones (360px and below) */
-@media (max-width: 360px) {
-    .main-content { padding: 0.75rem; }
-    .module-content { padding: 0.85rem; }
-    .task-card, .gotcha-card, .learning-path { padding: 0.85rem; }
-    .module-content pre code { font-size: 0.7rem !important; }
-}
-
-/* Landscape phone optimization */
-@media (max-height: 500px) and (orientation: landscape) {
-    .sidebar { height: 100vh; top: 0; }
-    .nav-item { padding: 0.5rem 1.25rem; min-height: 36px; }
-}
 </style>
 </head>
+
 <body>
 
 <nav>
-    <button class="hamburger" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
-    <a href="#" class="logo">⚡ ABAP Code Patterns <span style="font-weight:400; color:var(--text-secondary); font-size:0.9rem;">& Reference</span></a>
-    <span class="version">v4.0</span>
+
+    <button
+        class="hamburger"
+        onclick="toggleSidebar()"
+        aria-label="Toggle menu"
+    >
+        ☰
+    </button>
+
+    <a href="#" class="logo">
+        ⚡ C_ABAPD Exam Preparation
+        <span style="font-weight:400;color:var(--text-secondary);font-size:0.85rem;">
+            ABAP Cloud
+        </span>
+    </a>
+
+    <span class="version">v5.0</span>
+
 </nav>
 
+
 <div class="app-container">
-    <div class="backdrop" id="backdrop" onclick="toggleSidebar()"></div>
-    
-    <aside class="sidebar" id="sidebar">
-        <div class="nav-section">
-            <div class="nav-title">Learning Path</div>
-            <div class="nav-item active" onclick="showPanel('learning', this)">
-                <span class="nav-icon">📚</span> Course Priorities
-            </div>
-        </div>
-        <div class="nav-section">
-            <div class="nav-title">Implementation</div>
-            <div class="nav-item" onclick="showPanel('tasks', this)">
-                <span class="nav-icon">🎯</span> Practical Scenarios
-            </div>
-            <div class="nav-item" onclick="showPanel('gotchas', this)">
-                <span class="nav-icon">⚠️</span> Common Pitfalls
-            </div>
-        </div>
-        <div class="nav-section">
-            <div class="nav-title">Code Reference</div>
-            <div class="nav-item" onclick="showPanel('eml', this)">
-                <span class="nav-icon">⚡</span> EML Patterns
-            </div>
-            <div class="nav-item" onclick="showPanel('cds', this)">
-                <span class="nav-icon">🗄️</span> CDS & Access Control
-            </div>
-            <div class="nav-item" onclick="showPanel('rap', this)">
-                <span class="nav-icon">🧱</span> RAP Behaviors
-            </div>
-            <div class="nav-item" onclick="showPanel('joule', this)">
-                <span class="nav-icon">🤖</span> AI Prompts
-            </div>
-        </div>
-    </aside>
 
-    <main class="main-content">
-        
-        <!-- LEARNING PATH -->
-        <div class="panel active" id="panel-learning">
-            <div class="module-header">
-                <h2>📚 Learning Journey Priorities</h2>
-            </div>
-            <div class="info-box">
-                <strong>Based on your 3 years of ABAP experience:</strong> Focus on modern ABAP Cloud concepts, CDS views, and RAP. Skip basic ABAP programming.
-            </div>
-
-            <div class="learning-path">
-                <h4><span class="priority">PRIORITY 1</span> S4D430: Data Models with DDIC and CDS</h4>
-                <div class="hours">20 hours</div>
-                <p><strong>Focus on:</strong> CDS view annotations, associations, path expressions, DCL (access control), and extending external data models.</p>
-                <p><strong>Why:</strong> This is the foundation of ABAP Cloud and RAP. You cannot build RAP services without mastering CDS.</p>
-            </div>
-
-            <div class="learning-path">
-                <h4><span class="priority">PRIORITY 2</span> S4D401: Deepening ABAP Programming</h4>
-                <div class="hours">23 hours</div>
-                <p><strong>Focus on:</strong> Clean ABAP, modern syntax (inline declarations, string templates), exception handling, testing tools, and performance optimization.</p>
-                <p><strong>Skip:</strong> Basic debugging and classic ABAP concepts you already know.</p>
-            </div>
-
-            <div class="learning-path">
-                <h4><span class="priority">PRIORITY 3</span> S4D426: Clean Core Extensibility</h4>
-                <div class="hours">7 hours</div>
-                <p><strong>Focus on:</strong> Key user extensibility vs developer extensibility, side-by-side extensions, and in-app extensions for S/4HANA Cloud.</p>
-            </div>
-
-            <div class="learning-path">
-                <h4><span class="priority">PRIORITY 4</span> S4D400: Basic ABAP Programming</h4>
-                <div class="hours">17 hours</div>
-                <p><strong>Focus on:</strong> Only the sections on ABAP Cloud restrictions and modern syntax differences.</p>
-                <p><strong>Skip:</strong> Most of the course. You already know basic ABAP.</p>
-            </div>
-
-            <div class="module-content" style="margin-top: 2rem;">
-                <h3>⏱️ Recommended Study Timeline</h3>
-                <ul>
-                    <li><strong>Week 1:</strong> S4D430 (CDS views) - 2 hours/day</li>
-                    <li><strong>Week 2:</strong> S4D401 (Clean ABAP) - 2 hours/day</li>
-                    <li><strong>Week 3:</strong> S4D426 (Clean Core) + Practice scenarios - 2 hours/day</li>
-                    <li><strong>Week 4:</strong> Mock tasks and code pattern review - 2 hours/day</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- PRACTICAL SCENARIOS -->
-        <div class="panel" id="panel-tasks">
-            <div class="module-header">
-                <h2>🎯 Practical Implementation Scenarios</h2>
-            </div>
-            <div class="info-box">
-                <strong>Real-world patterns:</strong> These scenarios mirror what you'll encounter in actual ABAP Cloud development projects and practical assessments.
-            </div>
-
-            <div class="task-card">
-                <h4>Scenario 1: Expose Standard SAP Data as Fiori-Ready API</h4>
-                <p><strong>Business Requirement:</strong> Create a custom CDS view based on <code>I_BusinessPartner</code> to expose customer data for a Fiori app.</p>
-                <ul>
-                    <li>Create CDS view <code>ZI_Customer_###</code> with annotations for search and UI.</li>
-                    <li>Expose fields: <code>BusinessPartner</code>, <code>BusinessPartnerFullName</code>, <code>CreationDate</code>.</li>
-                    <li>Make <code>BusinessPartnerFullName</code> searchable.</li>
-                    <li>Add <code>@UI.lineItem</code> annotations for list report display.</li>
-                </ul>
-                <div class="grading">
-                    <strong>🔍 Implementation Checklist:</strong>
-                    <ul style="margin-top: 0.5rem;">
-                        <li>Use <code>@Search.defaultSearchElement: true</code> on the searchable field</li>
-                        <li>Set <code>@AccessControl.authorizationCheck: #CHECK</code> (requires DCL)</li>
-                        <li>Activate the view before testing</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="task-card">
-                <h4>Scenario 2: Build Managed RAP Service with Business Logic</h4>
-                <p><strong>Business Requirement:</strong> Create a RAP service for managing custom business objects with automatic field population.</p>
-                <ul>
-                    <li>Create Behavior Definition for <code>ZI_Customer_###</code>.</li>
-                    <li>Enable create and update operations (disable delete).</li>
-                    <li>Make <code>BusinessPartner</code> read-only.</li>
-                    <li>Implement determination to auto-populate <code>CreationDate</code> on create.</li>
-                </ul>
-                <div class="grading">
-                    <strong>🔍 Implementation Checklist:</strong>
-                    <ul style="margin-top: 0.5rem;">
-                        <li>Use <code>field ( readonly ) BusinessPartner;</code> in BDEF</li>
-                        <li>Map determination to <code>on modify { create; }</code></li>
-                        <li>Generate and activate Behavior Implementation class</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="task-card">
-                <h4>Scenario 3: Test RAP Service with EML</h4>
-                <p><strong>Business Requirement:</strong> Create an executable class to test the RAP service by creating and reading records.</p>
-                <ul>
-                    <li>Create class <code>ZCL_Test_###</code> implementing <code>IF_OO_ADT_CLASSRUN</code>.</li>
-                    <li>Use EML to create a new customer record.</li>
-                    <li>Commit the transaction.</li>
-                    <li>Read and display the created record.</li>
-                </ul>
-                <div class="grading">
-                    <strong>🔍 Implementation Checklist:</strong>
-                    <ul style="margin-top: 0.5rem;">
-                        <li>Use <code>IN LOCAL MODE</code> in all EML statements</li>
-                        <li>Provide <code>%cid</code> in CREATE operations</li>
-                        <li>Check <code>FAILED</code> and <code>REPORTED</code> tables for errors</li>
-                        <li>Use <code>COMMIT ENTITIES</code> to persist changes</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="task-card">
-                <h4>Scenario 4: Implement Access Control (DCL)</h4>
-                <p><strong>Business Requirement:</strong> Restrict data access so users only see records they created or records with status 'ACTIVE'.</p>
-                <ul>
-                    <li>Create a DCL artifact for the CDS view.</li>
-                    <li>Define WHERE clause based on <code>CreatedBy</code> and <code>Status</code>.</li>
-                    <li>Test with different user contexts.</li>
-                </ul>
-                <div class="grading">
-                    <strong>🔍 Implementation Checklist:</strong>
-                    <ul style="margin-top: 0.5rem;">
-                        <li>Use <code>$user</code> system variable for current user</li>
-                        <li>Link DCL to the correct CDS view entity</li>
-                        <li>Activate both CDS view and DCL together</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- COMMON PITFALLS -->
-        <div class="panel" id="panel-gotchas">
-            <div class="module-header">
-                <h2>⚠️ Common Implementation Pitfalls</h2>
-            </div>
-            <div class="info-box">
-                <strong>Production lessons learned:</strong> These are the most common mistakes that cause runtime errors or failed activations in ABAP Cloud.
-            </div>
-
-            <div class="gotcha-card">
-                <h4>🚨 Pitfall 1: Missing "IN LOCAL MODE" in EML</h4>
-                <p>When writing EML in a standalone ABAP class (outside RAP context), you must use <code>IN LOCAL MODE</code>. Without it, the system tries to apply feature controls that don't exist in your test context.</p>
-                <pre><code class="language-abap">" ❌ WRONG - Will fail or dump
-MODIFY ENTITIES OF ZI_MyEntity
-  ENTITY ZI_MyEntity
-  CREATE FIELDS ( Description )
-  WITH VALUE #( ( Description = 'Test' ) ).
-
-" ✅ CORRECT
-MODIFY ENTITIES OF ZI_MyEntity IN LOCAL MODE
-  ENTITY ZI_MyEntity
-  CREATE FIELDS ( Description )
-  WITH VALUE #( ( %cid = 'c1' Description = 'Test' ) ).</code></pre>
-            </div>
-
-            <div class="gotcha-card">
-                <h4>🚨 Pitfall 2: Activation Cascade Failures</h4>
-                <p>In RAP, artifacts have dependencies. If you modify a CDS view, the Behavior Definition may become inactive. If the BDEF is inactive, the Service Binding breaks.</p>
-                <p><strong>Solution:</strong> Always use "Activate All" (Ctrl+Shift+F3 in ADT) after making changes. Check the activation log for errors.</p>
-            </div>
-
-            <div class="gotcha-card">
-                <h4>🚨 Pitfall 3: Missing %cid in EML CREATE</h4>
-                <p>When creating records via EML, you must provide a temporary control ID (<code>%cid</code>). The RAP framework uses this to track the record before it gets a real database key.</p>
-                <pre><code class="language-abap">" ✅ CORRECT - Always provide %cid
-MODIFY ENTITIES OF ZI_MyEntity IN LOCAL MODE
-  ENTITY ZI_MyEntity
-  CREATE FIELDS ( Description )
-  WITH VALUE #( ( %cid = 'cid1' Description = 'Test' ) )
-  MAPPED DATA(lt_mapped).</code></pre>
-            </div>
-
-            <div class="gotcha-card">
-                <h4>🚨 Pitfall 4: Using #CHECK Without DCL</h4>
-                <p>If you set <code>@AccessControl.authorizationCheck: #CHECK</code> on a CDS view, you MUST create a corresponding DCL (Data Control Language) artifact. Otherwise, the view returns empty data.</p>
-                <p><strong>Solution:</strong> Either create a DCL artifact or use <code>#NOT_ALLOWED</code> if access control is not needed.</p>
-            </div>
-
-            <div class="gotcha-card">
-                <h4>🚨 Pitfall 5: Forgetting to Check FAILED/REPORTED Tables</h4>
-                <p>After EML operations, always check the <code>FAILED</code> and <code>REPORTED</code> tables. If you don't, your code will silently fail and you won't know why.</p>
-                <pre><code class="language-abap">MODIFY ENTITIES OF ZI_MyEntity IN LOCAL MODE
-  ENTITY ZI_MyEntity
-  CREATE FIELDS ( Description )
-  WITH VALUE #( ( %cid = 'c1' Description = 'Test' ) )
-  FAILED DATA(lt_failed)
-  REPORTED DATA(lt_reported).
-
-" ✅ Always check for errors
-IF lt_failed IS NOT INITIAL.
-  out->write( 'Operation failed:' ).
-  out->write( lt_reported ).
-  RETURN.
-ENDIF.</code></pre>
-            </div>
-        </div>
-
-        <!-- EML PATTERNS -->
-        <div class="panel" id="panel-eml">
-            <div class="module-header">
-                <h2>⚡ EML Code Patterns</h2>
-            </div>
-            <div class="search-bar">
-                <input type="text" class="search-input" placeholder="🔍 Search patterns..." onkeyup="filterSnippets(this.value)">
-            </div>
-
-            <div class="snippet-card searchable">
-                <div class="snippet-header">
-                    <h3>📖 EML READ with Error Handling</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="snippet-body">
-                    <pre><code class="language-abap">READ ENTITIES OF ZI_MyEntity IN LOCAL MODE
-  ENTITY ZI_MyEntity
-  ALL FIELDS WITH VALUE #( ( MyKey = '123' ) )
-  RESULT DATA(lt_result)
-  FAILED DATA(lt_failed)
-  REPORTED DATA(lt_reported).
-
-IF lt_failed IS NOT INITIAL.
-  out->write( 'Read failed:' ).
-  out->write( lt_reported ).
-  RETURN.
-ENDIF.
-
-out->write( lt_result ).</code></pre>
-                </div>
-            </div>
-
-            <div class="snippet-card searchable">
-                <div class="snippet-header">
-                    <h3>✏️ EML CREATE with Commit</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="snippet-body">
-                    <pre><code class="language-abap">MODIFY ENTITIES OF ZI_MyEntity IN LOCAL MODE
-  ENTITY ZI_MyEntity
-  CREATE FIELDS ( Description Amount )
-  WITH VALUE #( ( %cid = 'cid1' Description = 'Test' Amount = 100 ) )
-  MAPPED DATA(lt_mapped)
-  FAILED DATA(lt_failed)
-  REPORTED DATA(lt_reported).
-
-IF lt_failed IS NOT INITIAL.
-  out->write( 'Creation failed:' ).
-  out->write( lt_reported ).
-  RETURN.
-ENDIF.
-
-COMMIT ENTITIES
-  RESPONSE OF ZI_MyEntity
-  FAILED DATA(lt_commit_failed)
-  REPORTED DATA(lt_commit_reported).
-
-out->write( 'Created:' ).
-out->write( lt_mapped-myentity[ 1 ]-MyKey ).</code></pre>
-                </div>
-            </div>
-
-            <div class="snippet-card searchable">
-                <div class="snippet-header">
-                    <h3>🔄 EML UPDATE</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="snippet-body">
-                    <pre><code class="language-abap">MODIFY ENTITIES OF ZI_MyEntity IN LOCAL MODE
-  ENTITY ZI_MyEntity
-  UPDATE FIELDS ( Description )
-  WITH VALUE #( ( MyKey = '123' Description = 'Updated' ) )
-  FAILED DATA(lt_failed)
-  REPORTED DATA(lt_reported).
-
-IF lt_failed IS NOT INITIAL.
-  out->write( 'Update failed:' ).
-  out->write( lt_reported ).
-  RETURN.
-ENDIF.
-
-COMMIT ENTITIES.</code></pre>
-                </div>
-            </div>
-        </div>
-
-        <!-- CDS & ACCESS CONTROL -->
-        <div class="panel" id="panel-cds">
-            <div class="module-header">
-                <h2>🗄️ CDS View Patterns</h2>
-            </div>
-            <div class="search-bar">
-                <input type="text" class="search-input" placeholder="🔍 Search patterns..." onkeyup="filterSnippets(this.value)">
-            </div>
-
-            <div class="snippet-card searchable">
-                <div class="snippet-header">
-                    <h3>📄 CDS View with Fiori Annotations</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="snippet-body">
-                    <pre><code class="language-abap">@AccessControl.authorizationCheck: #CHECK
-@EndUserText.label: 'Custom Entity'
-@Search.searchable: true
-define root view entity ZI_MyEntity
-  as select from I_ReleasedTable
-{
-      @UI.hidden: true
-  key ID,
-
-      @Search.defaultSearchElement: true
-      @UI.lineItem: [{ position: 10, label: 'Name' }]
-      Name,
-
-      @UI.lineItem: [{ position: 20, label: 'Status' }]
-      Status
-}</code></pre>
-                </div>
-            </div>
-
-            <div class="snippet-card searchable">
-                <div class="snippet-header">
-                    <h3>🛡️ Data Control Language (DCL)</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="snippet-body">
-                    <pre><code class="language-abap">@EndUserText.label: 'Access Control'
-define role ZI_MyEntity_Role {
-  grant
-    select on
-      ZI_MyEntity
-        where
-          ( Status = 'ACTIVE' ) or
-          ( CreatedBy = $user );
-}</code></pre>
-                </div>
-            </div>
-
-            <div class="snippet-card searchable">
-                <div class="snippet-header">
-                    <h3>🔗 CDS Association with Path Expression</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="snippet-body">
-                    <pre><code class="language-abap">define view entity ZI_MyEntity
-  as select from I_BaseView
-  association [0..1] to I_CompanyCode as _CompanyCode 
-    on $projection.CompanyCode = _CompanyCode.CompanyCode
-{
-  key ID,
-  CompanyCode,
-  
-  " Path expression
-  _CompanyCode.CompanyName as CompanyNameText
-}</code></pre>
-                </div>
-            </div>
-        </div>
-
-        <!-- RAP BEHAVIORS -->
-        <div class="panel" id="panel-rap">
-            <div class="module-header">
-                <h2>🧱 RAP Behavior Patterns</h2>
-            </div>
-            <div class="search-bar">
-                <input type="text" class="search-input" placeholder="🔍 Search patterns..." onkeyup="filterSnippets(this.value)">
-            </div>
-
-            <div class="snippet-card searchable">
-                <div class="snippet-header">
-                    <h3>⚙️ Managed BDEF with Determination & Validation</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="snippet-body">
-                    <pre><code class="language-abap">managed implementation in class zbp_i_myentity unique;
-strict ( 2 );
-
-define behavior for ZI_MyEntity alias Entity
-persistent table zmy_db_table
-draft enabled
-{
-  create;
-  update;
-  delete;
-
-  field ( readonly ) ID;
-  field ( mandatory ) Name;
-
-  " Determination runs automatically
-  determination setDefaultStatus on modify { create; }
-  
-  " Validation runs on save
-  validation checkName on save { create; update; }
-}</code></pre>
-                </div>
-            </div>
-
-            <div class="snippet-card searchable">
-                <div class="snippet-header">
-                    <h3>🚀 Executable Class (IF_OO_ADT_CLASSRUN)</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="snippet-body">
-                    <pre><code class="language-abap">CLASS zcl_test DEFINITION PUBLIC FINAL CREATE PUBLIC.
-  PUBLIC SECTION.
-    INTERFACES if_oo_adt_classrun.
-ENDCLASS.
-
-CLASS zcl_test IMPLEMENTATION.
-  METHOD if_oo_adt_classrun~main.
-    DATA(lv_text) = |Hello ABAP Cloud|.
-    out->write( lv_text ).
-    
-    " Call EML operations here
-  ENDMETHOD.
-ENDCLASS.</code></pre>
-                </div>
-            </div>
-        </div>
-
-        <!-- AI PROMPTS -->
-        <div class="panel" id="panel-joule">
-            <div class="module-header">
-                <h2>🤖 AI Prompt Patterns</h2>
-            </div>
-            <div class="info-box">
-                <strong>Accelerate development:</strong> Use these prompts with SAP's Joule AI assistant to generate boilerplate code quickly.
-            </div>
-
-            <div class="snippet-card">
-                <div class="snippet-header"><h3>Prompt: Generate RAP BDEF</h3><button class="copy-btn" onclick="copyText(this, 'joule1')">Copy</button></div>
-                <div class="snippet-body" style="padding: 1rem; font-family: monospace; color: var(--success); overflow-x: auto;" id="joule1">
-                    Create a managed RAP behavior definition for the CDS view entity ZI_MyEntity. Make it draft enabled. Allow create, update, and delete. Make the field 'ID' readonly. Add a determination named 'setDefaultStatus' that triggers on modify for create.
-                </div>
-            </div>
-
-            <div class="snippet-card">
-                <div class="snippet-header"><h3>Prompt: Generate EML Test Class</h3><button class="copy-btn" onclick="copyText(this, 'joule2')">Copy</button></div>
-                <div class="snippet-body" style="padding: 1rem; font-family: monospace; color: var(--success); overflow-x: auto;" id="joule2">
-                    Write an executable ABAP class implementing IF_OO_ADT_CLASSRUN. In the main method, use EML IN LOCAL MODE to create a new record in ZI_MyEntity with the Name 'Test'. Commit the entities and output the mapped key or any reported errors to the console.
-                </div>
-            </div>
-
-            <div class="snippet-card">
-                <div class="snippet-header"><h3>Prompt: Generate CDS View</h3><button class="copy-btn" onclick="copyText(this, 'joule3')">Copy</button></div>
-                <div class="snippet-body" style="padding: 1rem; font-family: monospace; color: var(--success); overflow-x: auto;" id="joule3">
-                    Create a CDS view entity named ZI_MyEntity based on I_BusinessPartner. Expose BusinessPartner, BusinessPartnerFullName, and CreationDate. Add @UI.lineItem annotations for all fields and make BusinessPartnerFullName searchable.
-                </div>
-            </div>
-        </div>
-
-    </main>
+<div
+    class="backdrop"
+    id="backdrop"
+    onclick="toggleSidebar()">
 </div>
 
+
+<aside class="sidebar" id="sidebar">
+
+
+<!-- =====================================================
+     OVERVIEW
+     ===================================================== -->
+
+<div class="nav-section">
+
+    <div class="nav-title">
+        Exam Strategy
+    </div>
+
+    <div
+        class="nav-item active"
+        onclick="showPanel('overview', this)"
+    >
+        <span class="nav-icon">🎯</span>
+        Exam Strategy
+    </div>
+
+    <div
+        class="nav-item"
+        onclick="showPanel('roadmap', this)"
+    >
+        <span class="nav-icon">🗺️</span>
+        Study Roadmap
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     CORE ABAP
+     ===================================================== -->
+
+<div class="nav-section">
+
+    <div class="nav-title">
+        Core ABAP
+    </div>
+
+    <div
+        class="nav-item"
+        onclick="showPanel('cloud', this)"
+    >
+        <span class="nav-icon">☁️</span>
+        ABAP Cloud
+    </div>
+
+    <div
+        class="nav-item"
+        onclick="showPanel('syntax', this)"
+    >
+        <span class="nav-icon">⌨️</span>
+        Modern ABAP
+    </div>
+
+    <div
+        class="nav-item"
+        onclick="showPanel('oo', this)"
+    >
+        <span class="nav-icon">🧩</span>
+        ABAP OO
+    </div>
+
+    <div
+        class="nav-item"
+        onclick="showPanel('sql', this)"
+    >
+        <span class="nav-icon">🗄️</span>
+        ABAP SQL
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     DATA MODEL
+     ===================================================== -->
+
+<div class="nav-section">
+
+    <div class="nav-title">
+        Data Modeling
+    </div>
+
+    <div
+        class="nav-item"
+        onclick="showPanel('cds', this)"
+    >
+        <span class="nav-icon">📊</span>
+        CDS
+    </div>
+
+    <div
+        class="nav-item"
+        onclick="showPanel('dcl', this)"
+    >
+        <span class="nav-icon">🔐</span>
+        DCL
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     RAP
+     ===================================================== -->
+
+<div class="nav-section">
+
+    <div class="nav-title">
+        RAP
+    </div>
+
+    <div
+        class="nav-item"
+        onclick="showPanel('rap', this)"
+    >
+        <span class="nav-icon">🧱</span>
+        RAP Architecture
+    </div>
+
+    <div
+        class="nav-item"
+        onclick="showPanel('bdef', this)"
+    >
+        <span class="nav-icon">⚙️</span>
+        Behavior
+    </div>
+
+    <div
+        class="nav-item"
+        onclick="showPanel('eml', this)"
+    >
+        <span class="nav-icon">⚡</span>
+        EML
+    </div>
+
+    <div
+        class="nav-item"
+        onclick="showPanel('service', this)"
+    >
+        <span class="nav-icon">🌐</span>
+        Services / OData
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     QUALITY
+     ===================================================== -->
+
+<div class="nav-section">
+
+    <div class="nav-title">
+        Quality & Exam
+    </div>
+
+    <div
+        class="nav-item"
+        onclick="showPanel('testing', this)"
+    >
+        <span class="nav-icon">🧪</span>
+        Testing
+    </div>
+
+    <div
+        class="nav-item"
+        onclick="showPanel('clean', this)"
+    >
+        <span class="nav-icon">🧹</span>
+        Clean Core
+    </div>
+
+    <div
+        class="nav-item"
+        onclick="showPanel('pitfalls', this)"
+    >
+        <span class="nav-icon">⚠️</span>
+        Exam Traps
+    </div>
+
+    <div
+        class="nav-item"
+        onclick="showPanel('questions', this)"
+    >
+        <span class="nav-icon">❓</span>
+        Practice Questions
+    </div>
+
+</div>
+
+</aside>
+
+
+<main class="main-content">
+
+
+<!-- =====================================================
+     EXAM STRATEGY
+     ===================================================== -->
+
+<div class="panel active" id="panel-overview">
+
+<div class="module-header">
+    <h2>🎯 C_ABAPD Exam Strategy</h2>
+</div>
+
+<div class="info-box">
+
+<strong>Goal:</strong>
+Prepare for the SAP Certified Associate -
+Back-End Developer - ABAP Cloud certification.
+
+The preparation should not be RAP-only.
+The important areas include ABAP programming,
+ABAP OO, SQL/code pushdown, CDS/data modeling,
+RAP and Clean Core/ABAP Cloud concepts.
+
+</div>
+
+
+<div class="priority-card">
+
+<h4>
+<span class="priority">HIGH</span>
+ABAP Cloud Fundamentals
+</h4>
+
+<p>
+Understand the difference between Standard ABAP,
+ABAP for Cloud Development and the restrictions
+introduced by the cloud development model.
+</p>
+
+<ul>
+<li>ABAP Cloud architecture</li>
+<li>Released APIs</li>
+<li>Restricted language version</li>
+<li>ADT / Eclipse</li>
+<li>Cloud-ready development</li>
+<li>Clean Core principles</li>
+</ul>
+
+</div>
+
+
+<div class="priority-card">
+
+<h4>
+<span class="priority">HIGH</span>
+CDS + Data Modeling
+</h4>
+
+<p>
+CDS is one of the foundations of modern ABAP Cloud
+development and RAP.
+</p>
+
+<ul>
+<li>View entities</li>
+<li>Keys</li>
+<li>Associations</li>
+<li>Cardinalities</li>
+<li>Path expressions</li>
+<li>Annotations</li>
+<li>Parameters</li>
+<li>Authorization / DCL</li>
+</ul>
+
+</div>
+
+
+<div class="priority-card">
+
+<h4>
+<span class="priority">HIGH</span>
+RAP
+</h4>
+
+<ul>
+<li>Business object architecture</li>
+<li>Root view entity</li>
+<li>Behavior definition</li>
+<li>Behavior implementation</li>
+<li>Managed vs unmanaged</li>
+<li>Determinations</li>
+<li>Validations</li>
+<li>Actions</li>
+<li>Draft</li>
+<li>EML</li>
+<li>Service definition</li>
+<li>Service binding</li>
+</ul>
+
+</div>
+
+
+<div class="priority-card">
+
+<h4>
+<span class="priority">MEDIUM / HIGH</span>
+Core ABAP
+</h4>
+
+<ul>
+<li>Internal tables</li>
+<li>Work areas</li>
+<li>Field symbols</li>
+<li>References</li>
+<li>Modern syntax</li>
+<li>Expressions</li>
+<li>String templates</li>
+<li>Exception handling</li>
+<li>ABAP OO</li>
+<li>ABAP SQL</li>
+</ul>
+
+</div>
+
+
+<div class="priority-card">
+
+<h4>
+<span class="priority">MEDIUM</span>
+Testing & Quality
+</h4>
+
+<ul>
+<li>ABAP Unit</li>
+<li>Test classes</li>
+<li>Debugging</li>
+<li>Clean ABAP</li>
+<li>Performance</li>
+<li>SQL efficiency</li>
+</ul>
+
+</div>
+
+
+<div class="exam-tip">
+
+<strong>Important:</strong>
+
+Do not prepare only by memorizing code.
+For C_ABAPD-style questions, understand
+why a particular artifact, language version,
+API, data model or RAP mechanism is appropriate.
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     ROADMAP
+     ===================================================== -->
+
+<div class="panel" id="panel-roadmap">
+
+<div class="module-header">
+    <h2>🗺️ Recommended Study Roadmap</h2>
+</div>
+
+<div class="module-content">
+
+<h3>Phase 1 — ABAP Cloud Fundamentals</h3>
+
+<ul>
+<li>ABAP Cloud architecture</li>
+<li>ABAP for Cloud Development</li>
+<li>Standard ABAP vs Cloud ABAP</li>
+<li>Released APIs</li>
+<li>ADT</li>
+<li>Clean Core</li>
+</ul>
+
+
+<h3>Phase 2 — Modern ABAP</h3>
+
+<ul>
+<li>Inline declarations</li>
+<li>VALUE / COND / SWITCH</li>
+<li>FOR expressions</li>
+<li>Table expressions</li>
+<li>String templates</li>
+<li>Constructor operators</li>
+<li>Exception handling</li>
+<li>Internal table access</li>
+</ul>
+
+
+<h3>Phase 3 — ABAP OO</h3>
+
+<ul>
+<li>Classes</li>
+<li>Interfaces</li>
+<li>Inheritance</li>
+<li>Polymorphism</li>
+<li>Visibility</li>
+<li>Static vs instance components</li>
+<li>References</li>
+<li>Factory concepts</li>
+</ul>
+
+
+<h3>Phase 4 — ABAP SQL</h3>
+
+<ul>
+<li>SELECT</li>
+<li>JOIN</li>
+<li>WHERE</li>
+<li>GROUP BY</li>
+<li>Aggregations</li>
+<li>Host variables</li>
+<li>SQL expressions</li>
+<li>Code pushdown</li>
+<li>Performance considerations</li>
+</ul>
+
+
+<h3>Phase 5 — CDS</h3>
+
+<ul>
+<li>CDS view entities</li>
+<li>Associations</li>
+<li>Cardinality</li>
+<li>Path expressions</li>
+<li>Annotations</li>
+<li>Authorization</li>
+<li>DCL</li>
+</ul>
+
+
+<h3>Phase 6 — RAP</h3>
+
+<ul>
+<li>BO architecture</li>
+<li>Behavior definition</li>
+<li>Managed implementation</li>
+<li>Determinations</li>
+<li>Validations</li>
+<li>Actions</li>
+<li>Draft</li>
+<li>EML</li>
+<li>Transactional behavior</li>
+</ul>
+
+
+<h3>Phase 7 — Services</h3>
+
+<ul>
+<li>Service definition</li>
+<li>Service binding</li>
+<li>OData</li>
+<li>Fiori elements relationship</li>
+<li>RESTful architecture</li>
+</ul>
+
+
+<h3>Phase 8 — Practice</h3>
+
+<ul>
+<li>Concept questions</li>
+<li>Code-reading questions</li>
+<li>Choose-the-correct-artifact questions</li>
+<li>RAP lifecycle questions</li>
+<li>CDS/DCL questions</li>
+<li>Cloud restriction questions</li>
+</ul>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     ABAP CLOUD
+     ===================================================== -->
+
+<div class="panel" id="panel-cloud">
+
+<div class="module-header">
+    <h2>☁️ ABAP Cloud</h2>
+</div>
+
+<div class="module-content">
+
+<h3>Three Important Development Models</h3>
+
+<div class="table-wrap">
+
+<table>
+
+<tr>
+<th>Model</th>
+<th>Typical Usage</th>
+<th>Important Point</th>
+</tr>
+
+<tr>
+<td>Standard ABAP</td>
+<td>Classic / traditional systems</td>
+<td>Broad language and repository access</td>
+</tr>
+
+<tr>
+<td>ABAP for Cloud Development</td>
+<td>BTP ABAP environment / S/4HANA Cloud</td>
+<td>Restricted language + released APIs</td>
+</tr>
+
+<tr>
+<td>ABAP for Key Users</td>
+<td>Key-user extensibility</td>
+<td>More restricted development model</td>
+</tr>
+
+</table>
+
+</div>
+
+
+<h3>ABAP Cloud Principles</h3>
+
+<ul>
+<li>Cloud-compatible language version</li>
+<li>Released SAP APIs</li>
+<li>Stable extension points</li>
+<li>ADT as development environment</li>
+<li>Clean Core</li>
+<li>Upgrade-stable extensions</li>
+</ul>
+
+
+<div class="exam-tip">
+
+<strong>Exam trap:</strong>
+
+Do not assume that every classic ABAP statement
+or direct database access is available in
+ABAP for Cloud Development.
+
+Always ask:
+
+"Is this API / statement / object released and
+allowed in the target development model?"
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     MODERN ABAP
+     ===================================================== -->
+
+<div class="panel" id="panel-syntax">
+
+<div class="module-header">
+    <h2>⌨️ Modern ABAP</h2>
+</div>
+
+<div class="search-bar">
+<input
+    type="text"
+    class="search-input"
+    placeholder="🔍 Search syntax..."
+    onkeyup="filterSnippets(this.value)"
+>
+</div>
+
+
+<div class="snippet-card searchable">
+
+<div class="snippet-header">
+
+<h3>Inline Declaration</h3>
+
+<button
+    class="copy-btn"
+    onclick="copyCode(this)"
+>
+Copy
+</button>
+
+</div>
+
+<div class="snippet-body">
+
+<pre><code class="language-abap">
+
+DATA(lv_name) = |Farhad|.
+
+LOOP AT lt_customers INTO DATA(ls_customer).
+
+    DATA(lv_text) =
+        |Customer: { ls_customer-name }|.
+
+ENDLOOP.
+
+</code></pre>
+
+</div>
+
+</div>
+
+
+<div class="snippet-card searchable">
+
+<div class="snippet-header">
+
+<h3>VALUE Operator</h3>
+
+<button
+    class="copy-btn"
+    onclick="copyCode(this)"
+>
+Copy
+</button>
+
+</div>
+
+<div class="snippet-body">
+
+<pre><code class="language-abap">
+
+DATA(lt_numbers) =
+    VALUE int4_table(
+        ( 10 )
+        ( 20 )
+        ( 30 )
+    ).
+
+</code></pre>
+
+</div>
+
+</div>
+
+
+<div class="snippet-card searchable">
+
+<div class="snippet-header">
+
+<h3>Table Expression</h3>
+
+<button
+    class="copy-btn"
+    onclick="copyCode(this)"
+>
+Copy
+</button>
+
+</div>
+
+<div class="snippet-body">
+
+<pre><code class="language-abap">
+
+DATA(ls_customer) =
+    lt_customers[ id = 100 ].
+
+</code></pre>
+
+</div>
+
+</div>
+
+
+<div class="snippet-card searchable">
+
+<div class="snippet-header">
+
+<h3>String Template</h3>
+
+<button
+    class="copy-btn"
+    onclick="copyCode(this)"
+>
+Copy
+</button>
+
+</div>
+
+<div class="snippet-body">
+
+<pre><code class="language-abap">
+
+DATA(lv_text) =
+    |Customer { lv_id } has status { lv_status }.|.
+
+</code></pre>
+
+</div>
+
+</div>
+
+
+<div class="exam-tip">
+
+<strong>Know the concept:</strong>
+
+Be able to recognize modern syntax in existing code,
+not only write it from memory.
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     ABAP OO
+     ===================================================== -->
+
+<div class="panel" id="panel-oo">
+
+<div class="module-header">
+    <h2>🧩 ABAP OO</h2>
+</div>
+
+<div class="module-content">
+
+<h3>Important Topics</h3>
+
+<ul>
+<li>Class definition vs implementation</li>
+<li>PUBLIC / PROTECTED / PRIVATE</li>
+<li>Instance methods</li>
+<li>Static methods</li>
+<li>Instance attributes</li>
+<li>Static attributes</li>
+<li>Interfaces</li>
+<li>Inheritance</li>
+<li>Redefinition</li>
+<li>Polymorphism</li>
+<li>Object references</li>
+<li>Exception classes</li>
+</ul>
+
+
+<h3>Interface Example</h3>
+
+<pre><code class="language-abap">
+
+INTERFACE zif_customer.
+
+    METHODS get_name
+        RETURNING VALUE(rv_name) TYPE string.
+
+ENDINTERFACE.
+
+
+CLASS zcl_customer DEFINITION.
+
+    PUBLIC SECTION.
+
+        INTERFACES zif_customer.
+
+ENDCLASS.
+
+</code></pre>
+
+
+<div class="exam-tip">
+
+<strong>Exam focus:</strong>
+
+Understand what happens when an interface reference
+points to an implementing class and how method
+visibility and polymorphism work.
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     ABAP SQL
+     ===================================================== -->
+
+<div class="panel" id="panel-sql">
+
+<div class="module-header">
+    <h2>🗄️ ABAP SQL & Code Pushdown</h2>
+</div>
+
+<div class="module-content">
+
+<h3>Core Topics</h3>
+
+<ul>
+<li>SELECT</li>
+<li>JOIN</li>
+<li>WHERE</li>
+<li>GROUP BY</li>
+<li>HAVING</li>
+<li>ORDER BY</li>
+<li>Aggregations</li>
+<li>SQL expressions</li>
+<li>Host variables</li>
+<li>Database-side processing</li>
+</ul>
+
+
+<h3>Modern SELECT</h3>
+
+<pre><code class="language-abap">
+
+SELECT FROM zcustomer
+       FIELDS id,
+              name,
+              status
+       WHERE status = @lv_status
+       INTO TABLE @DATA(lt_customers).
+
+</code></pre>
+
+
+<h3>Code Pushdown</h3>
+
+<p>
+Code pushdown means moving data-intensive processing
+as close to the database as appropriate instead of
+retrieving large datasets and processing everything
+in ABAP.
+</p>
+
+
+<div class="exam-tip">
+
+<strong>Remember:</strong>
+
+Avoid unnecessary database round trips and unnecessary
+data transfer. Prefer appropriate SQL/CDS-based
+processing where possible.
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     CDS
+     ===================================================== -->
+
+<div class="panel" id="panel-cds">
+
+<div class="module-header">
+    <h2>📊 CDS Data Modeling</h2>
+</div>
+
+<div class="search-bar">
+
+<input
+    type="text"
+    class="search-input"
+    placeholder="🔍 Search CDS..."
+    onkeyup="filterSnippets(this.value)"
+>
+
+</div>
+
+
+<div class="snippet-card searchable">
+
+<div class="snippet-header">
+
+<h3>CDS View Entity</h3>
+
+<button
+    class="copy-btn"
+    onclick="copyCode(this)"
+>
+Copy
+</button>
+
+</div>
+
+<div class="snippet-body">
+
+<pre><code class="language-abap">
+
+@EndUserText.label: 'Customer'
+
+define view entity ZI_Customer
+    as select from zcustomer
+{
+    key id,
+        name,
+        status,
+        created_by
+}
+
+</code></pre>
+
+</div>
+
+</div>
+
+
+<div class="snippet-card searchable">
+
+<div class="snippet-header">
+
+<h3>Association</h3>
+
+<button
+    class="copy-btn"
+    onclick="copyCode(this)"
+>
+Copy
+</button>
+
+</div>
+
+<div class="snippet-body">
+
+<pre><code class="language-abap">
+
+define view entity ZI_Customer
+    as select from zcustomer
+
+    association [0..1]
+        to I_CompanyCode as _CompanyCode
+        on $projection.CompanyCode =
+           _CompanyCode.CompanyCode
+{
+    key id,
+        CompanyCode,
+        _CompanyCode
+}
+
+</code></pre>
+
+</div>
+
+</div>
+
+
+<div class="snippet-card searchable">
+
+<div class="snippet-header">
+
+<h3>Path Expression</h3>
+
+<button
+    class="copy-btn"
+    onclick="copyCode(this)"
+>
+Copy
+</button>
+
+</div>
+
+<div class="snippet-body">
+
+<pre><code class="language-abap">
+
+_CompanyCode.CompanyName as CompanyName
+
+</code></pre>
+
+</div>
+
+</div>
+
+
+<div class="exam-tip">
+
+<strong>Know:</strong>
+
+Understand the difference between associations,
+joins, cardinalities and path expressions.
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     DCL
+     ===================================================== -->
+
+<div class="panel" id="panel-dcl">
+
+<div class="module-header">
+    <h2>🔐 DCL / Authorization</h2>
+</div>
+
+<div class="module-content">
+
+<h3>Basic DCL Concept</h3>
+
+<p>
+DCL defines authorization restrictions for CDS-based
+data access.
+</p>
+
+
+<pre><code class="language-abap">
+
+@EndUserText.label: 'Customer Access'
+
+define role ZI_Customer_Role {
+
+    grant select on ZI_Customer
+
+        where
+            ( created_by = $user );
+
+}
+
+</code></pre>
+
+
+<h3>Important Concepts</h3>
+
+<ul>
+<li>DCL role</li>
+<li>GRANT SELECT</li>
+<li>$user</li>
+<li>Authorization conditions</li>
+<li>CDS authorization annotations</li>
+<li>Interaction between CDS and DCL</li>
+</ul>
+
+
+<div class="exam-tip">
+
+<strong>Exam trap:</strong>
+
+Know the difference between defining a CDS data model
+and restricting access to that data model.
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     RAP ARCHITECTURE
+     ===================================================== -->
+
+<div class="panel" id="panel-rap">
+
+<div class="module-header">
+    <h2>🧱 RAP Architecture</h2>
+</div>
+
+<div class="module-content">
+
+<h3>Typical RAP Stack</h3>
+
+<div class="table-wrap">
+
+<table>
+
+<tr>
+<th>Layer</th>
+<th>Purpose</th>
+</tr>
+
+<tr>
+<td>CDS Data Model</td>
+<td>Business object data model</td>
+</tr>
+
+<tr>
+<td>Behavior Definition</td>
+<td>Transactional behavior</td>
+</tr>
+
+<tr>
+<td>Behavior Implementation</td>
+<td>Custom business logic</td>
+</tr>
+
+<tr>
+<td>Service Definition</td>
+<td>Defines what is exposed</td>
+</tr>
+
+<tr>
+<td>Service Binding</td>
+<td>Binds the service to a protocol/runtime</td>
+</tr>
+
+<tr>
+<td>Consumer</td>
+<td>Fiori / API / external consumer</td>
+</tr>
+
+</table>
+
+</div>
+
+
+<h3>Important RAP Concepts</h3>
+
+<ul>
+<li>Business Object</li>
+<li>Root entity</li>
+<li>Child entities</li>
+<li>Composition</li>
+<li>Managed scenario</li>
+<li>Unmanaged scenario</li>
+<li>Draft</li>
+<li>Behavior definition</li>
+<li>Behavior implementation</li>
+<li>Determination</li>
+<li>Validation</li>
+<li>Action</li>
+<li>Feature control</li>
+<li>Authorization</li>
+<li>EML</li>
+</ul>
+
+
+<div class="exam-tip">
+
+<strong>Think in layers:</strong>
+
+CDS describes the data.
+
+Behavior describes what can happen.
+
+Service definition describes what is exposed.
+
+Service binding makes that service available.
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     BDEF
+     ===================================================== -->
+
+<div class="panel" id="panel-bdef">
+
+<div class="module-header">
+    <h2>⚙️ RAP Behavior Definition</h2>
+</div>
+
+
+<div class="snippet-card">
+
+<div class="snippet-header">
+
+<h3>Managed Behavior</h3>
+
+<button
+    class="copy-btn"
+    onclick="copyCode(this)"
+>
+Copy
+</button>
+
+</div>
+
+<div class="snippet-body">
+
+<pre><code class="language-abap">
+
+managed implementation in class
+    zbp_i_customer unique;
+
+strict ( 2 );
+
+define behavior for ZI_Customer
+persistent table zcustomer
+lock master
+authorization master
+{
+    create;
+    update;
+    delete;
+
+    field ( readonly ) id;
+
+    determination setStatus
+        on modify { create; }
+
+    validation checkName
+        on save { create; update; }
+
+    action approve result [1] $self;
+}
+
+</code></pre>
+
+</div>
+
+</div>
+
+
+<div class="module-content">
+
+<h3>Determination</h3>
+
+<p>
+Automatically derives or changes values based on
+business events.
+</p>
+
+<h3>Validation</h3>
+
+<p>
+Checks whether business data is valid before saving.
+</p>
+
+<h3>Action</h3>
+
+<p>
+Represents an explicit business operation initiated
+by a consumer or application.
+</p>
+
+
+<div class="exam-tip">
+
+<strong>Very important:</strong>
+
+Do not confuse determination, validation and action.
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     EML
+     ===================================================== -->
+
+<div class="panel" id="panel-eml">
+
+<div class="module-header">
+    <h2>⚡ Entity Manipulation Language</h2>
+</div>
+
+
+<div class="snippet-card">
+
+<div class="snippet-header">
+
+<h3>CREATE</h3>
+
+<button
+    class="copy-btn"
+    onclick="copyCode(this)"
+>
+Copy
+</button>
+
+</div>
+
+<div class="snippet-body">
+
+<pre><code class="language-abap">
+
+MODIFY ENTITIES OF ZI_Customer
+    IN LOCAL MODE
+
+    ENTITY Customer
+
+    CREATE FIELDS
+        ( name status )
+
+    WITH VALUE #(
+        (
+            %cid   = 'C1'
+            name   = 'Test'
+            status = 'NEW'
+        )
+    )
+
+    MAPPED DATA(lt_mapped)
+    FAILED DATA(lt_failed)
+    REPORTED DATA(lt_reported).
+
+</code></pre>
+
+</div>
+
+</div>
+
+
+<div class="snippet-card">
+
+<div class="snippet-header">
+
+<h3>READ</h3>
+
+<button
+    class="copy-btn"
+    onclick="copyCode(this)"
+>
+Copy
+</button>
+
+</div>
+
+<div class="snippet-body">
+
+<pre><code class="language-abap">
+
+READ ENTITIES OF ZI_Customer
+    IN LOCAL MODE
+
+    ENTITY Customer
+    ALL FIELDS WITH VALUE #(
+        (
+            id = 100
+        )
+    )
+
+    RESULT DATA(lt_result)
+    FAILED DATA(lt_failed)
+    REPORTED DATA(lt_reported).
+
+</code></pre>
+
+</div>
+
+</div>
+
+
+<div class="module-content">
+
+<h3>EML Concepts to Know</h3>
+
+<ul>
+<li>READ ENTITIES</li>
+<li>MODIFY ENTITIES</li>
+<li>CREATE</li>
+<li>UPDATE</li>
+<li>DELETE</li>
+<li>%cid</li>
+<li>MAPPED</li>
+<li>FAILED</li>
+<li>REPORTED</li>
+<li>COMMIT ENTITIES</li>
+<li>LOCAL MODE</li>
+</ul>
+
+
+<div class="exam-tip">
+
+<strong>Exam focus:</strong>
+
+Understand what EML is doing conceptually.
+Do not simply memorize one CREATE statement.
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     SERVICE
+     ===================================================== -->
+
+<div class="panel" id="panel-service">
+
+<div class="module-header">
+    <h2>🌐 Service Definition / Binding / OData</h2>
+</div>
+
+<div class="module-content">
+
+<h3>Service Definition</h3>
+
+<pre><code class="language-abap">
+
+@EndUserText.label: 'Customer Service'
+
+define service ZUI_CUSTOMER {
+
+    expose ZI_Customer
+        as Customer;
+
+}
+
+</code></pre>
+
+
+<h3>Service Binding</h3>
+
+<p>
+The service binding connects the service definition
+to a protocol and runtime used to expose the service.
+</p>
+
+
+<h3>Know the Difference</h3>
+
+<div class="table-wrap">
+
+<table>
+
+<tr>
+<th>Artifact</th>
+<th>Question to Ask</th>
+</tr>
+
+<tr>
+<td>CDS</td>
+<td>What is the data model?</td>
+</tr>
+
+<tr>
+<td>Behavior</td>
+<td>What operations/business rules exist?</td>
+</tr>
+
+<tr>
+<td>Service Definition</td>
+<td>What should be exposed?</td>
+</tr>
+
+<tr>
+<td>Service Binding</td>
+<td>How is the service exposed?</td>
+</tr>
+
+</table>
+
+</div>
+
+
+<div class="exam-tip">
+
+<strong>Common confusion:</strong>
+
+Service definition and service binding are not the
+same artifact.
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     TESTING
+     ===================================================== -->
+
+<div class="panel" id="panel-testing">
+
+<div class="module-header">
+    <h2>🧪 Testing & Quality</h2>
+</div>
+
+<div class="module-content">
+
+<h3>ABAP Unit</h3>
+
+<ul>
+<li>Test class</li>
+<li>Test method</li>
+<li>Assertions</li>
+<li>Test isolation</li>
+<li>Testable design</li>
+</ul>
+
+
+<h3>Executable Test Class</h3>
+
+<pre><code class="language-abap">
+
+CLASS zcl_test DEFINITION
+    PUBLIC
+    FINAL
+    CREATE PUBLIC.
+
+    PUBLIC SECTION.
+
+        INTERFACES if_oo_adt_classrun.
+
+ENDCLASS.
+
+
+CLASS zcl_test IMPLEMENTATION.
+
+    METHOD if_oo_adt_classrun~main.
+
+        out->write(
+            |ABAP Cloud test|
+        ).
+
+    ENDMETHOD.
+
+ENDCLASS.
+
+</code></pre>
+
+
+<h3>Quality Topics</h3>
+
+<ul>
+<li>Clean ABAP</li>
+<li>Readable code</li>
+<li>Meaningful names</li>
+<li>Exception handling</li>
+<li>Performance</li>
+<li>SQL efficiency</li>
+<li>Unit testing</li>
+</ul>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     CLEAN CORE
+     ===================================================== -->
+
+<div class="panel" id="panel-clean">
+
+<div class="module-header">
+    <h2>🧹 Clean Core & Extensibility</h2>
+</div>
+
+<div class="module-content">
+
+<h3>Why Clean Core?</h3>
+
+<p>
+The Clean Core approach aims to keep the SAP core
+stable and upgradeable while placing extensions
+in appropriate supported extension mechanisms.
+</p>
+
+
+<h3>Important Concepts</h3>
+
+<ul>
+<li>In-app extensibility</li>
+<li>Developer extensibility</li>
+<li>Side-by-side extensibility</li>
+<li>Released APIs</li>
+<li>Extension points</li>
+<li>Upgrade stability</li>
+<li>ABAP Cloud</li>
+</ul>
+
+
+<div class="exam-tip">
+
+<strong>Exam thinking:</strong>
+
+When several extension approaches are possible,
+consider whether the solution follows supported
+extension mechanisms and Clean Core principles.
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     EXAM TRAPS
+     ===================================================== -->
+
+<div class="panel" id="panel-pitfalls">
+
+<div class="module-header">
+    <h2>⚠️ C_ABAPD Exam Traps</h2>
+</div>
+
+
+<div class="topic-card">
+
+<h4>Trap 1 — Classic ABAP ≠ ABAP Cloud</h4>
+
+<p>
+A statement or API that works in traditional ABAP
+does not automatically mean it is allowed in
+ABAP for Cloud Development.
+</p>
+
+</div>
+
+
+<div class="topic-card">
+
+<h4>Trap 2 — CDS ≠ RAP</h4>
+
+<p>
+CDS is used for data modeling and more.
+RAP builds transactional behavior and services
+around business objects.
+</p>
+
+</div>
+
+
+<div class="topic-card">
+
+<h4>Trap 3 — Determination ≠ Validation</h4>
+
+<p>
+A determination derives or changes values.
+A validation checks business consistency.
+</p>
+
+</div>
+
+
+<div class="topic-card">
+
+<h4>Trap 4 — Service Definition ≠ Service Binding</h4>
+
+<p>
+The definition describes what is exposed.
+The binding connects the service to its runtime/protocol.
+</p>
+
+</div>
+
+
+<div class="topic-card">
+
+<h4>Trap 5 — Association ≠ Join</h4>
+
+<p>
+Know why and when associations are used and how
+cardinality and path expressions work.
+</p>
+
+</div>
+
+
+<div class="topic-card">
+
+<h4>Trap 6 — Managed ≠ Unmanaged</h4>
+
+<p>
+Understand which parts of persistence and transactional
+processing are handled by the RAP framework and which
+parts require developer implementation.
+</p>
+
+</div>
+
+
+<div class="topic-card">
+
+<h4>Trap 7 — EML ≠ ABAP SQL</h4>
+
+<p>
+ABAP SQL works with database data.
+EML interacts with RAP business objects.
+</p>
+
+</div>
+
+
+<div class="topic-card">
+
+<h4>Trap 8 — Memorization Only</h4>
+
+<p>
+Do not prepare by memorizing code blocks.
+Be able to read a scenario and select the appropriate
+artifact or mechanism.
+</p>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     QUESTIONS
+     ===================================================== -->
+
+<div class="panel" id="panel-questions">
+
+<div class="module-header">
+    <h2>❓ Practice Questions</h2>
+</div>
+
+
+<div class="question">
+
+<h4>
+1. Which technology is primarily used for defining
+a modern ABAP Cloud data model?
+</h4>
+
+<p>
+A. Dynpro<br>
+B. CDS<br>
+C. Smart Forms<br>
+D. SAPscript
+</p>
+
+<div class="answer">
+<strong>Answer:</strong> B — CDS
+</div>
+
+</div>
+
+
+<div class="question">
+
+<h4>
+2. What is the main purpose of a RAP Behavior Definition?
+</h4>
+
+<p>
+A. Define database indexes<br>
+B. Define transactional behavior<br>
+C. Define CSS<br>
+D. Define an SAP GUI screen
+</p>
+
+<div class="answer">
+<strong>Answer:</strong> B — Define transactional behavior
+</div>
+
+</div>
+
+
+<div class="question">
+
+<h4>
+3. What is EML primarily used for?
+</h4>
+
+<p>
+A. Manipulating RAP business objects<br>
+B. Styling Fiori applications<br>
+C. Creating database indexes<br>
+D. Managing operating-system files
+</p>
+
+<div class="answer">
+<strong>Answer:</strong> A — Manipulating RAP business objects
+</div>
+
+</div>
+
+
+<div class="question">
+
+<h4>
+4. Which artifact is used to define authorization
+restrictions for CDS data access?
+</h4>
+
+<p>
+A. DCL<br>
+B. BDEF<br>
+C. Service Binding<br>
+D. Behavior Pool
+</p>
+
+<div class="answer">
+<strong>Answer:</strong> A — DCL
+</div>
+
+</div>
+
+
+<div class="question">
+
+<h4>
+5. Which concept is strongly associated with ABAP Cloud?
+</h4>
+
+<p>
+A. Unlimited direct access to every SAP object<br>
+B. Released APIs and supported extension points<br>
+C. Mandatory Dynpro development<br>
+D. SAPscript-only development
+</p>
+
+<div class="answer">
+<strong>Answer:</strong> B
+</div>
+
+</div>
+
+
+<div class="question">
+
+<h4>
+6. What is the purpose of a determination?
+</h4>
+
+<p>
+A. Automatically derive or modify values<br>
+B. Define authorization roles<br>
+C. Expose an OData service<br>
+D. Create a database table
+</p>
+
+<div class="answer">
+<strong>Answer:</strong> A
+</div>
+
+</div>
+
+
+<div class="question">
+
+<h4>
+7. What is code pushdown?
+</h4>
+
+<p>
+A. Moving suitable data processing toward the database<br>
+B. Moving all logic into the UI<br>
+C. Moving ABAP code into JavaScript<br>
+D. Removing CDS
+</p>
+
+<div class="answer">
+<strong>Answer:</strong> A
+</div>
+
+</div>
+
+
+<div class="question">
+
+<h4>
+8. Which sequence best describes a typical RAP service?
+</h4>
+
+<p>
+A. CDS → Behavior → Service Definition → Service Binding<br>
+B. Dynpro → Smart Form → JavaScript<br>
+C. SQL → SAPscript → GUI status<br>
+D. DCL → Dynpro → BAdI
+</p>
+
+<div class="answer">
+<strong>Answer:</strong> A
+</div>
+
+</div>
+
+
+<div class="exam-tip">
+
+<strong>Next step:</strong>
+
+After mastering these topics, practice questions should
+become scenario-based rather than simple definition
+questions.
+
+</div>
+
+</div>
+
+
+</main>
+
+</div>
+
+
 <script>
-/* SIDEBAR TOGGLE (mobile) */
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
 function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const backdrop = document.getElementById('backdrop');
+
+    const sidebar =
+        document.getElementById('sidebar');
+
+    const backdrop =
+        document.getElementById('backdrop');
+
     sidebar.classList.toggle('open');
+
     backdrop.classList.toggle('show');
 }
 
-/* Close sidebar when clicking nav item on mobile */
+
+/* =========================================================
+   PANEL NAVIGATION
+   ========================================================= */
+
 function showPanel(panelId, navItem) {
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById('panel-' + panelId).classList.add('active');
-    if (navItem) navItem.classList.add('active');
-    
-    // Close sidebar on mobile after selection
-    if (window.innerWidth <= 768) {
-        toggleSidebar();
-    }
-    
-    setTimeout(() => {
-        document.querySelectorAll('#panel-' + panelId + ' pre code').forEach(block => {
-            Prism.highlightElement(block);
+
+    document
+        .querySelectorAll('.panel')
+        .forEach(panel => {
+            panel.classList.remove('active');
         });
-    }, 50);
-    
-    // Scroll to top on mobile
-    if (window.innerWidth <= 768) {
-        document.querySelector('.main-content').scrollTop = 0;
+
+    document
+        .querySelectorAll('.nav-item')
+        .forEach(item => {
+            item.classList.remove('active');
+        });
+
+    const panel =
+        document.getElementById(
+            'panel-' + panelId
+        );
+
+    if (panel) {
+        panel.classList.add('active');
     }
-}
 
-function filterSnippets(query) {
-    const lowerQuery = query.toLowerCase();
-    document.querySelectorAll('.searchable').forEach(card => {
-        const text = card.innerText.toLowerCase();
-        card.style.display = text.includes(lowerQuery) ? 'block' : 'none';
-    });
-}
+    if (navItem) {
+        navItem.classList.add('active');
+    }
 
-function copyCode(btn) {
-    const code = btn.closest('.snippet-card').querySelector('code').innerText;
-    navigator.clipboard.writeText(code).then(() => {
-        const original = btn.innerText;
-        btn.innerText = 'Copied!';
-        btn.style.borderColor = 'var(--success)';
-        btn.style.color = 'var(--success)';
-        setTimeout(() => {
-            btn.innerText = original;
-            btn.style.borderColor = '';
-            btn.style.color = '';
-        }, 1500);
-    });
-}
+    if (window.innerWidth <= 768) {
 
-function copyText(btn, id) {
-    const text = document.getElementById(id).innerText;
-    navigator.clipboard.writeText(text).then(() => {
-        const original = btn.innerText;
-        btn.innerText = 'Copied!';
-        setTimeout(() => { btn.innerText = original; }, 1500);
-    });
-}
+        const sidebar =
+            document.getElementById('sidebar');
 
-/* Close sidebar on ESC key */
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && window.innerWidth <= 768) {
-        const sidebar = document.getElementById('sidebar');
         if (sidebar.classList.contains('open')) {
             toggleSidebar();
         }
     }
-});
 
-window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        document.querySelectorAll('pre code').forEach(block => {
-            Prism.highlightElement(block);
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+function filterSnippets(query) {
+
+    const lowerQuery =
+        query.toLowerCase();
+
+    document
+        .querySelectorAll('.searchable')
+        .forEach(card => {
+
+            const text =
+                card.innerText.toLowerCase();
+
+            card.style.display =
+                text.includes(lowerQuery)
+                    ? 'block'
+                    : 'none';
+
         });
-    }, 100);
-});
+}
+
+
+/* =========================================================
+   COPY CODE
+   ========================================================= */
+
+function copyCode(btn) {
+
+    const code =
+        btn
+            .closest('.snippet-card')
+            .querySelector('code')
+            .innerText;
+
+    navigator.clipboard
+        .writeText(code)
+        .then(() => {
+
+            const original =
+                btn.innerText;
+
+            btn.innerText =
+                'Copied!';
+
+            btn.style.borderColor =
+                'var(--success)';
+
+            btn.style.color =
+                'var(--success)';
+
+            setTimeout(() => {
+
+                btn.innerText =
+                    original;
+
+                btn.style.borderColor =
+                    '';
+
+                btn.style.color =
+                    '';
+
+            }, 1500);
+
+        });
+}
+
+
+/* =========================================================
+   ESC
+   ========================================================= */
+
+document.addEventListener(
+    'keydown',
+    event => {
+
+        if (
+            event.key === 'Escape' &&
+            window.innerWidth <= 768
+        ) {
+
+            const sidebar =
+                document.getElementById(
+                    'sidebar'
+                );
+
+            if (
+                sidebar.classList.contains('open')
+            ) {
+                toggleSidebar();
+            }
+
+        }
+
+    }
+);
+
 </script>
+
 </body>
 </html>
