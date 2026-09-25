@@ -3,1345 +3,699 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>About Tools by Farhat</title>
+<title>Farhat's ABAP Tools</title>
 <style>
   :root {
-    --bg: #0f1419;
+    --bg: #0d1117;
     --bg-2: #161b22;
-    --bg-3: #1c222b;
-    --panel: #202832;
-    --border: #2d3748;
-    --text: #e6edf3;
+    --bg-3: #21262d;
+    --border: #30363d;
+    --text: #c9d1d9;
     --text-dim: #8b949e;
-    --accent: #4f9cf7;
-    --accent-2: #7ee787;
-    --accent-3: #f0883e;
+    --accent: #58a6ff;
+    --accent-2: #3fb950;
+    --accent-3: #d29922;
     --danger: #f85149;
-    --warn: #d29922;
-    --radius: 10px;
-    --shadow: 0 4px 20px rgba(0,0,0,0.35);
+    --radius: 8px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body {
-    height: 100%;
-    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
-    font-size: 14px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
   }
-  /* ---------- Top Bar ---------- */
-  .topbar {
-    height: 56px;
-    background: linear-gradient(90deg, #161b22 0%, #1c222b 100%);
+
+  /* HEADER */
+  header {
+    background: var(--bg-2);
     border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 60px;
     display: flex;
     align-items: center;
-    padding: 0 20px;
-    gap: 24px;
-    position: relative;
-    z-index: 10;
-  }
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 700;
-    font-size: 16px;
-    letter-spacing: 0.3px;
-  }
-  .logo-badge {
-    width: 30px; height: 30px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, var(--accent), #7c3aed);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 800; color: white;
-    box-shadow: 0 2px 8px rgba(79,156,247,0.4);
-  }
-  .logo small { color: var(--text-dim); font-weight: 400; font-size: 12px; margin-left: 4px; }
-  .topnav { display: flex; gap: 4px; margin-left: 20px; }
-  .topnav a {
-    color: var(--text-dim);
-    text-decoration: none;
-    padding: 8px 14px;
-    border-radius: 6px;
-    font-size: 13px;
-    transition: all 0.15s;
-  }
-  .topnav a:hover { background: var(--bg-3); color: var(--text); }
-  .topnav a.active { background: var(--bg-3); color: var(--accent); }
-  .topbar-right { margin-left: auto; display: flex; gap: 10px; align-items: center; }
-  .user-chip {
-    display: flex; align-items: center; gap: 8px;
-    padding: 4px 10px 4px 4px;
-    background: var(--bg-3);
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    font-size: 12px;
-  }
-  .user-avatar {
-    width: 24px; height: 24px; border-radius: 50%;
-    background: linear-gradient(135deg, #f0883e, #f85149);
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 11px; color: white;
-  }
-
-  /* ---------- Main Layout ---------- */
-  .main {
-    display: grid;
-    grid-template-columns: 240px 1fr 280px;
-    height: calc(100vh - 56px);
-    overflow: hidden;
-  }
-  .sidebar, .rightbar {
-    background: var(--bg-2);
-    border-right: 1px solid var(--border);
-    overflow-y: auto;
-    padding: 16px 12px;
-  }
-  .rightbar { border-right: none; border-left: 1px solid var(--border); }
-
-  .section-title {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: var(--text-dim);
-    margin: 14px 8px 8px;
-    font-weight: 600;
-  }
-  .report-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 9px 10px;
-    border-radius: 7px;
-    cursor: pointer;
-    color: var(--text);
-    font-size: 13px;
-    transition: all 0.15s;
-    margin-bottom: 2px;
-  }
-  .report-item:hover { background: var(--bg-3); }
-  .report-item.active {
-    background: linear-gradient(90deg, rgba(79,156,247,0.15), transparent);
-    color: var(--accent);
-    border-left: 2px solid var(--accent);
-    padding-left: 8px;
-  }
-  .report-item .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--text-dim);
-  }
-  .report-item.active .dot { background: var(--accent); }
-  .report-item .count {
-    margin-left: auto;
-    font-size: 10px;
-    color: var(--text-dim);
-    background: var(--bg-3);
-    padding: 2px 6px;
-    border-radius: 10px;
-  }
-  .divider { height: 1px; background: var(--border); margin: 14px 4px; }
-
-  /* ---------- Center ---------- */
-  .center {
-    overflow-y: auto;
-    padding: 24px 32px;
-    background: var(--bg);
-  }
-  .page-header {
-    display: flex;
-    align-items: flex-end;
     justify-content: space-between;
-    margin-bottom: 20px;
   }
-  .page-header h1 {
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: -0.3px;
-  }
-  .page-header p { color: var(--text-dim); font-size: 13px; margin-top: 4px; }
-  .breadcrumb {
-    font-size: 12px;
-    color: var(--text-dim);
+  .brand {
     display: flex;
-    gap: 6px;
     align-items: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
   }
-  .breadcrumb span.sep { opacity: 0.5; }
-  .breadcrumb span.current { color: var(--accent); }
-
-  /* ---------- Input Card ---------- */
-  .card {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow);
-  }
-  .card h3 {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 14px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .card h3 .icon {
-    width: 22px; height: 22px;
-    background: rgba(79,156,247,0.15);
-    color: var(--accent);
-    border-radius: 6px;
+  .brand-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--accent), #a371f7);
+    border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 12px;
+    font-size: 16px; color: white; font-weight: 800;
   }
-  .form-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 14px;
-    margin-bottom: 14px;
-  }
-  .form-group { display: flex; flex-direction: column; gap: 6px; }
-  .form-group label {
-    font-size: 11px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    font-weight: 600;
-  }
-  .input, .select {
+  .brand small { color: var(--text-dim); font-weight: 400; font-size: 13px; margin-left: 4px; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
     background: var(--bg-2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 10px 12px;
-    border-radius: 7px;
-    font-size: 13px;
-    font-family: inherit;
-    transition: all 0.15s;
-    outline: none;
+    padding: 0 24px;
+    border-bottom: 1px solid var(--border);
   }
-  .input:focus, .select:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(79,156,247,0.15);
-  }
-  .input::placeholder { color: var(--text-dim); }
-  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-  .chip {
-    background: rgba(79,156,247,0.15);
-    color: var(--accent);
-    padding: 4px 10px;
-    border-radius: 14px;
-    font-size: 12px;
-    display: flex; align-items: center; gap: 6px;
-    border: 1px solid rgba(79,156,247,0.3);
-  }
-  .chip .x {
-    cursor: pointer;
-    opacity: 0.7;
+  .tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    padding: 14px 20px;
     font-size: 14px;
-  }
-  .chip .x:hover { opacity: 1; }
-  .btn-row { display: flex; gap: 10px; justify-content: flex-end; margin-top: 6px; }
-  .btn {
-    padding: 9px 18px;
-    border-radius: 7px;
-    border: 1px solid var(--border);
-    background: var(--bg-3);
-    color: var(--text);
-    font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.15s;
-    display: inline-flex; align-items: center; gap: 6px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .tab-btn:hover { color: var(--text); background: var(--bg-3); }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .tab-btn .badge {
+    background: var(--bg-3);
+    color: var(--text-dim);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .tab-btn.active .badge { background: rgba(88,166,255,0.15); color: var(--accent); }
+
+  /* MAIN CONTENT */
+  main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .tool-panel { display: none; animation: fadeIn 0.25s ease; }
+  .tool-panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .panel-header { margin-bottom: 24px; }
+  .panel-header h2 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+  .panel-header p { color: var(--text-dim); font-size: 14px; line-height: 1.5; }
+
+  /* CARDS & FORMS */
+  .card {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .form-row { display: flex; gap: 16px; margin-bottom: 16px; align-items: flex-end; }
+  .form-group { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .form-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .input, .select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input:focus, .select:focus { border-color: var(--accent); }
+  
+  .btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg-3);
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
     font-family: inherit;
   }
   .btn:hover { background: var(--border); }
   .btn.primary {
-    background: linear-gradient(135deg, var(--accent), #3b82f6);
-    border-color: transparent;
-    color: white;
-    box-shadow: 0 2px 8px rgba(79,156,247,0.3);
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0d1117;
+    font-weight: 600;
   }
   .btn.primary:hover { filter: brightness(1.1); }
-  .btn.ghost { background: transparent; }
+  .btn.success { background: var(--accent-2); border-color: var(--accent-2); color: #0d1117; font-weight: 600; }
+  .btn.success:hover { filter: brightness(1.1); }
 
-  /* ---------- Results Tabs ---------- */
-  .results-tabs {
+  /* CODE BLOCK */
+  .code-container {
+    position: relative;
+    background: #010409;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .code-header {
     display: flex;
-    gap: 2px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 0;
-    background: var(--bg-2);
-    padding: 0 12px;
-    border-radius: var(--radius) var(--radius) 0 0;
-  }
-  .results-tabs .tab {
-    padding: 12px 18px;
-    cursor: pointer;
-    font-size: 13px;
-    color: var(--text-dim);
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-    transition: all 0.15s;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .results-tabs .tab:hover { color: var(--text); }
-  .results-tabs .tab.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-  }
-  .tab-badge {
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
     background: var(--bg-3);
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
     color: var(--text-dim);
-    padding: 1px 7px;
-    border-radius: 10px;
-    font-size: 10px;
     font-weight: 600;
   }
-  .tab.active .tab-badge { background: rgba(79,156,247,0.15); color: var(--accent); }
-
-  .results-body {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-top: none;
-    border-radius: 0 0 var(--radius) var(--radius);
-    padding: 24px;
-    min-height: 400px;
+  .code-block {
+    padding: 20px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #e6edf3;
+    overflow-x: auto;
+    white-space: pre;
+    max-height: 600px;
+    overflow-y: auto;
   }
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; animation: fadeIn 0.2s; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  /* Simple ABAP Syntax Highlighting */
+  .kw { color: #ff7b72; font-weight: 600; } /* Keywords */
+  .str { color: #a5d6ff; } /* Strings */
+  .cm { color: #8b949e; font-style: italic; } /* Comments */
+  .fn { color: #d2a8ff; } /* Functions */
+  .var { color: #ffa657; } /* Variables */
+  .type { color: #79c0ff; } /* Types */
 
-  /* ---------- Table Block (per SAP table) ---------- */
-  .table-block {
-    margin-bottom: 28px;
-    padding-bottom: 24px;
-    border-bottom: 2px dashed var(--border);
+  /* FILE UPLOAD */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--bg);
   }
-  .table-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-  .table-block-header {
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--accent);
+    background: rgba(88,166,255,0.05);
+  }
+  .upload-zone .icon { font-size: 32px; margin-bottom: 12px; opacity: 0.7; }
+  .upload-zone p { color: var(--text-dim); font-size: 14px; }
+  .upload-zone .highlight { color: var(--accent); font-weight: 600; }
+  #fileInput { display: none; }
+
+  .file-info {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-  }
-  .table-name-tag {
-    display: flex; align-items: center; gap: 10px;
-  }
-  .table-name-tag .name {
-    font-family: 'Consolas', 'Monaco', monospace;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--accent);
-    letter-spacing: 0.5px;
-  }
-  .table-name-tag .desc {
-    color: var(--text-dim);
-    font-size: 12px;
-    border-left: 1px solid var(--border);
-    padding-left: 10px;
-  }
-  .table-type-badge {
-    background: rgba(126,231,135,0.12);
+    gap: 12px;
+    padding: 12px 16px;
+    background: rgba(63,185,80,0.1);
+    border: 1px solid rgba(63,185,80,0.3);
+    border-radius: 6px;
+    margin-top: 16px;
     color: var(--accent-2);
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-  }
-
-  .sub-title {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-dim);
-    margin: 16px 0 10px;
-    font-weight: 600;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .sub-title::before {
-    content: '';
-    width: 3px; height: 12px;
-    background: var(--accent);
-    border-radius: 2px;
-  }
-
-  /* ---------- Info Grid ---------- */
-  .info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  .info-cell {
-    background: var(--bg-2);
-    padding: 10px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .info-cell .k {
-    font-size: 10px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    font-weight: 600;
-  }
-  .info-cell .v {
     font-size: 13px;
-    color: var(--text);
-    font-family: 'Consolas', monospace;
+    font-weight: 500;
   }
 
-  /* ---------- Data Table ---------- */
-  .data-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-    font-size: 12px;
-  }
-  .data-table thead th {
-    background: var(--bg-3);
-    color: var(--text-dim);
-    text-align: left;
-    padding: 10px 12px;
-    font-weight: 600;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-  }
-  .data-table tbody td {
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--border);
-    font-family: 'Consolas', monospace;
-    font-size: 12px;
-  }
-  .data-table tbody tr:last-child td { border-bottom: none; }
-  .data-table tbody tr:hover { background: rgba(79,156,247,0.05); }
-  .data-table .key-col { color: var(--accent); font-weight: 600; }
-  .data-table .curr-col { color: var(--accent-3); }
-  .data-table .num-col { text-align: right; }
-  .data-table .type-tag {
-    display: inline-block;
-    padding: 2px 7px;
-    border-radius: 4px;
-    font-size: 10px;
-    background: var(--bg-3);
-    color: var(--text-dim);
-    font-weight: 600;
-    letter-spacing: 0.3px;
-  }
-  .data-table .type-tag.char { background: rgba(79,156,247,0.15); color: var(--accent); }
-  .data-table .type-tag.num { background: rgba(126,231,135,0.15); color: var(--accent-2); }
-  .data-table .type-tag.curr { background: rgba(240,136,62,0.15); color: var(--accent-3); }
-  .data-table .type-tag.date { background: rgba(210,153,34,0.15); color: var(--warn); }
-  .data-table .type-tag.clnt { background: rgba(124,58,237,0.15); color: #a78bfa; }
-
-  .table-scroll {
-    max-height: 420px;
-    overflow: auto;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-  }
-  .table-scroll .data-table { border: none; border-radius: 0; }
-
-  /* ---------- Code Block ---------- */
-  .code-block {
-    background: #0d1117;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
-    font-family: 'Consolas', 'Monaco', monospace;
-    font-size: 12.5px;
-    line-height: 1.6;
-    overflow-x: auto;
-    position: relative;
-  }
-  .code-block .kw { color: #ff7b72; }
-  .code-block .str { color: #a5d6ff; }
-  .code-block .cm { color: #8b949e; font-style: italic; }
-  .code-block .fn { color: #d2a8ff; }
-  .code-block .var { color: #ffa657; }
-  .code-block .num { color: #79c0ff; }
-  .copy-code-btn {
-    position: absolute;
-    top: 10px; right: 10px;
-    background: var(--bg-3);
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    padding: 4px 10px;
-    border-radius: 5px;
-    font-size: 11px;
-    cursor: pointer;
-  }
-  .copy-code-btn:hover { color: var(--text); }
-
-  /* ---------- Right Bar ---------- */
-  .quick-action {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 12px;
-    background: var(--bg-3);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    cursor: pointer;
-    margin-bottom: 8px;
-    transition: all 0.15s;
-    font-size: 13px;
-  }
-  .quick-action:hover { border-color: var(--accent); transform: translateX(2px); }
-  .quick-action .qa-icon {
-    width: 28px; height: 28px;
-    border-radius: 6px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px;
-    flex-shrink: 0;
-  }
-  .qa-icon.green { background: rgba(126,231,135,0.15); color: var(--accent-2); }
-  .qa-icon.red { background: rgba(248,81,73,0.15); color: var(--danger); }
-  .qa-icon.blue { background: rgba(79,156,247,0.15); color: var(--accent); }
-  .qa-icon.orange { background: rgba(240,136,62,0.15); color: var(--accent-3); }
-  .qa-icon.purple { background: rgba(124,58,237,0.15); color: #a78bfa; }
-  .quick-action .qa-text { flex: 1; }
-  .quick-action .qa-text small { color: var(--text-dim); font-size: 11px; display: block; margin-top: 2px; }
-
-  .checkbox-row {
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .checkbox-row:hover { background: var(--bg-3); }
-  .checkbox-row input[type="checkbox"] {
-    width: 16px; height: 16px;
-    accent-color: var(--accent);
-    cursor: pointer;
-  }
-  .checkbox-row label {
-    font-size: 13px;
-    cursor: pointer;
-    flex: 1;
-  }
-  .checkbox-row .hint {
-    font-size: 10px;
-    color: var(--text-dim);
-  }
-
-  .stat-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 8px;
-  }
-  .stat-box {
-    background: var(--bg-3);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
-  }
-  .stat-box .sv { font-size: 18px; font-weight: 700; color: var(--accent); }
-  .stat-box .sl { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 2px; }
-
-  /* ---------- Toast ---------- */
+  /* TOAST */
   .toast {
     position: fixed;
     bottom: 24px; right: 24px;
-    background: var(--panel);
+    background: var(--bg-2);
     border: 1px solid var(--accent);
-    border-left: 3px solid var(--accent);
-    padding: 12px 18px;
+    border-left: 4px solid var(--accent);
+    padding: 14px 20px;
     border-radius: 8px;
-    box-shadow: var(--shadow);
-    font-size: 13px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    font-size: 14px;
+    font-weight: 500;
     opacity: 0;
     transform: translateY(20px);
-    transition: all 0.25s;
+    transition: all 0.3s;
     pointer-events: none;
     z-index: 100;
   }
-  .toast.show { opacity: 1; transform: none; }
+  .toast.show { opacity: 1; transform: translateY(0); }
 
-  /* ---------- Scrollbar ---------- */
-  ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: #3d4756; }
-
-  /* ---------- Empty state ---------- */
-  .empty {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--text-dim);
+  /* WORKFLOW ARROW */
+  .workflow-hint {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(210,153,34,0.1);
+    border: 1px solid rgba(210,153,34,0.3);
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--accent-3);
   }
-  .empty .big {
-    font-size: 40px;
-    margin-bottom: 12px;
-    opacity: 0.4;
-  }
-  .empty h4 { color: var(--text); font-size: 15px; margin-bottom: 6px; }
 </style>
 </head>
 <body>
 
-<!-- ============ TOP BAR ============ -->
-<div class="topbar">
-  <div class="logo">
-    <div class="logo-badge">F</div>
-    <div>About Tools <small>by Farhat</small></div>
+<header>
+  <div class="brand">
+    <div class="brand-icon">F</div>
+    <div>Farhat's ABAP Tools <small>v1.0</small></div>
   </div>
-  <nav class="topnav">
-    <a href="#" class="active">Explorer</a>
-    <a href="#">Reports</a>
-    <a href="#">Templates</a>
-    <a href="#">Settings</a>
-    <a href="#">Help</a>
-  </nav>
-  <div class="topbar-right">
-    <div class="user-chip">
-      <div class="user-avatar">FR</div>
-      <span>farhat@dev</span>
-    </div>
-  </div>
+  <div style="font-size: 12px; color: var(--text-dim);">farhadabap.github.io/tools</div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('details')">
+    📋 Table Details <span class="badge">Generator</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('injection')">
+    💉 Data Injection <span class="badge">Uploader</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('about')">
+    ℹ️ About / Extend
+  </button>
 </div>
 
-<!-- ============ MAIN LAYOUT ============ -->
-<div class="main">
-
-  <!-- LEFT SIDEBAR -->
-  <aside class="sidebar">
-    <div class="section-title">Reports</div>
-    <div class="report-item active" data-report="technical">
-      <span class="dot"></span>
-      <span>Technical Details</span>
-    </div>
-    <div class="report-item" data-report="data">
-      <span class="dot"></span>
-      <span>Data Entries</span>
-    </div>
-    <div class="report-item" data-report="compare">
-      <span class="dot"></span>
-      <span>Compare Tables</span>
-    </div>
-    <div class="report-item" data-report="custom">
-      <span class="dot"></span>
-      <span>Custom Query</span>
+<main>
+  <!-- ================= TOOL 1: TABLE DETAILS ================= -->
+  <div id="tab-details" class="tool-panel active">
+    <div class="panel-header">
+      <h2>Table Details & Code Generator</h2>
+      <p>Enter SAP table names to generate ready-to-use ABAP read reports and export the structure for the Data Injection tool.</p>
     </div>
 
-    <div class="divider"></div>
-    <div class="section-title">Saved Reports</div>
-    <div class="report-item">
-      <span class="dot"></span>
-      <span>MM Module Audit</span>
-      <span class="count">3</span>
-    </div>
-    <div class="report-item">
-      <span class="dot"></span>
-      <span>SD Pricing Check</span>
-      <span class="count">5</span>
-    </div>
-    <div class="report-item">
-      <span class="dot"></span>
-      <span>FI Balance Review</span>
-      <span class="count">2</span>
+    <div class="workflow-hint">
+      💡 <b>Workflow:</b> Generate details here → Click "Export Structure as JSON" → Go to "Data Injection" tab → Upload that JSON file.
     </div>
 
-    <div class="divider"></div>
-    <div class="section-title">Templates</div>
-    <div class="report-item">
-      <span class="dot"></span>
-      <span>Material Master</span>
-    </div>
-    <div class="report-item">
-      <span class="dot"></span>
-      <span>Sales Order Flow</span>
-    </div>
-    <div class="report-item">
-      <span class="dot"></span>
-      <span>Financial Docs</span>
-    </div>
-
-    <div class="divider"></div>
-    <button class="btn ghost" style="width:100%; justify-content:center;">+ New Report</button>
-  </aside>
-
-  <!-- CENTER -->
-  <main class="center">
-    <div class="page-header">
-      <div>
-        <div class="breadcrumb">
-          <span>Home</span>
-          <span class="sep">/</span>
-          <span>Explorer</span>
-          <span class="sep">/</span>
-          <span class="current" id="crumbReport">Technical Details</span>
-        </div>
-        <h1 id="pageTitle">Technical Details</h1>
-        <p id="pageDesc">Inspect SAP table metadata, fields, data types, currency references and relations.</p>
-      </div>
-    </div>
-
-    <!-- INPUT CARD -->
     <div class="card">
-      <h3><span class="icon">⚙</span> Table Selection</h3>
       <div class="form-row">
-        <div class="form-group">
-          <label>Table Names (comma separated)</label>
-          <input type="text" class="input" id="tableInput" placeholder="e.g. MARA, MARC, VBAK" value="MARA, MARC, VBAK" />
-          <div class="chip-row" id="chipRow"></div>
+        <div class="form-group" style="flex: 2;">
+          <label>Table Name(s)</label>
+          <input type="text" class="input" id="tableNames" placeholder="e.g., MARA, VBAK, VBAP (comma separated)" value="MARA" />
         </div>
         <div class="form-group">
           <label>Report Type</label>
           <select class="select" id="reportType">
-            <option value="technical">Technical Details</option>
-            <option value="data">Data Entries</option>
-            <option value="compare">Compare Tables</option>
-            <option value="custom">Custom Query</option>
+            <option value="select">Standard SELECT Report</option>
+            <option value="alv">ALV Grid Display</option>
+            <option value="join">Multi-Table JOIN</option>
           </select>
+        </div>
+        <button class="btn primary" onclick="generateDetails()">⚡ Generate Code</button>
+      </div>
+    </div>
+
+    <div id="detailsResult" style="display: none;">
+      <div class="code-container">
+        <div class="code-header">
+          <span id="codeTitle">ABAP Report</span>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn" style="padding: 4px 10px; font-size: 12px;" onclick="downloadJSON()">📥 Export JSON</button>
+            <button class="btn" style="padding: 4px 10px; font-size: 12px;" onclick="copyCode('detailsCode')">📋 Copy Code</button>
+          </div>
+        </div>
+        <div class="code-block" id="detailsCode"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TOOL 2: DATA INJECTION ================= -->
+  <div id="tab-injection" class="tool-panel">
+    <div class="panel-header">
+      <h2>Data Injection Program Generator</h2>
+      <p>Upload a table structure JSON (exported from the Table Details tool) to automatically generate an ABAP data mock/injection program.</p>
+    </div>
+
+    <div class="card">
+      <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+        <div class="icon">📂</div>
+        <p>Click to upload or drag and drop</p>
+        <p class="highlight">.json or .txt file</p>
+        <input type="file" id="fileInput" accept=".json,.txt" onchange="handleFileUpload(this)" />
+      </div>
+      <div id="fileInfo" class="file-info" style="display: none;">
+        <span>✅</span>
+        <span id="fileName">structure.json loaded successfully</span>
+      </div>
+    </div>
+
+    <div id="injectionResult" style="display: none;">
+      <div class="form-row" style="margin-bottom: 16px;">
+        <div class="form-group">
+          <label>Number of Mock Rows to Generate</label>
+          <input type="number" class="input" id="mockRows" value="5" min="1" max="50" onchange="generateInjectionCode()" />
         </div>
         <div class="form-group">
-          <label>Entry Limit</label>
-          <select class="select" id="entryLimit">
-            <option>100</option>
-            <option selected>1000</option>
-            <option>5000</option>
-            <option>10000</option>
-            <option>Unlimited</option>
+          <label>Operation</label>
+          <select class="select" id="injectOp" onchange="generateInjectionCode()">
+            <option value="INSERT">INSERT (New records)</option>
+            <option value="MODIFY">MODIFY (Upsert)</option>
+            <option value="UPDATE">UPDATE (Existing only)</option>
           </select>
         </div>
+        <button class="btn success" onclick="generateInjectionCode()" style="align-self: flex-end;">🔄 Regenerate Code</button>
       </div>
-      <div class="btn-row">
-        <button class="btn ghost" onclick="clearInput()">Clear</button>
-        <button class="btn" onclick="loadSample()">Load Sample</button>
-        <button class="btn primary" onclick="generateReport()">⚡ Generate Report</button>
-      </div>
-    </div>
 
-    <!-- RESULTS -->
-    <div id="resultsArea" style="display:none;">
-      <div class="results-tabs">
-        <div class="tab active" data-tab="details">📋 Table Details <span class="tab-badge" id="badgeDetails">3</span></div>
-        <div class="tab" data-tab="data">🗂 Data <span class="tab-badge" id="badgeData">—</span></div>
-        <div class="tab" data-tab="code">💻 Code</div>
-        <div class="tab" data-tab="relations">🔗 Relations</div>
-      </div>
-      <div class="results-body">
-
-        <!-- TAB: DETAILS -->
-        <div class="tab-panel active" id="panel-details"></div>
-
-        <!-- TAB: DATA -->
-        <div class="tab-panel" id="panel-data"></div>
-
-        <!-- TAB: CODE -->
-        <div class="tab-panel" id="panel-code"></div>
-
-        <!-- TAB: RELATIONS -->
-        <div class="tab-panel" id="panel-relations"></div>
-
+      <div class="code-container">
+        <div class="code-header">
+          <span id="injectCodeTitle">ABAP Injection Report</span>
+          <button class="btn" style="padding: 4px 10px; font-size: 12px;" onclick="copyCode('injectionCode')">📋 Copy Code</button>
+        </div>
+        <div class="code-block" id="injectionCode"></div>
       </div>
     </div>
+  </div>
 
-    <!-- EMPTY STATE -->
-    <div id="emptyState" class="card">
-      <div class="empty">
-        <div class="big">🗃</div>
-        <h4>No report generated yet</h4>
-        <p>Enter one or more SAP table names above and click <b>Generate Report</b>.</p>
-      </div>
+  <!-- ================= TOOL 3: ABOUT ================= -->
+  <div id="tab-about" class="tool-panel">
+    <div class="panel-header">
+      <h2>About & Extensibility</h2>
+      <p>This is a static, client-side tool hosted on GitHub Pages. No data is sent to any server. Everything runs in your browser.</p>
     </div>
-  </main>
+    <div class="card">
+      <h3 style="margin-bottom: 12px; color: var(--accent);">How to add a new tool:</h3>
+      <ol style="padding-left: 20px; line-height: 1.8; color: var(--text-dim);">
+        <li>Add a new button in the <code>.tabs</code> div.</li>
+        <li>Add a new <code>div</code> with class <code>tool-panel</code> and a unique ID.</li>
+        <li>Add the ID to the <code>switchTab()</code> function in the script.</li>
+        <li>Write your HTML/JS logic inside that panel.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom: 12px; color: var(--accent-2);">Built-in Mock Tables</h3>
+      <p style="color: var(--text-dim); font-size: 13px;">
+        For demonstration, this tool has built-in metadata for: <b>MARA, MARC, VBAK, VBAP, KNA1</b>.<br>
+        For other tables, the generator creates a generic but fully functional ABAP skeleton that you can easily adapt, or you can manually define the fields in the exported JSON.
+      </p>
+    </div>
+  </div>
+</main>
 
-  <!-- RIGHT SIDEBAR -->
-  <aside class="rightbar">
-    <div class="section-title">Quick Actions</div>
-    <div class="quick-action" onclick="exportExcel()">
-      <div class="qa-icon green">📊</div>
-      <div class="qa-text">Export Excel<small>Download as .xlsx</small></div>
-    </div>
-    <div class="quick-action" onclick="exportPDF()">
-      <div class="qa-icon red">📄</div>
-      <div class="qa-text">Export PDF<small>Print-ready document</small></div>
-    </div>
-    <div class="quick-action" onclick="copyReport()">
-      <div class="qa-icon blue">📋</div>
-      <div class="qa-text">Copy Report<small>Copy HTML to clipboard</small></div>
-    </div>
-    <div class="quick-action" onclick="saveTemplate()">
-      <div class="qa-icon orange">💾</div>
-      <div class="qa-text">Save Template<small>Reuse configuration</small></div>
-    </div>
-    <div class="quick-action" onclick="shareLink()">
-      <div class="qa-icon purple">🔗</div>
-      <div class="qa-text">Share Link<small>Copy URL with params</small></div>
-    </div>
-
-    <div class="divider"></div>
-    <div class="section-title">Options</div>
-    <div class="checkbox-row">
-      <input type="checkbox" id="optFields" checked />
-      <label for="optFields">Fields</label>
-      <span class="hint">All columns</span>
-    </div>
-    <div class="checkbox-row">
-      <input type="checkbox" id="optCurrency" checked />
-      <label for="optCurrency">Currency</label>
-      <span class="hint">WAERS refs</span>
-    </div>
-    <div class="checkbox-row">
-      <input type="checkbox" id="optRelations" checked />
-      <label for="optRelations">Relations</label>
-      <span class="hint">FK / joins</span>
-    </div>
-    <div class="checkbox-row">
-      <input type="checkbox" id="optCode" checked />
-      <label for="optCode">Code</label>
-      <span class="hint">ABAP snippet</span>
-    </div>
-    <div class="checkbox-row">
-      <input type="checkbox" id="optTech" checked />
-      <label for="optTech">Tech Info</label>
-      <span class="hint">Class, buffer</span>
-    </div>
-
-    <div class="divider"></div>
-    <div class="section-title">Summary</div>
-    <div class="stat-row">
-      <div class="stat-box"><div class="sv" id="statTables">0</div><div class="sl">Tables</div></div>
-      <div class="stat-box"><div class="sv" id="statFields">0</div><div class="sl">Fields</div></div>
-      <div class="stat-box"><div class="sv" id="statKeys">0</div><div class="sl">Key Fields</div></div>
-      <div class="stat-box"><div class="sv" id="statCurr">0</div><div class="sl">Currency Refs</div></div>
-    </div>
-  </aside>
-</div>
-
-<div class="toast" id="toast">Action completed</div>
+<div class="toast" id="toast">Action completed successfully</div>
 
 <script>
 /* =========================================================
-   MOCK SAP TABLE METADATA (in real life, this comes from DDIF)
+   MOCK METADATA (In a real scenario, this could be expanded 
+   or fetched from a public JSON file in your repo)
    ========================================================= */
-const TABLES = {
+const SAP_METADATA = {
   MARA: {
     name: 'MARA',
     desc: 'General Material Data',
-    type: 'TRANSP',
-    deliveryClass: 'A',
-    dataClass: 'APPL0',
-    buffering: 'X',
-    clientDep: 'No',
-    maintCategory: 'C',
-    sizeCategory: '4',
     fields: [
-      { name:'MANDT', type:'CLNT', len:3, key:true, currency:null, desc:'Client' },
-      { name:'MATNR', type:'CHAR', len:18, key:true, currency:null, desc:'Material Number' },
-      { name:'ERSDA', type:'DATS', len:8, key:false, currency:null, desc:'Created On' },
-      { name:'LAEDA', type:'DATS', len:8, key:false, currency:null, desc:'Last Change' },
-      { name:'MTART', type:'CHAR', len:4, key:false, currency:null, desc:'Material Type' },
-      { name:'MBRSH', type:'CHAR', len:1, key:false, currency:null, desc:'Industry Sector' },
-      { name:'MEINS', type:'UNIT', len:3, key:false, currency:null, desc:'Base Unit of Measure' },
-      { name:'MATKL', type:'CHAR', len:9, key:false, currency:null, desc:'Material Group' },
-      { name:'ZEINR', type:'CHAR', len:22, key:false, currency:null, desc:'Document Number' },
-      { name:'BRGEW', type:'QUAN', len:13, key:false, currency:null, desc:'Gross Weight' },
-      { name:'GEWEI', type:'UNIT', len:3, key:false, currency:null, desc:'Weight Unit' }
-    ],
-    relations: [
-      { from:'MARA-MATNR', to:'MARC-MATNR', type:'1:N', desc:'Plant data' },
-      { from:'MARA-MATNR', to:'MVKE-MATNR', type:'1:N', desc:'Sales data' },
-      { from:'MARA-MEINS', to:'T006-MSEHI', type:'N:1', desc:'Unit of measure' }
+      { name: 'MANDT', type: 'CLNT', len: 3, key: true },
+      { name: 'MATNR', type: 'CHAR', len: 18, key: true },
+      { name: 'ERSDA', type: 'DATS', len: 8, key: false },
+      { name: 'MTART', type: 'CHAR', len: 4, key: false },
+      { name: 'MEINS', type: 'UNIT', len: 3, key: false },
+      { name: 'MATKL', type: 'CHAR', len: 9, key: false }
     ]
   },
   MARC: {
-    name:'MARC',
-    desc:'Plant Data for Material',
-    type:'TRANSP',
-    deliveryClass:'A',
-    dataClass:'APPL0',
-    buffering:'X',
-    clientDep:'No',
-    maintCategory:'C',
-    sizeCategory:'2',
+    name: 'MARC',
+    desc: 'Plant Data for Material',
     fields: [
-      { name:'MANDT', type:'CLNT', len:3, key:true, currency:null, desc:'Client' },
-      { name:'MATNR', type:'CHAR', len:18, key:true, currency:null, desc:'Material Number' },
-      { name:'WERKS', type:'CHAR', len:4, key:true, currency:null, desc:'Plant' },
-      { name:'DISPO', type:'CHAR', len:3, key:false, currency:null, desc:'MRP Controller' },
-      { name:'PLIFZ', type:'NUMC', len:3, key:false, currency:null, desc:'Planned Delivery Time' },
-      { name:'WEBAZ', type:'NUMC', len:3, key:false, currency:null, desc:'GR Processing Time' },
-      { name:'PERKZ', type:'CHAR', len:1, key:false, currency:null, desc:'Period Indicator' },
-      { name:'AUSSL', type:'DEC', len:5, key:false, currency:null, desc:'Assembly Scrap %' },
-      { name:'STLAL', type:'CHAR', len:2, key:false, currency:null, desc:'Alternative BOM' }
-    ],
-    relations: [
-      { from:'MARC-MATNR', to:'MARA-MATNR', type:'N:1', desc:'Material master' },
-      { from:'MARC-WERKS', to:'T001W-WERKS', type:'N:1', desc:'Plant master' }
+      { name: 'MANDT', type: 'CLNT', len: 3, key: true },
+      { name: 'MATNR', type: 'CHAR', len: 18, key: true },
+      { name: 'WERKS', type: 'CHAR', len: 4, key: true },
+      { name: 'DISPO', type: 'CHAR', len: 3, key: false },
+      { name: 'PLIFZ', type: 'NUMC', len: 3, key: false }
     ]
   },
   VBAK: {
-    name:'VBAK',
-    desc:'Sales Document: Header Data',
-    type:'TRANSP',
-    deliveryClass:'A',
-    dataClass:'APPL0',
-    buffering:' ',
-    clientDep:'No',
-    maintCategory:'C',
-    sizeCategory:'4',
+    name: 'VBAK',
+    desc: 'Sales Document: Header Data',
     fields: [
-      { name:'MANDT', type:'CLNT', len:3, key:true, currency:null, desc:'Client' },
-      { name:'VBELN', type:'CHAR', len:10, key:true, currency:null, desc:'Sales Document' },
-      { name:'ERDAT', type:'DATS', len:8, key:false, currency:null, desc:'Creation Date' },
-      { name:'ERZET', type:'TIMS', len:6, key:false, currency:null, desc:'Entry Time' },
-      { name:'ERNAM', type:'CHAR', len:12, key:false, currency:null, desc:'Created By' },
-      { name:'AUART', type:'CHAR', len:4, key:false, currency:null, desc:'Order Type' },
-      { name:'KUNNR', type:'CHAR', len:10, key:false, currency:null, desc:'Customer Number' },
-      { name:'NETWR', type:'CURR', len:13, key:false, currency:'WAERS', desc:'Net Value' },
-      { name:'WAERK', type:'CUKY', len:5, key:false, currency:null, desc:'Document Currency' },
-      { name:'VKORG', type:'CHAR', len:4, key:false, currency:null, desc:'Sales Organization' },
-      { name:'VTWEG', type:'CHAR', len:2, key:false, currency:null, desc:'Distribution Channel' },
-      { name:'SPART', type:'CHAR', len:2, key:false, currency:null, desc:'Division' }
-    ],
-    relations: [
-      { from:'VBAK-VBELN', to:'VBAP-VBELN', type:'1:N', desc:'Sales items' },
-      { from:'VBAK-KUNNR', to:'KNA1-KUNNR', type:'N:1', desc:'Customer master' },
-      { from:'VBAK-WAERK', to:'TCURC-WAERS', type:'N:1', desc:'Currency master' }
+      { name: 'MANDT', type: 'CLNT', len: 3, key: true },
+      { name: 'VBELN', type: 'CHAR', len: 10, key: true },
+      { name: 'ERDAT', type: 'DATS', len: 8, key: false },
+      { name: 'AUART', type: 'CHAR', len: 4, key: false },
+      { name: 'KUNNR', type: 'CHAR', len: 10, key: false },
+      { name: 'NETWR', type: 'CURR', len: 15, key: false },
+      { name: 'WAERK', type: 'CUKY', len: 5, key: false }
+    ]
+  },
+  VBAP: {
+    name: 'VBAP',
+    desc: 'Sales Document: Item Data',
+    fields: [
+      { name: 'MANDT', type: 'CLNT', len: 3, key: true },
+      { name: 'VBELN', type: 'CHAR', len: 10, key: true },
+      { name: 'POSNR', type: 'NUMC', len: 6, key: true },
+      { name: 'MATNR', type: 'CHAR', len: 18, key: false },
+      { name: 'KWMENG', type: 'QUAN', len: 15, key: false },
+      { name: 'NETPR', type: 'CURR', len: 11, key: false }
+    ]
+  },
+  KNA1: {
+    name: 'KNA1',
+    desc: 'General Data in Customer Master',
+    fields: [
+      { name: 'MANDT', type: 'CLNT', len: 3, key: true },
+      { name: 'KUNNR', type: 'CHAR', len: 10, key: true },
+      { name: 'NAME1', type: 'CHAR', len: 35, key: false },
+      { name: 'STRAS', type: 'CHAR', len: 35, key: false },
+      { name: 'ORT01', type: 'CHAR', len: 35, key: false }
     ]
   }
 };
 
-/* =========================================================
-   STATE
-   ========================================================= */
-let currentTables = [];
-let currentReport = 'technical';
+let currentStructure = null; // Holds the JSON structure for injection tool
 
 /* =========================================================
-   UI HANDLERS
+   UI LOGIC
    ========================================================= */
-const $ = (id) => document.getElementById(id);
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
+  
+  event.currentTarget.classList.add('active');
+  document.getElementById('tab-' + tabId).classList.add('active');
+}
 
 function toast(msg) {
-  const t = $('toast');
+  const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
-}
-
-function parseTables() {
-  const raw = $('tableInput').value;
-  return raw.split(/[,\s]+/).map(s => s.trim().toUpperCase()).filter(Boolean);
-}
-
-function renderChips() {
-  const row = $('chipRow');
-  row.innerHTML = '';
-  parseTables().forEach(t => {
-    const c = document.createElement('div');
-    c.className = 'chip';
-    c.innerHTML = `<span>${t}</span><span class="x" onclick="removeChip('${t}')">×</span>`;
-    row.appendChild(c);
-  });
-}
-
-function removeChip(name) {
-  const list = parseTables().filter(t => t !== name);
-  $('tableInput').value = list.join(', ');
-  renderChips();
-}
-
-function clearInput() {
-  $('tableInput').value = '';
-  renderChips();
-}
-
-function loadSample() {
-  $('tableInput').value = 'MARA, MARC, VBAK';
-  renderChips();
-  toast('Sample tables loaded');
-}
-
-$('tableInput').addEventListener('input', renderChips);
-
-/* Report type sync */
-document.querySelectorAll('.report-item[data-report]').forEach(el => {
-  el.addEventListener('click', () => {
-    document.querySelectorAll('.report-item[data-report]').forEach(r => r.classList.remove('active'));
-    el.classList.add('active');
-    const r = el.dataset.report;
-    currentReport = r;
-    $('reportType').value = r;
-    const titles = {
-      technical: ['Technical Details', 'Inspect SAP table metadata, fields, data types, currency references and relations.'],
-      data: ['Data Entries', 'Browse live data entries from selected tables with configurable limits.'],
-      compare: ['Compare Tables', 'Side-by-side comparison of structure, keys and data types.'],
-      custom: ['Custom Query', 'Build a custom ABAP-style query against selected tables.']
-    };
-    $('pageTitle').textContent = titles[r][0];
-    $('pageDesc').textContent = titles[r][1];
-    $('crumbReport').textContent = titles[r][0];
-  });
-});
-
-$('reportType').addEventListener('change', e => {
-  const r = e.target.value;
-  document.querySelector(`.report-item[data-report="${r}"]`)?.click();
-});
-
-/* Tabs */
-document.querySelectorAll('.results-tabs .tab').forEach(t => {
-  t.addEventListener('click', () => {
-    document.querySelectorAll('.results-tabs .tab').forEach(x => x.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(x => x.classList.remove('active'));
-    t.classList.add('active');
-    $('panel-' + t.dataset.tab).classList.add('active');
-  });
-});
-
-/* =========================================================
-   GENERATE REPORT
-   ========================================================= */
-function generateReport() {
-  const tables = parseTables();
-  if (!tables.length) { toast('Please enter at least one table name'); return; }
-
-  currentTables = tables;
-  $('emptyState').style.display = 'none';
-  $('resultsArea').style.display = 'block';
-
-  renderDetails(tables);
-  renderData(tables);
-  renderCode(tables);
-  renderRelations(tables);
-  updateStats(tables);
-  $('badgeDetails').textContent = tables.length;
-  $('badgeData').textContent = $('entryLimit').value;
-
-  toast(`Report generated for ${tables.length} table(s)`);
-}
-
-/* ---------- DETAILS TAB ---------- */
-function renderDetails(tables) {
-  const panel = $('panel-details');
-  const showFields = $('optFields').checked;
-  const showTech = $('optTech').checked;
-  const showCurr = $('optCurrency').checked;
-
-  panel.innerHTML = tables.map(tname => {
-    const t = TABLES[tname];
-    if (!t) {
-      return `<div class="table-block">
-        <div class="table-block-header">
-          <div class="table-name-tag">
-            <span class="name">${tname}</span>
-            <span class="desc" style="color:var(--danger)">⚠ Table not found in metadata cache</span>
-          </div>
-        </div>
-        <p style="color:var(--text-dim); font-size:13px;">This table is not available in the local cache. Connect to the SAP system or add metadata manually.</p>
-      </div>`;
-    }
-
-    let html = `<div class="table-block">
-      <div class="table-block-header">
-        <div class="table-name-tag">
-          <span class="name">${t.name}</span>
-          <span class="desc">${t.desc}</span>
-        </div>
-        <span class="table-type-badge">${t.type}</span>
-      </div>`;
-
-    if (showTech) {
-      html += `
-        <div class="sub-title">Technical Information</div>
-        <div class="info-grid">
-          <div class="info-cell"><span class="k">Table Name</span><span class="v">${t.name}</span></div>
-          <div class="info-cell"><span class="k">Table Type</span><span class="v">${t.type}</span></div>
-          <div class="info-cell"><span class="k">Delivery Class</span><span class="v">${t.deliveryClass}</span></div>
-          <div class="info-cell"><span class="k">Data Class</span><span class="v">${t.dataClass}</span></div>
-          <div class="info-cell"><span class="k">Buffering</span><span class="v">${t.buffering || '—'}</span></div>
-          <div class="info-cell"><span class="k">Client-Dependent</span><span class="v">${t.clientDep}</span></div>
-          <div class="info-cell"><span class="k">Maint. Category</span><span class="v">${t.maintCategory}</span></div>
-          <div class="info-cell"><span class="k">Size Category</span><span class="v">${t.sizeCategory}</span></div>
-        </div>`;
-    }
-
-    if (showFields) {
-      const cols = ['Field','Type','Len','Key','Description'];
-      if (showCurr) cols.push('Currency Ref');
-      html += `
-        <div class="sub-title">Fields / Columns (${t.fields.length})</div>
-        <div class="table-scroll">
-          <table class="data-table">
-            <thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead>
-            <tbody>
-              ${t.fields.map(f => `
-                <tr>
-                  <td class="${f.key?'key-col':''}">${f.name}</td>
-                  <td><span class="type-tag ${f.type.toLowerCase()}">${f.type}</span></td>
-                  <td class="num-col">${f.len}</td>
-                  <td>${f.key?'🔑':'—'}</td>
-                  <td style="font-family:inherit;color:var(--text-dim)">${f.desc}</td>
-                  ${showCurr?`<td class="curr-col">${f.currency||'—'}</td>`:''}
-                </tr>`).join('')}
-            </tbody>
-          </table>
-        </div>`;
-    }
-
-    html += `</div>`;
-    return html;
-  }).join('');
-}
-
-/* ---------- DATA TAB ---------- */
-function renderData(tables) {
-  const panel = $('panel-data');
-  const limit = parseInt($('entryLimit').value) || 1000;
-  const showCurr = $('optCurrency').checked;
-
-  panel.innerHTML = tables.map(tname => {
-    const t = TABLES[tname];
-    if (!t) return `<div class="table-block"><p style="color:var(--text-dim)">No data available for ${tname}</p></div>`;
-
-    const sampleRows = generateSampleData(t, Math.min(8, limit));
-    const cols = t.fields.map(f => f.name);
-
-    return `<div class="table-block">
-      <div class="table-block-header">
-        <div class="table-name-tag">
-          <span class="name">${t.name}</span>
-          <span class="desc">Data preview · ${limit.toLocaleString()} entries limit</span>
-        </div>
-        <span class="table-type-badge">${sampleRows.length} rows shown</span>
-      </div>
-      <div class="table-scroll">
-        <table class="data-table">
-          <thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead>
-          <tbody>
-            ${sampleRows.map(row => `
-              <tr>${row.map((val,i)=>{
-                const f = t.fields[i];
-                let cls = '';
-                if (f.key) cls = 'key-col';
-                else if (f.type === 'CURR') cls = 'curr-col num-col';
-                else if (f.type === 'NUMC' || f.type === 'DEC' || f.type === 'QUAN') cls = 'num-col';
-                return `<td class="${cls}">${val}</td>`;
-              }).join('')}</tr>
-            `).join('')}
-          </tbody>
-        </table>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function generateSampleData(t, n) {
-  const rows = [];
-  for (let i = 0; i < n; i++) {
-    rows.push(t.fields.map(f => mockValue(f, i)));
-  }
-  return rows;
-}
-
-function mockValue(f, i) {
-  const pad = (s, l) => String(s).padStart(l, '0');
-  switch (f.type) {
-    case 'CLNT': return '100';
-    case 'CHAR':
-      if (f.name === 'MATNR') return 'MAT-' + pad(1000 + i, 7);
-      if (f.name === 'VBELN') return '0000' + pad(60000 + i, 6);
-      if (f.name === 'KUNNR') return '0001000' + (i % 10);
-      if (f.name === 'WERKS') return '10' + (i % 4) + '0';
-      return f.name.substr(0,3) + pad(i, f.len - 3);
-    case 'DATS': return '20260' + ((i%9)+1) + pad(10+i,2);
-    case 'TIMS': return pad(10+(i%12),2) + pad(i*3%60,2) + '00';
-    case 'NUMC': return pad(i * 7 % 100, f.len);
-    case 'DEC': return (10.5 + i * 0.3).toFixed(3);
-    case 'QUAN': return (100 + i * 12.5).toFixed(2);
-    case 'UNIT': return f.name === 'MEINS' ? 'PC' : (f.name === 'GEWEI' ? 'KG' : 'EA');
-    case 'CURR': return (1250.75 + i * 33.3).toFixed(2);
-    case 'CUKY': return ['USD','EUR','GBP','JPY'][i % 4];
-    default: return '—';
-  }
-}
-
-/* ---------- CODE TAB ---------- */
-function renderCode(tables) {
-  const panel = $('panel-code');
-  const showCurr = $('optCurrency').checked;
-
-  panel.innerHTML = tables.map(tname => {
-    const t = TABLES[tname];
-    if (!t) return '';
-    const fieldList = t.fields.map(f => f.name).join(', ');
-    const currFields = t.fields.filter(f => f.currency);
-
-    return `<div class="table-block">
-      <div class="table-block-header">
-        <div class="table-name-tag">
-          <span class="name">${t.name}</span>
-          <span class="desc">ABAP SELECT snippet</span>
-        </div>
-      </div>
-      <div class="code-block">
-        <button class="copy-code-btn" onclick="copyCode(this)">📋 Copy</button>
-<span class="cm">* -------------------------------------------------</span>
-<span class="cm">* Report: ${t.name} technical extract</span>
-<span class="cm">* Generated by About Tools by Farhat</span>
-<span class="cm">* -------------------------------------------------</span>
-<span class="kw">REPORT</span> z_${t.name.toLowerCase()}_extract.
-
-<span class="kw">TABLES</span>: ${t.name.toLowerCase()}.
-
-<span class="kw">DATA</span>: lt_${t.name.toLowerCase()} <span class="kw">TYPE STANDARD TABLE OF</span> ${t.name},
-      ls_${t.name.toLowerCase()} <span class="kw">TYPE</span> ${t.name}.
-
-<span class="cm">* Select up to 1000 entries</span>
-<span class="kw">SELECT</span> <span class="var">${fieldList}</span>
-  <span class="kw">FROM</span> ${t.name}
-  <span class="kw">UP TO</span> <span class="num">1000</span> <span class="kw">ROWS</span>
-  <span class="kw">INTO TABLE</span> lt_${t.name.toLowerCase()}.
-
-<span class="kw">IF</span> sy-subrc = <span class="num">0</span>.
-  <span class="fn">LOOP AT</span> lt_${t.name.toLowerCase()} <span class="kw">INTO</span> ls_${t.name.toLowerCase()}.
-    <span class="fn">WRITE</span>: / ls_${t.name.toLowerCase()}-${t.fields.find(f=>f.key)?.name || t.fields[0].name}.
-  <span class="kw">ENDLOOP</span>.
-<span class="kw">ENDIF</span>.
-${currFields.length && showCurr ? `
-<span class="cm">* Currency reference fields detected</span>
-<span class="cm">* ${currFields.map(f=>`${f.name} -> ${f.currency}`).join(', ')}</span>
-<span class="kw">DATA</span>: lv_amount <span class="kw">TYPE</span> p <span class="kw">DECIMALS</span> <span class="num">2</span>,
-      lv_curr   <span class="kw">TYPE</span> waers.
-` : ''}`
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function copyCode(btn) {
-  const code = btn.parentElement.innerText.replace('📋 Copy','').trim();
-  navigator.clipboard.writeText(code);
-  btn.textContent = '✓ Copied';
-  setTimeout(() => btn.textContent = '📋 Copy', 1500);
-}
-
-/* ---------- RELATIONS TAB ---------- */
-function renderRelations(tables) {
-  const panel = $('panel-relations');
-  panel.innerHTML = tables.map(tname => {
-    const t = TABLES[tname];
-    if (!t || !t.relations.length) return '';
-    return `<div class="table-block">
-      <div class="table-block-header">
-        <div class="table-name-tag">
-          <span class="name">${t.name}</span>
-          <span class="desc">Foreign keys & joins</span>
-        </div>
-      </div>
-      <table class="data-table">
-        <thead><tr><th>From</th><th>To</th><th>Cardinality</th><th>Description</th></tr></thead>
-        <tbody>
-          ${t.relations.map(r => `
-            <tr>
-              <td class="key-col">${r.from}</td>
-              <td class="key-col">${r.to}</td>
-              <td><span class="type-tag char">${r.type}</span></td>
-              <td style="font-family:inherit;color:var(--text-dim)">${r.desc}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    </div>`;
-  }).join('') || `<div class="empty"><div class="big">🔗</div><h4>No relations detected</h4><p>Enable the Relations option and regenerate.</p></div>`;
-}
-
-/* ---------- STATS ---------- */
-function updateStats(tables) {
-  let fields = 0, keys = 0, curr = 0;
-  tables.forEach(n => {
-    const t = TABLES[n];
-    if (!t) return;
-    fields += t.fields.length;
-    keys += t.fields.filter(f => f.key).length;
-    curr += t.fields.filter(f => f.currency).length;
-  });
-  $('statTables').textContent = tables.length;
-  $('statFields').textContent = fields;
-  $('statKeys').textContent = keys;
-  $('statCurr').textContent = curr;
+  setTimeout(() => t.classList.remove('show'), 2500);
 }
 
 /* =========================================================
-   QUICK ACTIONS
+   TOOL 1: TABLE DETAILS GENERATOR
    ========================================================= */
-function exportExcel() {
-  const tables = currentTables.length ? currentTables : parseTables();
-  if (!tables.length) { toast('Generate a report first'); return; }
-  let csv = '';
-  tables.forEach(tname => {
-    const t = TABLES[tname]; if (!t) return;
-    csv += `TABLE: ${t.name} - ${t.desc}\n`;
-    csv += t.fields.map(f => f.name).join(',') + '\n';
-    const rows = generateSampleData(t, 5);
-    rows.forEach(r => csv += r.join(',') + '\n');
-    csv += '\n\n';
+function generateDetails() {
+  const input = document.getElementById('tableNames').value;
+  const tables = input.split(',').map(t => t.trim().toUpperCase()).filter(Boolean);
+  const type = document.getElementById('reportType').value;
+  
+  if (tables.length === 0) {
+    toast('Please enter at least one table name');
+    return;
+  }
+
+  let abap = `<span class="cm">*&---------------------------------------------------------------------*</span>\n`;
+  abap += `<span class="cm">*& Report  Z_READ_</span><span class="var">${tables.join('_')}</span>\n`;
+  abap += `<span class="cm">*& Generated by Farhat's ABAP Tools</span>\n`;
+  abap += `<span class="cm">*&---------------------------------------------------------------------*</span>\n\n`;
+  abap += `<span class="kw">REPORT</span> <span class="var">z_read_</span><span class="var">${tables[0].toLowerCase()}</span>.\n\n`;
+
+  // Store structure for JSON export
+  currentStructure = [];
+
+  tables.forEach(tbl => {
+    const meta = SAP_METADATA[tbl];
+    if (meta) {
+      currentStructure.push(meta);
+      abap += `<span class="cm">* Table: ${meta.name} - ${meta.desc}</span>\n`;
+      abap += `<span class="kw">TABLES</span>: <span class="var">${meta.name.toLowerCase()}</span>.\n`;
+      abap += `<span class="kw">DATA</span>: <span class="var">gt_${meta.name.toLowerCase()}</span> <span class="kw">TYPE STANDARD TABLE OF</span> <span class="type">${meta.name}</span>,\n`;
+      abap += `       <span class="var">gs_${meta.name.toLowerCase()}</span> <span class="kw">TYPE</span> <span class="type">${meta.name}</span>.\n\n`;
+      
+      // Select options for key fields
+      const keys = meta.fields.filter(f => f.key);
+      if (keys.length > 0) {
+        abap += `<span class="kw">SELECT-OPTIONS</span>:\n`;
+        keys.forEach((k, i) => {
+          const comma = i === keys.length - 1 ? '.' : ',';
+          abap += `  <span class="var">s_${k.name.toLowerCase()}</span> <span class="kw">FOR</span> <span class="var">${meta.name.toLowerCase()}</span><span class="kw">-</span><span class="var">${k.name.toLowerCase()}</span>${comma}\n`;
+        });
+        abap += `\n`;
+      }
+    } else {
+      // Generic fallback for unknown tables
+      currentStructure.push({ name: tbl, desc: 'Custom/Unknown Table', fields: [{ name: 'MANDT', type: 'CLNT', len: 3, key: true }, { name: 'FIELD1', type: 'CHAR', len: 10, key: false }] });
+      abap += `<span class="cm">* Table: ${tbl} (Metadata not in local cache, using generic structure)</span>\n`;
+      abap += `<span class="kw">TABLES</span>: <span class="var">${tbl.toLowerCase()}</span>.\n`;
+      abap += `<span class="kw">DATA</span>: <span class="var">gt_${tbl.toLowerCase()}</span> <span class="kw">TYPE STANDARD TABLE OF</span> <span class="type">${tbl}</span>.\n\n`;
+      abap += `<span class="kw">SELECT-OPTIONS</span>: <span class="var">s_key</span> <span class="kw">FOR</span> <span class="var">${tbl.toLowerCase()}</span><span class="kw">-</span><span class="var">mandt</span>.\n\n`;
+    }
   });
-  const blob = new Blob([csv], { type:'text/csv' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'sap_tables_' + Date.now() + '.csv';
-  a.click();
-  toast('Excel/CSV exported');
+
+  abap += `<span class="kw">START-OF-SELECTION</span>.\n`;
+  
+  tables.forEach(tbl => {
+    const meta = SAP_METADATA[tbl];
+    const keys = meta ? meta.fields.filter(f => f.key) : [{name: 'MANDT'}];
+    const whereClause = keys.map(k => `<span class="var">${k.name.toLowerCase()}</span> <span class="kw">IN</span> <span class="var">s_${k.name.toLowerCase()}</span>`).join(' <span class="kw">AND</span> ');
+    
+    abap += `  <span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="type">${tbl}</span>\n`;
+    abap += `    <span class="kw">INTO TABLE</span> <span class="var">gt_${tbl.toLowerCase()}</span>\n`;
+    abap += `    <span class="kw">WHERE</span> ${whereClause}.\n`;
+    abap += `  <span class="kw">IF</span> sy-subrc = <span class="var">0</span>.\n`;
+    abap += `    <span class="cm">* Process ${tbl} data here</span>\n`;
+    abap += `  <span class="kw">ENDIF</span>.\n\n`;
+  });
+
+  document.getElementById('detailsCode').innerHTML = abap;
+  document.getElementById('detailsResult').style.display = 'block';
+  document.getElementById('codeTitle').textContent = `Z_READ_${tables.join('_')}.abap`;
+  toast('ABAP Code generated successfully');
 }
 
-function exportPDF() {
-  toast('Opening print dialog…');
-  setTimeout(() => window.print(), 400);
+function downloadJSON() {
+  if (!currentStructure || currentStructure.length === 0) {
+    toast('Generate details first');
+    return;
+  }
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentStructure, null, 2));
+  const downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href", dataStr);
+  downloadAnchorNode.setAttribute("download", `abap_structure_${Date.now()}.json`);
+  document.body.appendChild(downloadAnchorNode);
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+  toast('JSON structure downloaded');
 }
 
-function copyReport() {
-  const html = $('resultsArea').innerHTML;
-  navigator.clipboard.writeText(html);
-  toast('Report HTML copied to clipboard');
+/* =========================================================
+   TOOL 2: DATA INJECTION GENERATOR
+   ========================================================= */
+// Drag and drop support
+const dropZone = document.getElementById('dropZone');
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  const files = e.dataTransfer.files;
+  if (files.length) processFile(files[0]);
+});
+
+function handleFileUpload(input) {
+  if (input.files.length) processFile(input.files[0]);
 }
 
-function saveTemplate() {
-  const tpl = {
-    tables: parseTables(),
-    report: $('reportType').value,
-    limit: $('entryLimit').value,
-    options: {
-      fields: $('optFields').checked,
-      currency: $('optCurrency').checked,
-      relations: $('optRelations').checked,
-      code: $('optCode').checked,
-      tech: $('optTech').checked
+function processFile(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      // Handle both pure JSON and text-wrapped JSON
+      let content = e.target.result;
+      if (!content.trim().startsWith('[') && !content.trim().startsWith('{')) {
+        // Try to extract JSON from text file if user pasted it
+        const jsonMatch = content.match(/\[[\s\S]*\]|\{[\s\S]*\}/);
+        if (jsonMatch) content = jsonMatch[0];
+      }
+      currentStructure = JSON.parse(content);
+      
+      // Ensure it's an array
+      if (!Array.isArray(currentStructure)) {
+        currentStructure = [currentStructure];
+      }
+
+      document.getElementById('fileName').textContent = `${file.name} loaded (${currentStructure.length} table(s))`;
+      document.getElementById('fileInfo').style.display = 'flex';
+      document.getElementById('injectionResult').style.display = 'block';
+      
+      generateInjectionCode();
+      toast('File parsed successfully');
+    } catch (err) {
+      toast('Error parsing file. Ensure it is valid JSON.');
+      console.error(err);
     }
   };
-  localStorage.setItem('farhat_tpl_' + Date.now(), JSON.stringify(tpl));
-  toast('Template saved locally');
+  reader.readAsText(file);
 }
 
-function shareLink() {
-  const params = new URLSearchParams({
-    tables: parseTables().join(','),
-    report: $('reportType').value,
-    limit: $('entryLimit').value
+function generateInjectionCode() {
+  if (!currentStructure) return;
+  
+  const rows = parseInt(document.getElementById('mockRows').value) || 5;
+  const operation = document.getElementById('injectOp').value;
+  
+  let abap = `<span class="cm">*&---------------------------------------------------------------------*</span>\n`;
+  abap += `<span class="cm">*& Report  Z_INJECT_DATA</span>\n`;
+  abap += `<span class="cm">*& Generated by Farhat's ABAP Tools (Data Injection)</span>\n`;
+  abap += `<span class="cm">*& WARNING: Only run in Development clients with proper authorization!</span>\n`;
+  abap += `<span class="cm">*&---------------------------------------------------------------------*</span>\n\n`;
+
+  currentStructure.forEach(meta => {
+    const tName = meta.name.toLowerCase();
+    abap += `<span class="kw">DATA</span>: <span class="var">gt_${tName}</span> <span class="kw">TYPE STANDARD TABLE OF</span> <span class="type">${meta.name}</span>,\n`;
+    abap += `       <span class="var">gs_${tName}</span> <span class="kw">TYPE</span> <span class="type">${meta.name}</span>.\n\n`;
+    
+    abap += `<span class="cm">* --- Mock Data Generation for ${meta.name} ---</span>\n`;
+    abap += `<span class="kw">DO</span> <span class="var">${rows}</span> <span class="kw">TIMES</span>.\n`;
+    abap += `  <span class="kw">CLEAR</span> <span class="var">gs_${tName}</span>.\n`;
+    
+    meta.fields.forEach(field => {
+      let mockValue = "''";
+      if (field.key && field.name === 'MANDT') mockValue = "'100'";
+      else if (field.key && field.name === 'MATNR') mockValue = "'TEST_MAT_' && sy-index";
+      else if (field.key && field.name === 'VBELN') mockValue = "'0000' && sy-index";
+      else if (field.type === 'CHAR') mockValue = `'VAL_${field.name.substring(0,3)}'`;
+      else if (field.type === 'NUMC') mockValue = `'0001'`;
+      else if (field.type === 'DATS') mockValue = "'20260926'";
+      else if (field.type === 'CURR' || field.type === 'QUAN') mockValue = "100.00";
+      else if (field.type === 'CLNT') mockValue = "'100'";
+      
+      abap += `  <span class="var">gs_${tName}</span><span class="kw">-</span><span class="var">${field.name.toLowerCase()}</span> = <span class="str">${mockValue}</span>.\n`;
+    });
+    
+    abap += `  <span class="kw">APPEND</span> <span class="var">gs_${tName}</span> <span class="kw">TO</span> <span class="var">gt_${tName}</span>.\n`;
+    abap += `<span class="kw">ENDDO</span>.\n\n`;
+
+    abap += `<span class="cm">* --- Database Operation ---</span>\n`;
+    abap += `<span class="kw">${operation}</span> <span class="type">${meta.name}</span> <span class="kw">FROM TABLE</span> <span class="var">gt_${tName}</span>.\n`;
+    abap += `<span class="kw">IF</span> sy-subrc = <span class="var">0</span>.\n`;
+    abap += `  <span class="kw">WRITE</span>: / <span class="str">'Successfully injected '</span>, sy-dbcnt, <span class="str">' records into ${meta.name}'</span>.\n`;
+    abap += `<span class="kw">ELSE</span>.\n`;
+    abap += `  <span class="kw">WRITE</span>: / <span class="str">'Injection failed. SY-SUBRC:'</span>, sy-subrc.\n`;
+    abap += `<span class="kw">ENDIF</span>.\n\n`;
+    abap += `<span class="kw">COMMIT WORK</span>.\n`;
+    abap += `<span class="cm">*&---------------------------------------------------------------------*</span>\n\n`;
   });
-  const url = location.pathname + '?' + params.toString();
-  navigator.clipboard.writeText(url);
-  toast('Shareable link copied');
+
+  document.getElementById('injectionCode').innerHTML = abap;
+  document.getElementById('injectCodeTitle').textContent = `Z_INJECT_${currentStructure[0].name}.abap`;
 }
 
 /* =========================================================
-   INIT
+   UTILITIES
    ========================================================= */
-renderChips();
+function copyCode(elementId) {
+  const codeText = document.getElementById(elementId).innerText;
+  navigator.clipboard.writeText(codeText).then(() => {
+    toast('ABAP code copied to clipboard!');
+  }).catch(err => {
+    toast('Failed to copy');
+  });
+}
 </script>
 </body>
 </html>
