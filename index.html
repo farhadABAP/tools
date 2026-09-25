@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C_ABAPD Exam Survival Kit | Setter Edition</title>
+<title>C_ABAPD Complete Exam Hub | ABAP Cloud</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-abap.min.js"></script>
@@ -20,413 +20,549 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
 
 nav { background: var(--bg-secondary); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
 .logo { font-size: 1.1rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
-.exam-badge { background: var(--danger); color: white; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.7rem; font-weight: 700; }
+.exam-badge { background: var(--purple); color: white; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.7rem; font-weight: 700; }
 
 .app-container { display: flex; flex: 1; overflow: hidden; }
 .sidebar { width: 260px; background: var(--bg-secondary); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
-.nav-section { padding: 1rem 0; border-bottom: 1px solid var(--border); }
-.nav-title { padding: 0 1.5rem; font-size: 0.7rem; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
-.nav-item { padding: 0.6rem 1.5rem; cursor: pointer; color: var(--text-secondary); font-size: 0.85rem; display: flex; align-items: center; gap: 0.75rem; transition: all 0.2s; border-left: 3px solid transparent; }
+.nav-section { padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
+.nav-title { padding: 0 1.25rem; font-size: 0.65rem; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.4rem; }
+.nav-item { padding: 0.5rem 1.25rem; cursor: pointer; color: var(--text-secondary); font-size: 0.82rem; display: flex; align-items: center; gap: 0.6rem; transition: all 0.2s; border-left: 3px solid transparent; }
 .nav-item:hover { background: var(--bg-tertiary); color: var(--text-primary); }
 .nav-item.active { background: var(--accent-glow); color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
-.nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+.nav-icon { font-size: 0.95rem; width: 18px; text-align: center; }
+.check-mark { margin-left: auto; color: var(--success); font-size: 0.85rem; display: none; }
+.nav-item.completed .check-mark { display: block; }
 
 .main-content { flex: 1; overflow-y: auto; padding: 2rem; }
 .panel { display: none; max-width: 1100px; margin: 0 auto; }
 .panel.active { display: block; }
 
-.module-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
-.module-header h2 { font-size: 1.5rem; }
-.module-content { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; }
-.module-content h3 { color: var(--accent); margin: 1.5rem 0 0.75rem; font-size: 1.1rem; }
-.module-content p { margin-bottom: 1rem; color: var(--text-primary); }
-.module-content ul { margin-bottom: 1rem; padding-left: 1.5rem; }
+.dash-header { background: linear-gradient(135deg, #1f242e 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; }
+.dash-header h1 { font-size: 1.8rem; margin-bottom: 0.5rem; background: linear-gradient(90deg, var(--accent), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.dash-header p { color: var(--text-secondary); }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.stat-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; }
+.stat-card h4 { font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem; }
+.stat-card .val { font-size: 1.5rem; font-weight: 700; }
+.progress-bar { width: 100%; height: 8px; background: var(--bg-tertiary); border-radius: 4px; margin-top: 0.75rem; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--purple)); transition: width 0.5s; }
+
+.module-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
+.module-header h2 { font-size: 1.4rem; }
+.btn-complete { background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-primary); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+.btn-complete:hover { border-color: var(--success); color: var(--success); }
+.btn-complete.done { background: var(--success); border-color: var(--success); color: white; }
+
+.module-content { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; margin-bottom: 1.5rem; }
+.module-content h3 { color: var(--accent); margin: 1.5rem 0 0.75rem; font-size: 1.05rem; }
+.module-content h3:first-child { margin-top: 0; }
+.module-content p { margin-bottom: 1rem; }
+.module-content ul, .module-content ol { margin-bottom: 1rem; padding-left: 1.5rem; }
 .module-content li { margin-bottom: 0.5rem; color: var(--text-secondary); }
-.module-content code:not([class*="language-"]) { background: var(--bg-tertiary); padding: 0.1rem 0.4rem; border-radius: 4px; font-family: "Fira Code", monospace; font-size: 0.85rem; color: var(--warn); }
+.module-content code:not([class*="language-"]) { background: var(--bg-tertiary); padding: 0.1rem 0.4rem; border-radius: 4px; font-family: "Fira Code", monospace; font-size: 0.82rem; color: var(--warn); }
 .module-content pre { margin-bottom: 1.5rem; border-radius: 6px; border: 1px solid var(--border); }
-.module-content pre code { font-size: 0.82rem !important; }
+.module-content pre code { font-size: 0.8rem !important; }
 
-/* TASKS & GOTCHAS */
-.task-card { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid var(--accent); }
-.task-card h4 { color: var(--accent); margin-bottom: 0.5rem; }
-.task-card .grading { background: rgba(218, 54, 51, 0.1); border: 1px solid var(--danger); padding: 0.75rem; border-radius: 4px; margin-top: 1rem; font-size: 0.85rem; color: var(--danger); }
-.task-card .grading strong { display: block; margin-bottom: 0.25rem; }
-
-.gotcha-card { background: var(--bg-secondary); border: 1px solid var(--warn); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
-.gotcha-card h4 { color: var(--warn); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
-
-.info-box { background: rgba(88, 166, 255, 0.1); border-left: 3px solid var(--accent); padding: 1rem; border-radius: 0 6px 6px 0; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-primary); }
-.info-box strong { color: var(--accent); }
+.checklist-item { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; margin-bottom: 0.75rem; display: flex; align-items: flex-start; gap: 1rem; cursor: pointer; transition: all 0.2s; }
+.checklist-item:hover { border-color: var(--accent); }
+.checklist-item.checked { background: rgba(35, 134, 54, 0.1); border-color: var(--success); }
+.checklist-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--success); cursor: pointer; margin-top: 2px; flex-shrink: 0; }
+.checklist-item label { flex: 1; cursor: pointer; font-size: 0.9rem; }
+.checklist-item .hint { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem; }
 
 .search-bar { position: sticky; top: 0; z-index: 10; background: var(--bg-primary); padding-bottom: 1rem; margin-bottom: 1rem; }
 .search-input { width: 100%; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; color: var(--text-primary); font-size: 1rem; outline: none; }
+.search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
 
 .snippet-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1.5rem; overflow: hidden; }
-.snippet-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-tertiary); }
-.snippet-header h3 { font-size: 1rem; color: var(--accent); }
-.snippet-body pre { margin: 0 !important; border-radius: 0 !important; max-height: 400px; overflow: auto; }
-.snippet-body code { font-family: "Fira Code", "Consolas", monospace !important; font-size: 0.82rem !important; }
-.copy-btn { background: var(--bg-primary); border: 1px solid var(--border); color: var(--text-secondary); padding: 0.3rem 0.7rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
+.snippet-header { padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-tertiary); }
+.snippet-header h3 { font-size: 0.95rem; color: var(--accent); }
+.snippet-body pre { margin: 0 !important; border-radius: 0 !important; max-height: 450px; overflow: auto; }
+.snippet-body code { font-family: "Fira Code", "Consolas", monospace !important; font-size: 0.8rem !important; }
+.copy-btn { background: var(--bg-primary); border: 1px solid var(--border); color: var(--text-secondary); padding: 0.3rem 0.7rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: all 0.2s; }
 .copy-btn:hover { border-color: var(--success); color: var(--success); }
 
+.info-box { background: rgba(88, 166, 255, 0.1); border-left: 3px solid var(--accent); padding: 1rem; border-radius: 0 6px 6px 0; margin-bottom: 1.5rem; font-size: 0.9rem; }
+.info-box strong { color: var(--accent); }
+.warn-box { background: rgba(210, 153, 34, 0.1); border-left: 3px solid var(--warn); padding: 1rem; border-radius: 0 6px 6px 0; margin-bottom: 1.5rem; font-size: 0.9rem; }
+.warn-box strong { color: var(--warn); }
+.danger-box { background: rgba(218, 54, 51, 0.1); border-left: 3px solid var(--danger); padding: 1rem; border-radius: 0 6px 6px 0; margin-bottom: 1.5rem; font-size: 0.9rem; }
+.danger-box strong { color: var(--danger); }
+
 .tag { display: inline-block; background: var(--accent-glow); color: var(--accent); padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; margin-left: 0.5rem; }
+.tag-new { background: rgba(163, 113, 247, 0.15); color: var(--purple); }
+.tag-critical { background: rgba(218, 54, 51, 0.15); color: var(--danger); }
+
+.flashcard-container { perspective: 1000px; height: 280px; margin-bottom: 1.5rem; }
+.flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s; cursor: pointer; }
+.flashcard.flipped { transform: rotateY(180deg); }
+.card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2rem; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
+.card-front { background: linear-gradient(135deg, #1f242e, #161b22); }
+.card-back { background: linear-gradient(135deg, #161b22, #0d1117); transform: rotateY(180deg); }
+.card-face h3 { font-size: 1.15rem; margin-bottom: 1rem; color: var(--accent); }
+.card-face p { font-size: 0.95rem; }
+.card-controls { display: flex; justify-content: center; gap: 1rem; }
+.card-counter { text-align: center; color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 0.5rem; }
+
+.quiz-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
+.quiz-card h4 { margin-bottom: 1rem; font-size: 1rem; }
+.quiz-options { display: flex; flex-direction: column; gap: 0.6rem; }
+.quiz-opt { background: var(--bg-tertiary); border: 1px solid var(--border); padding: 0.7rem 1rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 0.9rem; }
+.quiz-opt:hover { border-color: var(--accent); }
+.quiz-opt.correct { border-color: var(--success); background: rgba(35, 134, 54, 0.15); color: var(--success); }
+.quiz-opt.wrong { border-color: var(--danger); background: rgba(218, 54, 51, 0.15); color: var(--danger); }
+.quiz-explanation { margin-top: 1rem; padding: 1rem; background: var(--bg-tertiary); border-left: 3px solid var(--accent); border-radius: 4px; display: none; font-size: 0.85rem; color: var(--text-secondary); }
+
+.joule-prompt { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; font-family: "Fira Code", monospace; font-size: 0.82rem; color: var(--success); margin-bottom: 1rem; position: relative; padding-right: 4rem; white-space: pre-wrap; }
+.joule-prompt .copy-btn { position: absolute; top: 0.5rem; right: 0.5rem; }
+
+.tool-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
+.tool-card h4 { color: var(--purple); margin-bottom: 1rem; }
+.tool-row { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.tool-field { flex: 1; min-width: 200px; }
+.tool-field label { display: block; font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 0.3rem; }
+.tool-field select, .tool-field input { width: 100%; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; padding: 0.5rem; color: var(--text-primary); font-size: 0.9rem; }
+.tool-output { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; font-family: "Fira Code", monospace; font-size: 0.82rem; color: var(--success); min-height: 60px; white-space: pre-wrap; }
+
+.task-card { background: var(--bg-secondary); border: 1px solid var(--warn); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
+.task-card h4 { color: var(--warn); margin-bottom: 0.75rem; }
+.task-step { padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+.task-step:last-child { border-bottom: none; }
+.task-step strong { color: var(--accent); }
 
 pre { margin: 0 !important; border-radius: 0 !important; background: var(--code-bg) !important; }
 code { font-family: "Fira Code", "Consolas", monospace !important; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
 <nav>
-    <a href="#" class="logo">🎓 farhadABAP <span style="font-weight:400; color:var(--text-secondary); font-size:0.9rem;">/ C_ABAPD Survival Kit</span></a>
-    <span class="exam-badge">EXAM SETTER EDITION</span>
+    <a href="#" class="logo">🎓 farhadABAP <span style="font-weight:400; color:var(--text-secondary); font-size:0.9rem;">/ C_ABAPD Hub</span></a>
+    <span class="exam-badge">BETA · SYSTEM-BASED</span>
 </nav>
 
 <div class="app-container">
     <aside class="sidebar">
         <div class="nav-section">
-            <div class="nav-title">Exam Reality</div>
-            <div class="nav-item active" onclick="showPanel('tasks', this)">
-                <span class="nav-icon">🎯</span> Mock Practical Tasks
-            </div>
-            <div class="nav-item" onclick="showPanel('gotchas', this)">
-                <span class="nav-icon">⚠️</span> Grading Script Gotchas
-            </div>
+            <div class="nav-title">Overview</div>
+            <div class="nav-item active" onclick="showPanel('dashboard', this)"><span class="nav-icon">📊</span> Dashboard</div>
+            <div class="nav-item" onclick="showPanel('checklist', this)"><span class="nav-icon">✅</span> Pre-Flight Checklist</div>
+            <div class="nav-item" onclick="showPanel('regulations', this)"><span class="nav-icon">📜</span> Exam Regulations</div>
         </div>
         <div class="nav-section">
-            <div class="nav-title">Survival Boilerplates</div>
-            <div class="nav-item" onclick="showPanel('eml', this)">
-                <span class="nav-icon">⚡</span> EML & Error Handling
-            </div>
-            <div class="nav-item" onclick="showPanel('cds', this)">
-                <span class="nav-icon">🗄️</span> CDS & Access Control
-            </div>
-            <div class="nav-item" onclick="showPanel('rap', this)">
-                <span class="nav-icon">🧱</span> RAP & Determinations
-            </div>
-            <div class="nav-item" onclick="showPanel('joule', this)">
-                <span class="nav-icon">🤖</span> Joule Prompts
-            </div>
+            <div class="nav-title">Learning Modules</div>
+            <div class="nav-item" onclick="showPanel('mod1', this)" id="nav-mod1"><span class="nav-icon">☁️</span> 1. ABAP Cloud <span class="check-mark">✓</span></div>
+            <div class="nav-item" onclick="showPanel('mod2', this)" id="nav-mod2"><span class="nav-icon">🧱</span> 2. ABAP OO <span class="check-mark">✓</span></div>
+            <div class="nav-item" onclick="showPanel('mod3', this)" id="nav-mod3"><span class="nav-icon">🗄️</span> 3. CDS Views <span class="check-mark">✓</span></div>
+            <div class="nav-item" onclick="showPanel('mod4', this)" id="nav-mod4"><span class="nav-icon">⚡</span> 4. RAP Model <span class="check-mark">✓</span></div>
+            <div class="nav-item" onclick="showPanel('mod5', this)" id="nav-mod5"><span class="nav-icon">🔌</span> 5. Service Exposure <span class="check-mark">✓</span></div>
+            <div class="nav-item" onclick="showPanel('mod6', this)" id="nav-mod6"><span class="nav-icon">🤖</span> 6. Joule & AI <span class="check-mark">✓</span></div>
+        </div>
+        <div class="nav-section">
+            <div class="nav-title">Quick Reference</div>
+            <div class="nav-item" onclick="showPanel('boilerplate', this)"><span class="nav-icon">📋</span> Boilerplate Code</div>
+            <div class="nav-item" onclick="showPanel('flashcards', this)"><span class="nav-icon">🃏</span> Flashcards</div>
+            <div class="nav-item" onclick="showPanel('quiz', this)"><span class="nav-icon">📝</span> Practice Quiz</div>
+            <div class="nav-item" onclick="showPanel('mocktask', this)"><span class="nav-icon">🎯</span> Mock Exam Task</div>
+            <div class="nav-item" onclick="showPanel('joule', this)"><span class="nav-icon">🛠️</span> Joule Prompts</div>
         </div>
     </aside>
 
     <main class="main-content">
-        
-        <!-- MOCK PRACTICAL TASKS -->
-        <div class="panel active" id="panel-tasks">
-            <div class="module-header">
-                <h2>🎯 Mock Practical Tasks (Exam Format)</h2>
-            </div>
-            <div class="info-box">
-                <strong>How the Exam Works:</strong> You will log into the SAP BTP system, open this exact dashboard, and see 3 to 4 tasks. You must build the artifacts in the system. The grading script checks if the artifacts exist, are active, and contain specific properties.
-            </div>
 
-            <div class="task-card">
-                <h4>Task 1: Data Modeling & Exposure</h4>
-                <p><strong>Scenario:</strong> Create a CDS view entity named <code>ZI_EXAM_###</code> (replace ### with your user ID) based on the released SAP view <code>I_BusinessPartner</code>.</p>
-                <ul>
-                    <li>Expose fields: <code>BusinessPartner</code>, <code>BusinessPartnerFullName</code>, and <code>CreationDate</code>.</li>
-                    <li>Make <code>BusinessPartnerFullName</code> searchable and a default search element.</li>
-                    <li>Add <code>@UI.lineItem</code> annotations for all fields with position 10, 20, 30.</li>
-                    <li>Set <code>@AccessControl.authorizationCheck: #NOT_ALLOWED</code> (since we are skipping DCL for this specific mock task, though in real exams they might ask for #CHECK).</li>
-                </ul>
-                <div class="grading">
-                    <strong>🤖 How the Grading Script Checks This:</strong>
-                    It queries the ABAP Dictionary for an active entity named <code>ZI_EXAM_###</code>. It parses the source code to ensure <code>@Search.defaultSearchElement: true</code> is present on the exact field requested. If the view is "Inactive", you get 0 points.
+        <!-- ==================== DASHBOARD ==================== -->
+        <div class="panel active" id="panel-dashboard">
+            <div class="dash-header">
+                <h1>SAP Certified – Backend Developer – ABAP Cloud</h1>
+                <p>Exam Code: <strong>C_ABAPD</strong> · Duration: 3 Hours · Pass Score: 67% · Type: System-Based Practical (Open Book)</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>Study Progress</h4>
+                    <div class="val" id="progress-val">0%</div>
+                    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+                </div>
+                <div class="stat-card">
+                    <h4>Modules Completed</h4>
+                    <div class="val" id="modules-done">0 / 6</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Quiz Best Score</h4>
+                    <div class="val" id="quiz-score">—</div>
                 </div>
             </div>
-
-            <div class="task-card">
-                <h4>Task 2: Business Logic (RAP)</h4>
-                <p><strong>Scenario:</strong> Create a Managed Behavior Definition for the entity created in Task 1.</p>
-                <ul>
-                    <li>Enable <code>create</code> and <code>update</code> (Disable delete).</li>
-                    <li>Make <code>BusinessPartner</code> read-only.</li>
-                    <li>Implement a determination <code>setCreationDate</code> that triggers on <code>modify</code> for <code>create</code>.</li>
-                </ul>
-                <div class="grading">
-                    <strong>🤖 How the Grading Script Checks This:</strong>
-                    It checks the BDEF artifact. It looks for the exact string <code>field ( readonly ) BusinessPartner;</code>. It checks if the determination is mapped to the correct event (<code>on modify { create; }</code>). If you forgot to generate the Behavior Implementation class (BIL) and it's missing, the BDEF won't activate, resulting in 0 points.
-                </div>
-            </div>
-
-            <div class="task-card">
-                <h4>Task 3: ABAP Class Execution (EML)</h4>
-                <p><strong>Scenario:</strong> Create an executable class <code>ZCL_EXAM_RUN_###</code> implementing <code>IF_OO_ADT_CLASSRUN</code>.</p>
-                <ul>
-                    <li>Use EML to create a new record in your RAP entity.</li>
-                    <li>Commit the transaction using <code>COMMIT ENTITIES</code>.</li>
-                    <li>Output the generated key or success message to the console.</li>
-                </ul>
-                <div class="grading">
-                    <strong>🤖 How the Grading Script Checks This:</strong>
-                    It executes your class in the background. It intercepts the console output (<code>out->write</code>). If your EML statement fails (e.g., because you forgot <code>IN LOCAL MODE</code>), the class dumps or outputs nothing, and the script marks it failed.
-                </div>
-            </div>
-        </div>
-
-        <!-- GRADING SCRIPT GOTCHAS -->
-        <div class="panel" id="panel-gotchas">
-            <div class="module-header">
-                <h2>⚠️ Grading Script Gotchas (Silent Killers)</h2>
-            </div>
-            <div class="info-box">
-                <strong>Exam Setter Insight:</strong> 40% of candidates fail not because they don't know ABAP, but because they fall into these automated grading traps. Read these carefully.
-            </div>
-
-            <div class="gotcha-card">
-                <h4>🚨 Gotcha 1: The "IN LOCAL MODE" Trap</h4>
-                <p>When you write EML (Entity Manipulation Language) inside an ABAP Class (like your ClassRun test class), you are <strong>outside</strong> the RAP transaction context. If you just write <code>MODIFY ENTITIES...</code>, it will fail or dump.</p>
-                <p><strong>The Fix:</strong> You MUST append <code>IN LOCAL MODE</code> to your EML statements when testing in a standalone class. This bypasses the PBO/PAI feature controls for testing purposes.</p>
-                <pre><code class="language-abap">MODIFY ENTITIES OF ZI_MyEntity IN LOCAL MODE
-  ENTITY ZI_MyEntity
-  CREATE FIELDS ( Description )
-  WITH VALUE #( ( %cid = 'c1' Description = 'Test' ) )
-  MAPPED DATA(lt_mapped) FAILED DATA(lt_failed) REPORTED DATA(lt_reported).</code></pre>
-            </div>
-
-            <div class="gotcha-card">
-                <h4>🚨 Gotcha 2: The "Activation" Cascade</h4>
-                <p>In RAP, artifacts depend on each other. If you change the CDS view, the Behavior Definition might become inactive. If the BDEF is inactive, the Service Binding breaks.</p>
-                <p><strong>The Fix:</strong> Always use "Activate All" (Ctrl+Shift+F3 in ADT) before running your test class or checking your Fiori preview. The grading script only checks <strong>active</strong> artifacts.</p>
-            </div>
-
-            <div class="gotcha-card">
-                <h4>🚨 Gotcha 3: Ignoring the %CID (Control ID)</h4>
-                <p>When creating records via EML, the grading script often checks if you mapped the temporary ID (<code>%cid</code>) to the actual database key.</p>
-                <p><strong>The Fix:</strong> Always provide a <code>%cid</code> in your CREATE statement, and read the <code>MAPPED</code> table to get the real key.</p>
-            </div>
-
-            <div class="gotcha-card">
-                <h4>🚨 Gotcha 4: Missing Access Control (DCL)</h4>
-                <p>If the task says "Ensure data access is restricted based on the user's authorization", and you just put <code>@AccessControl.authorizationCheck: #CHECK</code> on the CDS view, you will fail.</p>
-                <p><strong>The Fix:</strong> You must actually create a DCL (Data Control Language) artifact (<code>.acds</code>) that defines the <code>WHERE</code> clause, otherwise the CDS view will return empty data when the grader runs it.</p>
-            </div>
-        </div>
-
-        <!-- EML & ERROR HANDLING -->
-        <div class="panel" id="panel-eml">
-            <div class="module-header">
-                <h2>⚡ EML & Error Handling Boilerplates</h2>
-            </div>
-            
-            <div class="snippet-card">
-                <div class="snippet-header">
-                    <h3>📖 EML READ with Error Catching</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="snippet-body">
-                    <pre><code class="language-abap">" Read data and capture any RAP errors
-READ ENTITIES OF ZI_MyEntity IN LOCAL MODE
-  ENTITY ZI_MyEntity
-  ALL FIELDS WITH VALUE #( ( MyKey = '123' ) )
-  RESULT DATA(lt_result)
-  FAILED DATA(lt_failed)
-  REPORTED DATA(lt_reported).
-
-" How to output errors in your ClassRun
-IF lt_failed IS NOT INITIAL.
-  out->write( 'EML Read Failed!' ).
-  out->write( lt_reported ).
-  RETURN.
-ENDIF.
-
-out->write( lt_result ).</code></pre>
-                </div>
-            </div>
-
-            <div class="snippet-card">
-                <div class="snippet-header">
-                    <h3>✏️ EML CREATE (The exact syntax for exams)</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="snippet-body">
-                    <pre><code class="language-abap">MODIFY ENTITIES OF ZI_MyEntity IN LOCAL MODE
-  ENTITY ZI_MyEntity
-  CREATE FIELDS ( Description Amount )
-  WITH VALUE #( ( %cid        = 'cid1'
-                  Description = 'Exam Test'
-                  Amount      = 100 ) )
-  MAPPED DATA(lt_mapped)
-  FAILED DATA(lt_failed)
-  REPORTED DATA(lt_reported).
-
-IF lt_failed IS NOT INITIAL.
-  out->write( 'Creation failed. Check validation.' ).
-  out->write( lt_reported ).
-  RETURN.
-ENDIF.
-
-" Commit the draft/transaction
-COMMIT ENTITIES
-  RESPONSE OF ZI_MyEntity
-  FAILED DATA(lt_commit_failed)
-  REPORTED DATA(lt_commit_reported).
-
-out->write( 'Success! Created key:' ).
-out->write( lt_mapped-myentity[ 1 ]-MyKey ).</code></pre>
+            <div class="module-content">
+                <h3>🎯 What Makes This Exam Different</h3>
+                <p>This is <strong>not</strong> a multiple-choice exam. You will be given access to a real SAP BTP ABAP Environment system and a list of <strong>practical tasks</strong> to complete within 3 hours. The system auto-grades your work by checking if your artifacts (CDS views, behavior definitions, classes) exist and are syntactically correct.</p>
+                <h3>🧠 Your 3-Year Experience: Double-Edged Sword</h3>
+                <p>You already know ABAP. The danger is <strong>muscle memory</strong>. The exam system will reject classic ABAP statements. You must actively unlearn:</p>
+                <div class="two-col">
+                    <div>
+                        <h3 style="color:var(--danger);">❌ Forbidden (Auto-Fail)</h3>
+                        <ul>
+                            <li><code>SELECT * FROM mara</code></li>
+                            <li><code>COMMIT WORK</code></li>
+                            <li><code>WRITE: / 'text'</code></li>
+                            <li><code>IF sy-subrc = 0</code></li>
+                            <li><code>CALL FUNCTION 'BAPI_...'</code></li>
+                            <li><code>SELECTION-SCREEN</code></li>
+                            <li>Direct table access to standard tables</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color:var(--success);">✅ Required (Cloud Way)</h3>
+                        <ul>
+                            <li><code>SELECT FROM I_Material</code> (released CDS)</li>
+                            <li><code>COMMIT ENTITIES</code></li>
+                            <li><code>out->write( 'text' )</code></li>
+                            <li><code>TRY...CATCH cx_root</code></li>
+                            <li>Released APIs only</li>
+                            <li>Fiori Elements via annotations</li>
+                            <li>EML for data manipulation</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- CDS & ACCESS CONTROL -->
-        <div class="panel" id="panel-cds">
-            <div class="module-header">
-                <h2>🗄️ CDS & Access Control (DCL)</h2>
+        <!-- ==================== PRE-FLIGHT CHECKLIST ==================== -->
+        <div class="panel" id="panel-checklist">
+            <div class="module-header"><h2>✅ Pre-Exam Checklist</h2></div>
+            <div class="danger-box"><strong>⚠️ SAP-Mandated Requirements.</strong> Failing these = automatic fail, regardless of code quality. Source: Official SAP System-Based Assessment FAQ.</div>
+            <div class="module-content">
+                <h3>24 Hours Before Exam</h3>
+                <div class="checklist-item" onclick="toggleChecklist(this)"><input type="checkbox"><div><label><strong>SAP Universal ID: 2 emails with DIFFERENT domains</strong></label><div class="hint">e.g., personal@gmail.com AND work@company.com. Two Gmail accounts will NOT work. You will be blocked from launching.</div></div></div>
+                <div class="checklist-item" onclick="toggleChecklist(this)"><input type="checkbox"><div><label><strong>Verify subscription has available exam attempts</strong></label><div class="hint">Check "My Learning → My Certifications". Each attempt counts against your subscription.</div></div></div>
+                <div class="checklist-item" onclick="toggleChecklist(this)"><input type="checkbox"><div><label><strong>Clear browser cache and cookies</strong></label><div class="hint">SAP FAQ #10 explicitly recommends this to prevent technical glitches.</div></div></div>
+                <div class="checklist-item" onclick="toggleChecklist(this)"><input type="checkbox"><div><label><strong>Prepare backup browser (Chrome ↔ Edge)</strong></label><div class="hint">If primary browser crashes, switch instantly. Timer does NOT pause.</div></div></div>
+                <div class="checklist-item" onclick="toggleChecklist(this)"><input type="checkbox"><div><label><strong>Stable internet + laptop plugged into power</strong></label><div class="hint">Timer cannot be paused. Any disconnection eats your 3 hours.</div></div></div>
+                <h3>Exam Day — Critical Workflow</h3>
+                <div class="checklist-item" onclick="toggleChecklist(this)"><input type="checkbox"><div><label><strong>Use restroom, get water BEFORE clicking Start</strong></label><div class="hint">Timer starts the MILLISECOND you click "Start the Certification Exam". It CANNOT be paused.</div></div></div>
+                <div class="checklist-item" onclick="toggleChecklist(this)"><input type="checkbox"><div><label><strong>Click "Enroll" to unlock exam tasks & setup guide</strong></label><div class="hint">You CANNOT see tasks until you click Enroll and grant consent. #1 cause of candidate panic.</div></div></div>
+                <div class="checklist-item" onclick="toggleChecklist(this)"><input type="checkbox"><div><label><strong>Keep assessment dashboard tab OPEN</strong></label><div class="hint">You work in a new tab, but the dashboard has your task list. Keep it visible.</div></div></div>
+                <div class="checklist-item" onclick="toggleChecklist(this)"><input type="checkbox"><div><label><strong>Set phone alarm for 15 min before timer ends</strong></label><div class="hint">Use this to stop coding and click "Confirm Completion".</div></div></div>
+                <div class="checklist-item" onclick="toggleChecklist(this)"><input type="checkbox"><div><label><strong>Click "Confirm Completion" on dashboard tab</strong></label><div class="hint">Finishing code is NOT enough. You MUST click this button or the system marks you incomplete/failed.</div></div></div>
             </div>
+        </div>
 
-            <div class="snippet-card">
-                <div class="snippet-header">
-                    <h3>📄 CDS View with UI & Search Annotations</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="snippet-body">
-                    <pre><code class="language-abap">@AccessControl.authorizationCheck: #CHECK
-@EndUserText.label: 'Exam Entity'
+        <!-- ==================== EXAM REGULATIONS ==================== -->
+        <div class="panel" id="panel-regulations">
+            <div class="module-header"><h2>📜 Exam Regulations & Format</h2></div>
+            <div class="module-content">
+                <h3>Official Exam Details</h3>
+                <ul>
+                    <li><strong>Exam Code:</strong> C_ABAPD (Beta Version)</li>
+                    <li><strong>Full Title:</strong> SAP Certified – Backend Developer – ABAP Cloud</li>
+                    <li><strong>Duration:</strong> 3 hours (180 minutes)</li>
+                    <li><strong>Pass Score:</strong> 67%</li>
+                    <li><strong>Assessment Type:</strong> System-Based (Practical)</li>
+                    <li><strong>Format:</strong> Open Book — you may use SAP Help, your own notes, and AI tools (Joule)</li>
+                    <li><strong>Environment:</strong> SAP BTP ABAP Environment (Steampunk) via Eclipse ADT or SAP Business Application Studio</li>
+                    <li><strong>Results:</strong> Available within ~15 minutes after confirming completion</li>
+                </ul>
+                <h3>What the Exam Validates</h3>
+                <p>Per the official certification description:</p>
+                <ul>
+                    <li>Core principles of the ABAP programming language</li>
+                    <li>Developing robust applications using the <strong>ABAP RESTful Application Programming Model (RAP)</strong></li>
+                    <li>Proficiency in leveraging <strong>Joule</strong> (SAP's generative AI assistant) for code generation, explanation, and optimization</li>
+                    <li>Comprehensive knowledge and practical skills to contribute in a <strong>mentored role</strong></li>
+                    <li>Modern, <strong>AI-augmented development workflows</strong></li>
+                </ul>
+                <h3>How System-Based Grading Works</h3>
+                <p>The system checks your work <strong>automatically</strong>. It verifies:</p>
+                <ol>
+                    <li>Do the required artifacts exist? (CDS view, BDEF, class, service binding)</li>
+                    <li>Are they syntactically correct? (No activation errors)</li>
+                    <li>Do they contain the required elements? (Specific fields, annotations, methods)</li>
+                    <li>Does the code produce the expected result when executed?</li>
+                </ol>
+                <div class="warn-box"><strong>⚠️ Key Insight:</strong> Partial credit exists. If your CDS view activates but is missing one annotation, you still get points for the parts that are correct. Always activate your artifacts frequently to catch syntax errors early.</div>
+                <h3>Cancellation & Rescheduling</h3>
+                <ul>
+                    <li>Cancel up to <strong>24 hours before</strong> the scheduled slot</li>
+                    <li>Confirming a date/time does <strong>not</strong> count as an attempt</li>
+                    <li>To cancel: Create a case with category "Technical Query"</li>
+                    <li>You cannot book a new exam until the existing one is canceled</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ==================== MODULE 1: ABAP CLOUD ==================== -->
+        <div class="panel" id="panel-mod1">
+            <div class="module-header"><h2>Module 1: ABAP Cloud Fundamentals <span class="tag">STEAMPUNK</span></h2><button class="btn-complete" onclick="toggleComplete('mod1', this)">Mark Complete</button></div>
+            <div class="module-content">
+                <h3>What is ABAP Cloud?</h3>
+                <p>ABAP Cloud is the development model for SAP BTP ABAP Environment. It enforces a strict subset of ABAP to ensure cloud compatibility, upgrade stability, and multi-tenancy.</p>
+                <h3>ABAP Cloud Extensibility Tiers <span class="tag tag-new">NEW</span></h3>
+                <p>The exam tests your understanding of the three-tier extensibility model:</p>
+                <ul>
+                    <li><strong>Tier 1 (Cloud-Compliant):</strong> Uses only released SAP APIs and CDS views. Full cloud compatibility. This is what you develop in the exam.</li>
+                    <li><strong>Tier 2 (Cloud-Ready):</strong> Uses some non-released but stable APIs. May break during upgrades.</li>
+                    <li><strong>Tier 3 (Classic):</strong> Full ABAP access. Not cloud-compatible. Not available in BTP ABAP Environment.</li>
+                </ul>
+                <h3>Released Objects (Whitelist)</h3>
+                <p>Only SAP objects marked as "released" can be used in Tier 1. Check via:</p>
+                <ul>
+                    <li>Eclipse ADT: <strong>Project Explorer → Released Objects</strong></li>
+                    <li>SAP BAS: <strong>Released Objects app</strong></li>
+                    <li>Look for the annotation <code>@EndUserText.label</code> on released CDS views</li>
+                </ul>
+                <h3>Modern ABAP Syntax (Mandatory in Cloud)</h3>
+                <pre><code class="language-abap">" Inline declarations
+DATA(lv_count) = 0.
+DATA(ls_struct) = VALUE #( field1 = 'A' field2 = 'B' ).
+
+" Constructor expressions
+DATA(lt_data) = VALUE tt_type( ( id = 1 ) ( id = 2 ) ).
+
+" String templates
+DATA(lv_msg) = |User { sy-uname } logged in at { sy-uzeit TIME = ISO }|.
+
+" Modern loops
+LOOP AT lt_data INTO DATA(ls_item) WHERE status = 'A'.
+  " ...
+ENDLOOP.
+
+" FOR expressions (inline iteration)
+DATA(lt_names) = VALUE string_table(
+  FOR ls IN lt_data ( ls-name ) ).
+
+" Conditional expressions
+DATA(lv_status) = COND #( WHEN lv_count > 0 THEN 'OK' ELSE 'EMPTY' ).</code></pre>
+            </div>
+        </div>
+
+        <!-- ==================== MODULE 2: ABAP OO ==================== -->
+        <div class="panel" id="panel-mod2">
+            <div class="module-header"><h2>Module 2: ABAP Object-Oriented <span class="tag">CLEAN CODE</span></h2><button class="btn-complete" onclick="toggleComplete('mod2', this)">Mark Complete</button></div>
+            <div class="module-content">
+                <h3>Executable Classes (IF_OO_ADT_CLASSRUN)</h3>
+                <p>Replaces <code>REPORT</code> and <code>START-OF-SELECTION</code>. This is how you test code in ABAP Cloud.</p>
+                <pre><code class="language-abap">CLASS zcl_my_test DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES if_oo_adt_classrun.
+ENDCLASS.
+
+CLASS zcl_my_test IMPLEMENTATION.
+  METHOD if_oo_adt_classrun~main.
+    TRY.
+        DATA(lo_processor) = NEW zcl_processor( ).
+        lo_processor->execute( ).
+        out->write( 'Success' ).
+      CATCH cx_root INTO DATA(lx_error).
+        out->write( lx_error->get_text( ) ).
+    ENDTRY.
+  ENDMETHOD.
+ENDCLASS.</code></pre>
+
+                <h3>Exception Handling (No SY-SUBRC)</h3>
+                <pre><code class="language-abap">METHOD process_data.
+  TRY.
+      DATA(lv_result) = calculate( iv_input ).
+    CATCH cx_sy_arithmetic_error INTO DATA(lx_arith).
+      " Handle specific exception
+      RAISE EXCEPTION TYPE zcx_custom_error
+        EXPORTING previous = lx_arith.
+    CATCH cx_root INTO DATA(lx_general).
+      " Catch-all fallback
+      out->write( lx_general->get_text( ) ).
+  ENDTRY.
+ENDMETHOD.</code></pre>
+
+                <h3>Constructor Injection Pattern <span class="tag tag-new">NEW</span></h3>
+                <pre><code class="language-abap">CLASS zcl_service DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING io_repo TYPE REF TO zif_repository.
+    METHODS get_data RETURNING VALUE(rt_data) TYPE tt_data.
+  PRIVATE SECTION.
+    DATA mo_repo TYPE REF TO zif_repository.
+ENDCLASS.
+
+CLASS zcl_service IMPLEMENTATION.
+  METHOD constructor.
+    mo_repo = io_repo. " Dependency injected, not CREATE OBJECT
+  ENDMETHOD.
+  METHOD get_data.
+    rt_data = mo_repo->read_all( ).
+  ENDMETHOD.
+ENDCLASS.</code></pre>
+            </div>
+        </div>
+
+        <!-- ==================== MODULE 3: CDS VIEWS ==================== -->
+        <div class="panel" id="panel-mod3">
+            <div class="module-header"><h2>Module 3: CDS View Engineering <span class="tag">FOUNDATION</span></h2><button class="btn-complete" onclick="toggleComplete('mod3', this)">Mark Complete</button></div>
+            <div class="module-content">
+                <h3>CDS View Entity with Full Annotations</h3>
+                <pre><code class="language-abap">@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'Billing Document'
 @Search.searchable: true
-define root view entity ZI_ExamEntity
-  as select from I_ReleasedTable
+@Metadata.allowExtensions: true
+define root view entity ZI_BillingDoc
+  as select from I_BillingDocument
+  association [0..1] to I_CompanyCode as _CompanyCode
+    on $projection.CompanyCode = _CompanyCode.CompanyCode
 {
       @UI.hidden: true
-  key ID,
+  key BillingDocument,
 
       @Search.defaultSearchElement: true
-      @UI.lineItem: [{ position: 10, label: 'Name' }]
-      Name,
+      @UI.lineItem: [{ position: 10, label: 'Company' }]
+      @Consumption.valueHelpDefinition: [{ entity: { name: 'I_CompanyCode', element: 'CompanyCode' } }]
+      CompanyCode,
 
-      @UI.lineItem: [{ position: 20, label: 'Status' }]
-      Status
-}</code></pre>
-                </div>
-            </div>
+      @UI.lineItem: [{ position: 20, label: 'Customer' }]
+      @Search.defaultSearchElement: true
+      CustomerName,
 
-            <div class="snippet-card">
-                <div class="snippet-header">
-                    <h3>🛡️ Data Control Language (DCL) - Crucial for #CHECK</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="snippet-body">
-                    <pre><code class="language-abap">@EndUserText.label: 'Access Control for Exam Entity'
-define role ZI_ExamEntity_Role {
-  grant
-    select on
-      ZI_ExamEntity
-        where
-          ( Status = 'ACTIVE' ) or
-          ( CreatedBy = $user );
+      @UI.lineItem: [{ position: 30, label: 'Net Amount' }]
+      @Semantics.amount.currencyCode: 'Currency'
+      TotalNetAmount,
+
+      @UI.lineItem: [{ position: 40 }]
+      @Semantics.currencyCode: true
+      TransactionCurrency,
+
+      " Path expression via association
+      _CompanyCode.CompanyName as CompanyNameText
 }</code></pre>
-                </div>
+
+                <h3>CDS Access Control (DCL) <span class="tag tag-new">NEW</span></h3>
+                <p>When you use <code>@AccessControl.authorizationCheck: #CHECK</code>, you MUST create a DCL (Data Control Language) source:</p>
+                <pre><code class="language-abap">@EndUserText.label: 'Access control for ZI_BillingDoc'
+define role ZI_BillingDoc_Access {
+  grant select on ZI_BillingDoc
+    where ( CompanyCode ) = aspect pfcg_auth( F_BKPF_BUK, BUKRS );
+}</code></pre>
+
+                <h3>Custom Entity (for external data) <span class="tag tag-new">NEW</span></h3>
+                <pre><code class="language-abap">@EndUserText.label: 'External Weather Data'
+define custom entity ZI_WeatherData {
+  key City     : abap.char(40);
+      Temp     : abap.dec(5,2);
+      Condition: abap.char(20);
+}</code></pre>
+                <p>Custom entities require a separate ABAP class implementing <code>IF_RAP_QUERY_PROVIDER</code> to fetch data at runtime.</p>
             </div>
         </div>
 
-        <!-- RAP & DETERMINATIONS -->
-        <div class="panel" id="panel-rap">
-            <div class="module-header">
-                <h2>🧱 RAP Behavior Definition (BDEF)</h2>
-            </div>
+        <!-- ==================== MODULE 4: RAP MODEL ==================== -->
+        <div class="panel" id="panel-mod4">
+            <div class="module-header"><h2>Module 4: RAP (RESTful ABAP Programming) <span class="tag tag-critical">CORE</span></h2><button class="btn-complete" onclick="toggleComplete('mod4', this)">Mark Complete</button></div>
+            <div class="module-content">
+                <h3>RAP Architecture Overview</h3>
+                <ol>
+                    <li><strong>Data Model:</strong> CDS Interface View → CDS Consumption (Projection) View</li>
+                    <li><strong>Behavior:</strong> Behavior Definition (BDEF) → Behavior Implementation (BIL class)</li>
+                    <li><strong>Service:</strong> Service Definition → Service Binding (OData V2/V4)</li>
+                </ol>
 
-            <div class="snippet-card">
-                <div class="snippet-header">
-                    <h3>⚙️ Managed BDEF with Determination & Validation</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="snippet-body">
-                    <pre><code class="language-abap">managed implementation in class zbp_i_examentity unique;
+                <h3>Behavior Definition (BDEF) — Full Syntax</h3>
+                <pre><code class="language-abap">managed implementation in class zbp_i_billingdoc unique;
 strict ( 2 );
 
-define behavior for ZI_ExamEntity alias Entity
-persistent table zexam_db_table
-draft enabled
+define behavior for ZI_BillingDoc alias Billing
+  persistent table zbillingdoc
+  draft enabled
+  lock master
+  authorization master ( instance )
+  etag master LastChangedAt
 {
   create;
   update;
   delete;
 
-  field ( readonly ) ID;
-  field ( mandatory ) Name;
+  field ( readonly ) BillingDocument;
+  field ( mandatory ) CustomerName;
+  field ( numbering : managed ) BillingDocument;
 
-  // Determination runs automatically on create
-  determination setDefaultStatus on modify { create; }
-  
-  // Validation runs when user clicks "Save"
-  validation checkName on save { create; update; }
+  " Early numbering: framework assigns key before save
+  " numbering : managed = framework generates key
+
+  determination setDefaults on modify { create; }
+  validation validateCustomer on save { create; update; }
+
+  action ( features : instance ) approve result [1] $self;
+
+  draft action Edit;
+  draft action Activate;
+  draft action Discard;
+  draft action Resume;
+  draft action Prepare;
 }</code></pre>
-                </div>
-            </div>
-        </div>
 
-        <!-- JOULE PROMPTS -->
-        <div class="panel" id="panel-joule">
-            <div class="module-header">
-                <h2>🤖 Joule Prompts (Exam Accelerators)</h2>
-            </div>
-            <div class="info-box">
-                <strong>Pro Tip:</strong> Use these exact prompts in Joule to generate 80% of your boilerplate in seconds.
-            </div>
+                <h3>Behavior Implementation Class (BIL) <span class="tag tag-critical">EXAM CRITICAL</span></h3>
+                <p>You WILL have to write this in the exam. This is the actual ABAP class behind the BDEF:</p>
+                <pre><code class="language-abap">CLASS lhc_Billing DEFINITION INHERITING FROM cl_abap_behavior_handler.
+  PRIVATE SECTION.
+    METHODS get_instance_authorizations FOR INSTANCE AUTHORIZATION
+      IMPORTING keys REQUEST requested_authorizations FOR Billing RESULT result.
 
-            <div class="snippet-card">
-                <div class="snippet-header"><h3>Prompt: Generate RAP BDEF</h3><button class="copy-btn" onclick="copyText(this, 'joule1')">Copy</button></div>
-                <div class="snippet-body" style="padding: 1rem; font-family: monospace; color: var(--success);" id="joule1">
-                    Create a managed RAP behavior definition for the CDS view entity ZI_ExamEntity. Make it draft enabled. Allow create, update, and delete. Make the field 'ID' readonly. Add a determination named 'setDefaultStatus' that triggers on modify for create.
-                </div>
-            </div>
+    METHODS setDefaults FOR DETERMINE ON MODIFY
+      IMPORTING keys FOR Billing~setDefaults.
 
-            <div class="snippet-card">
-                <div class="snippet-header"><h3>Prompt: Generate EML Test Class</h3><button class="copy-btn" onclick="copyText(this, 'joule2')">Copy</button></div>
-                <div class="snippet-body" style="padding: 1rem; font-family: monospace; color: var(--success);" id="joule2">
-                    Write an executable ABAP class implementing IF_OO_ADT_CLASSRUN. In the main method, use EML IN LOCAL MODE to create a new record in ZI_ExamEntity with the Name 'Test'. Commit the entities and output the mapped key or any reported errors to the console.
-                </div>
-            </div>
-        </div>
+    METHODS validateCustomer FOR VALIDATE ON SAVE
+      IMPORTING keys FOR Billing~validateCustomer.
+ENDCLASS.
 
-    </main>
-</div>
+CLASS lhc_Billing IMPLEMENTATION.
 
-<script>
-function showPanel(panelId, navItem) {
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById('panel-' + panelId).classList.add('active');
-    if (navItem) navItem.classList.add('active');
-    
-    setTimeout(() => {
-        document.querySelectorAll('#panel-' + panelId + ' pre code').forEach(block => {
-            Prism.highlightElement(block);
-        });
-    }, 50);
-}
+  METHOD get_instance_authorizations.
+    " Implement authorization checks here
+  ENDMETHOD.
 
-function copyCode(btn) {
-    const code = btn.closest('.snippet-card').querySelector('code').innerText;
-    navigator.clipboard.writeText(code).then(() => {
-        const original = btn.innerText;
-        btn.innerText = 'Copied!';
-        btn.style.borderColor = 'var(--success)';
-        btn.style.color = 'var(--success)';
-        setTimeout(() => {
-            btn.innerText = original;
-            btn.style.borderColor = '';
-            btn.style.color = '';
-        }, 1500);
-    });
-}
+  METHOD setDefaults.
+    READ ENTITIES OF ZI_BillingDoc IN LOCAL MODE
+      ENTITY Billing
+        FIELDS ( CustomerName )
+        WITH CORRESPONDING #( keys )
+      ASSIGNING FIELD-SYMBOL(&lt;lt_data&gt;).
 
-function copyText(btn, id) {
-    const text = document.getElementById(id).innerText;
-    navigator.clipboard.writeText(text).then(() => {
-        const original = btn.innerText;
-        btn.innerText = 'Copied!';
-        setTimeout(() => { btn.innerText = original; }, 1500);
-    });
-}
+    MODIFY ENTITIES OF ZI_BillingDoc IN LOCAL MODE
+      ENTITY Billing
+        UPDATE FIELDS ( TransactionCurrency )
+        WITH VALUE #( FOR ls IN &lt;lt_data&gt; (
+          %tky = ls-%tky
+          TransactionCurrency = 'EUR' ) ).
+  ENDMETHOD.
 
-window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        document.querySelectorAll('pre code').forEach(block => {
-            Prism.highlightElement(block);
-        });
-    }, 100);
-});
-</script>
-</body>
-</html>
+  METHOD validateCustomer.
+    READ ENTITIES OF ZI_BillingDoc IN LOCAL MODE
+      ENTITY Billing
+        FIELDS ( CustomerName )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(lt_data).
+
+    LOOP AT lt_data INTO DATA(ls_data).
+      IF ls_data-CustomerName IS INITIAL.
+        APPEND VALUE #( %tky = ls_data-%tky ) TO failed-billing.
+        APPEND VALUE #( %tky = ls_data-%tky
+                        %msg = new_message( id = 'ZMSG' number = '001'
+                                            severity = if_abap_behv_message=>severity-error )
+                      ) TO reported-billing.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+
+ENDCLASS.</code></pre>
+
+                <h3>EML — All Operations <span class="tag tag-critical">EXAM CRITICAL</span></h3>
+                <pre><code class="language-abap">" ===== READ =====
+READ ENTITIES OF ZI_BillingDoc IN LOCAL MODE
+  ENTITY Billing
+    FIELDS ( CustomerName TotalNetAmount )
+    WITH VALUE #( ( BillingDocument = '0001' ) )
+  RESULT DATA(lt_result)
+  FAILED DATA(lt_failed)
+  REPORTED DATA(lt_reported).
+
+" ===== CREATE =====
+MODIFY ENTITIES OF ZI_BillingDoc IN LOCAL MODE
+  ENTITY Billing
+    CREATE FIELDS ( CustomerName TotalNetAmount TransactionCurrency )
+    WITH VALUE #( ( %cid = 'ref1'
+                    CustomerName = 'Test Customer
