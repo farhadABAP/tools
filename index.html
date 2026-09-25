@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modern ABAP Cloud Generator</title>
+<title>ABAP Code Refactorer</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-abap.min.js"></script>
@@ -23,527 +23,295 @@
     --code-bg: #1e1e1e;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; height: 100vh; display: flex; flex-direction: column; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.5; height: 100vh; display: flex; flex-direction: column; }
 
 /* NAV */
 nav { background: var(--bg-secondary); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
 .logo { font-size: 1.1rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
-.cloud-toggle { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-secondary); background: var(--bg-tertiary); padding: 0.4rem 0.8rem; border-radius: 20px; border: 1px solid var(--border); }
-.cloud-toggle input { accent-color: var(--accent); }
 
 /* APP LAYOUT */
 .app-container { display: flex; flex: 1; overflow: hidden; }
 
-/* SIDEBAR */
-.sidebar { width: 240px; background: var(--bg-secondary); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1rem 0; flex-shrink: 0; }
-.nav-item { padding: 0.75rem 1.5rem; cursor: pointer; color: var(--text-secondary); font-size: 0.9rem; display: flex; align-items: center; gap: 0.75rem; transition: all 0.2s; border-left: 3px solid transparent; }
-.nav-item:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-.nav-item.active { background: var(--accent-glow); color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
-.nav-icon { font-size: 1.1rem; }
+/* LEFT: INPUT */
+ pane-input { width: 40%; display: flex; flex-direction: column; border-right: 1px solid var(--border); background: var(--bg-secondary); }
+.pane-header { padding: 0.75rem 1rem; background: var(--bg-tertiary); border-bottom: 1px solid var(--border); font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; display: flex; justify-content: space-between; align-items: center; }
+.code-area { flex: 1; width: 100%; background: var(--code-bg); color: var(--text-primary); border: none; padding: 1rem; font-family: "Fira Code", "Consolas", monospace; font-size: 0.85rem; resize: none; outline: none; line-height: 1.6; }
+.code-area::placeholder { color: var(--text-secondary); opacity: 0.5; }
 
-/* MAIN CONTENT */
-.main-content { flex: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; }
-.panel { display: none; height: 100%; }
-.panel.active { display: flex; flex-direction: column; gap: 1.5rem; }
+/* MIDDLE: RULES */
+.pane-rules { width: 30%; display: flex; flex-direction: column; border-right: 1px solid var(--border); background: var(--bg-primary); }
+.rules-container { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.rule-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; padding: 0.75rem; position: relative; transition: border-color 0.2s; }
+.rule-card:hover { border-color: var(--accent); }
+.rule-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: center; }
+.rule-input { flex: 1; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; padding: 0.4rem 0.6rem; color: var(--text-primary); font-family: "Fira Code", monospace; font-size: 0.8rem; }
+.rule-input:focus { outline: none; border-color: var(--accent); }
+.rule-options { display: flex; gap: 0.75rem; font-size: 0.75rem; color: var(--text-secondary); }
+.rule-options label { display: flex; align-items: center; gap: 0.3rem; cursor: pointer; }
+.rule-options input { accent-color: var(--accent); }
+.btn-remove { position: absolute; top: 0.5rem; right: 0.5rem; background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1rem; padding: 0.2rem; }
+.btn-remove:hover { color: var(--danger); }
 
-.panel-header h2 { font-size: 1.5rem; margin-bottom: 0.25rem; }
-.panel-header p { color: var(--text-secondary); font-size: 0.9rem; }
+.btn-add { width: 100%; padding: 0.6rem; background: var(--bg-tertiary); border: 1px dashed var(--border); color: var(--accent); border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; margin-top: 0.5rem; }
+.btn-add:hover { background: var(--accent-glow); border-color: var(--accent); }
 
-/* GRID */
-.gen-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 1.5rem; flex: 1; min-height: 0; }
-@media (max-width: 1024px) { .gen-grid { grid-template-columns: 1fr; } .app-container { flex-direction: column; } .sidebar { width: 100%; flex-direction: row; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--border); } .nav-item { white-space: nowrap; border-left: none; border-bottom: 3px solid transparent; } .nav-item.active { border-left: none; border-bottom-color: var(--accent); } }
+.preset-bar { padding: 0.75rem 1rem; border-top: 1px solid var(--border); background: var(--bg-secondary); }
+.preset-title { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: 600; }
+.preset-btns { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.preset-btn { background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-primary); padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer; }
+.preset-btn:hover { border-color: var(--warn); color: var(--warn); }
 
-/* CARDS & FORMS */
-.gen-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; display: flex; flex-direction: column; overflow-y: auto; }
-.gen-card h4 { color: var(--accent); margin-bottom: 1rem; font-size: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
-.gen-field { margin-bottom: 1rem; }
-.gen-field label { display: block; font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; font-weight: 600; }
-.gen-field input[type="text"], .gen-field select { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; padding: 0.5rem 0.75rem; color: var(--text-primary); font-family: "Fira Code", "Consolas", monospace; font-size: 0.85rem; width: 100%; }
-.gen-field input:focus, .gen-field select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+/* RIGHT: OUTPUT */
+.pane-output { width: 30%; display: flex; flex-direction: column; background: var(--bg-secondary); }
+.output-container { flex: 1; overflow: auto; position: relative; }
+.output-container pre { margin: 0 !important; min-height: 100%; }
+.output-container code { font-family: "Fira Code", "Consolas", monospace !important; font-size: 0.82rem !important; }
 
-.checkbox-group { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem; }
-.checkbox-group label { text-transform: none; font-size: 0.85rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
-.checkbox-group input { accent-color: var(--accent); }
-
-.actions { display: flex; gap: 0.75rem; margin-top: auto; padding-top: 1rem; }
-.btn { padding: 0.6rem 1.2rem; border-radius: 6px; border: none; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+/* UTILS */
+.btn { padding: 0.4rem 0.8rem; border-radius: 4px; border: none; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
 .btn-primary { background: var(--success); color: white; }
 .btn-primary:hover { background: #2ea043; }
 .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border); }
 .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
-/* CODE PREVIEW */
-.generated { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; height: 100%; }
-.gen-label { background: var(--bg-tertiary); padding: 0.5rem 1rem; font-size: 0.75rem; color: var(--text-secondary); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-family: "Fira Code", monospace; }
-.generated pre { flex: 1; margin: 0 !important; overflow: auto; }
-.generated pre code { font-family: "Fira Code", "Consolas", monospace !important; font-size: 0.82rem !important; }
-
-/* UTILS */
-.hint { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem; font-style: italic; }
-.tag { display: inline-block; background: var(--accent-glow); color: var(--accent); padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; margin-left: 0.5rem; }
+.stats { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem; text-align: right; }
 </style>
 </head>
 <body>
 
 <nav>
-    <a href="#" class="logo">⚡ farhadABAP <span style="font-weight:400; color:var(--text-secondary); font-size:0.9rem;">/ Cloud Tools</span></a>
-    <label class="cloud-toggle">
-        <input type="checkbox" id="cloud-mode" checked>
-        <span>☁️ ABAP Cloud (Steampunk) Mode</span>
-    </label>
+    <a href="#" class="logo">🔄 farhadABAP <span style="font-weight:400; color:var(--text-secondary); font-size:0.9rem;">/ Code Refactorer</span></a>
+    <button class="btn btn-primary" onclick="applyRefactoring()">⚡ Apply All Rules</button>
 </nav>
 
 <div class="app-container">
-    <aside class="sidebar">
-        <div class="nav-item active" onclick="switchTab(event, 'panel-cds')">
-            <span class="nav-icon">🗄️</span> CDS View
+    
+    <!-- LEFT: INPUT CODE -->
+    <div class="pane-input">
+        <div class="pane-header">
+            <span>📝 Source ABAP Code</span>
+            <button class="btn btn-secondary" style="font-size:0.7rem; padding:0.2rem 0.5rem;" onclick="loadSample()">Load Sample</button>
         </div>
-        <div class="nav-item" onclick="switchTab(event, 'panel-oo')">
-            <span class="nav-icon">🧱</span> ABAP OO Class
-        </div>
-        <div class="nav-item" onclick="switchTab(event, 'panel-rap')">
-            <span class="nav-icon">⚡</span> RAP Behavior
-        </div>
-        <div class="nav-item" onclick="switchTab(event, 'panel-rest')">
-            <span class="nav-icon">🌐</span> REST / HTTP
-        </div>
-    </aside>
+        <textarea class="code-area" id="input-code" placeholder="Paste your ABAP code here..."></textarea>
+    </div>
 
-    <main class="main-content">
+    <!-- MIDDLE: RULES -->
+    <div class="pane-rules">
+        <div class="pane-header">
+            <span>⚙️ Replacement Rules</span>
+            <button class="btn btn-secondary" style="font-size:0.7rem; padding:0.2rem 0.5rem;" onclick="clearRules()">Clear All</button>
+        </div>
+        <div class="rules-container" id="rules-container">
+            <!-- Rules will be injected here -->
+        </div>
+        <button class="btn-add" onclick="addRule()">+ Add Replacement Rule</button>
         
-        <!-- ================= CDS VIEW GENERATOR ================= -->
-        <div class="panel active" id="panel-cds">
-            <div class="panel-header">
-                <h2>CDS View Generator <span class="tag">FOUNDATION</span></h2>
-                <p>Generate cloud-ready Core Data Services views with annotations and path expressions.</p>
-            </div>
-            <div class="gen-grid">
-                <div class="gen-card">
-                    <h4>Configuration</h4>
-                    <div class="gen-field">
-                        <label>CDS View Name (e.g., ZI_BillingDoc)</label>
-                        <input type="text" id="cds-name" value="ZI_BillingDocument">
-                    </div>
-                    <div class="gen-field">
-                        <label>Underlying Table / View</label>
-                        <input type="text" id="cds-base" value="I_BillingDocument">
-                    </div>
-                    <div class="gen-field">
-                        <label>Primary Key Field</label>
-                        <input type="text" id="cds-key" value="BillingDocument">
-                    </div>
-                    <div class="gen-field">
-                        <label>Annotations</label>
-                        <div class="checkbox-group">
-                            <label><input type="checkbox" id="cds-anno-auth" checked> @AccessControl.authorizationCheck: #CHECK</label>
-                            <label><input type="checkbox" id="cds-anno-search" checked> @Search.searchable: true</label>
-                            <label><input type="checkbox" id="cds-anno-ui"> @UI.headerInfo.typeName: 'Document'</label>
-                        </div>
-                    </div>
-                    <div class="gen-field">
-                        <label>Fields to Expose (comma-separated)</label>
-                        <input type="text" id="cds-fields" value="BillingDocument, CompanyCode, CreationDate, TotalNetAmount, Currency">
-                    </div>
-                    <div class="actions">
-                        <button class="btn btn-primary" onclick="genCDS()">Generate CDS</button>
-                        <button class="btn btn-secondary" onclick="resetCDS()">Reset</button>
-                    </div>
-                </div>
-                <div class="generated" id="cds-out" style="display:none;">
-                    <div class="gen-label">
-                        <span>zi_billingdocument.ddls</span>
-                        <button class="btn btn-secondary" style="padding:0.2rem 0.6rem; font-size:0.75rem;" onclick="copyGen('cds')">Copy</button>
-                    </div>
-                    <pre><code class="language-abap" id="cds-code"></code></pre>
-                </div>
+        <div class="preset-bar">
+            <div class="preset-title">⚡ Quick ABAP Modernization Presets</div>
+            <div class="preset-btns">
+                <button class="preset-btn" onclick="applyPreset('modern_vars')">wa_ → ls_ / it_ → lt_</button>
+                <button class="preset-btn" onclick="applyPreset('prefix_change')">ZOLD_ → ZNEW_</button>
+                <button class="preset-btn" onclick="applyPreset('commit_work')">COMMIT WORK → COMMIT ENTITIES</button>
+                <button class="preset-btn" onclick="applyPreset('sy_subrc')">Remove SY-SUBRC checks</button>
             </div>
         </div>
+    </div>
 
-        <!-- ================= ABAP OO GENERATOR ================= -->
-        <div class="panel" id="panel-oo">
-            <div class="panel-header">
-                <h2>ABAP OO Class Generator <span class="tag">CLEAN CODE</span></h2>
-                <p>Generate modern, executable ABAP classes with dependency injection and exception handling.</p>
-            </div>
-            <div class="gen-grid">
-                <div class="gen-card">
-                    <h4>Configuration</h4>
-                    <div class="gen-field">
-                        <label>Class Name (e.g., ZCL_DOC_PROCESSOR)</label>
-                        <input type="text" id="oo-name" value="ZCL_DOCUMENT_PROCESSOR">
-                    </div>
-                    <div class="gen-field">
-                        <label>Description</label>
-                        <input type="text" id="oo-desc" value="Document Processing Logic">
-                    </div>
-                    <div class="gen-field">
-                        <label>Interfaces</label>
-                        <div class="checkbox-group">
-                            <label><input type="checkbox" id="oo-if-run" checked> IF_OO_ADT_CLASSRUN (Executable)</label>
-                            <label><input type="checkbox" id="oo-if-serial"> IF_SERIALIZABLE_OBJECT</label>
-                        </div>
-                    </div>
-                    <div class="gen-field">
-                        <label>Method Name</label>
-                        <input type="text" id="oo-method" value="PROCESS_DOCUMENT">
-                    </div>
-                    <div class="actions">
-                        <button class="btn btn-primary" onclick="genOO()">Generate Class</button>
-                        <button class="btn btn-secondary" onclick="resetOO()">Reset</button>
-                    </div>
-                </div>
-                <div class="generated" id="oo-out" style="display:none;">
-                    <div class="gen-label">
-                        <span>zcl_document_processor.clas.abap</span>
-                        <button class="btn btn-secondary" style="padding:0.2rem 0.6rem; font-size:0.75rem;" onclick="copyGen('oo')">Copy</button>
-                    </div>
-                    <pre><code class="language-abap" id="oo-code"></code></pre>
-                </div>
-            </div>
+    <!-- RIGHT: OUTPUT CODE -->
+    <div class="pane-output">
+        <div class="pane-header">
+            <span>✅ Refactored Code</span>
+            <button class="btn btn-secondary" style="font-size:0.7rem; padding:0.2rem 0.5rem;" onclick="copyOutput()">Copy</button>
         </div>
-
-        <!-- ================= RAP GENERATOR ================= -->
-        <div class="panel" id="panel-rap">
-            <div class="panel-header">
-                <h2>RAP Behavior Definition <span class="tag">CLOUD NATIVE</span></h2>
-                <p>Generate Managed or Unmanaged RAP behavior definitions with optional Draft support.</p>
-            </div>
-            <div class="gen-grid">
-                <div class="gen-card">
-                    <h4>Configuration</h4>
-                    <div class="gen-field">
-                        <label>CDS View Entity Name</label>
-                        <input type="text" id="rap-entity" value="ZI_BillingDocument">
-                    </div>
-                    <div class="gen-field">
-                        <label>Primary Key Field</label>
-                        <input type="text" id="rap-key" value="BillingDocument">
-                    </div>
-                    <div class="gen-field">
-                        <label>Implementation Type</label>
-                        <select id="rap-type">
-                            <option value="managed">Managed (Framework handles DB)</option>
-                            <option value="unmanaged">Unmanaged (Custom BOPF/Logic)</option>
-                        </select>
-                    </div>
-                    <div class="gen-field">
-                        <label>Features</label>
-                        <div class="checkbox-group">
-                            <label><input type="checkbox" id="rap-draft" checked> Draft Enabled</label>
-                            <label><input type="checkbox" id="rap-create" checked> Create</label>
-                            <label><input type="checkbox" id="rap-update" checked> Update</label>
-                            <label><input type="checkbox" id="rap-delete" checked> Delete</label>
-                        </div>
-                    </div>
-                    <div class="actions">
-                        <button class="btn btn-primary" onclick="genRAP()">Generate Behavior</button>
-                        <button class="btn btn-secondary" onclick="resetRAP()">Reset</button>
-                    </div>
-                </div>
-                <div class="generated" id="rap-out" style="display:none;">
-                    <div class="gen-label">
-                        <span>zi_billingdocument.bdef</span>
-                        <button class="btn btn-secondary" style="padding:0.2rem 0.6rem; font-size:0.75rem;" onclick="copyGen('rap')">Copy</button>
-                    </div>
-                    <pre><code class="language-abap" id="rap-code"></code></pre>
-                </div>
-            </div>
+        <div class="output-container">
+            <pre><code class="language-abap" id="output-code">" Refactored code will appear here...</code></pre>
         </div>
+        <div class="stats" id="stats">0 replacements made.</div>
+    </div>
 
-        <!-- ================= REST API GENERATOR ================= -->
-        <div class="panel" id="panel-rest">
-            <div class="panel-header">
-                <h2>REST / HTTP Client <span class="tag">ABAP CLOUD</span></h2>
-                <p>Generate cloud-compliant HTTP client code using CL_WEB_HTTP_CLIENT (no legacy CL_HTTP_CLIENT).</p>
-            </div>
-            <div class="gen-grid">
-                <div class="gen-card">
-                    <h4>Configuration</h4>
-                    <div class="gen-field">
-                        <label>Method Name</label>
-                        <input type="text" id="rest-method-name" value="FETCH_EXTERNAL_DATA">
-                    </div>
-                    <div class="gen-field">
-                        <label>HTTP Method</label>
-                        <select id="rest-http-method">
-                            <option value="GET">GET</option>
-                            <option value="POST">POST</option>
-                            <option value="PUT">PUT</option>
-                        </select>
-                    </div>
-                    <div class="gen-field">
-                        <label>Target URL</label>
-                        <input type="text" id="rest-url" value="https://api.example.com/v1/documents">
-                    </div>
-                    <div class="gen-field">
-                        <label>Authentication</label>
-                        <select id="rest-auth">
-                            <option value="none">None</option>
-                            <option value="basic">Basic Authentication</option>
-                            <option value="oauth2">OAuth 2.0 (via Destination)</option>
-                        </select>
-                    </div>
-                    <div class="actions">
-                        <button class="btn btn-primary" onclick="genREST()">Generate Code</button>
-                        <button class="btn btn-secondary" onclick="resetREST()">Reset</button>
-                    </div>
-                </div>
-                <div class="generated" id="rest-out" style="display:none;">
-                    <div class="gen-label">
-                        <span>zcl_rest_client.clas.locals_imp.abap</span>
-                        <button class="btn btn-secondary" style="padding:0.2rem 0.6rem; font-size:0.75rem;" onclick="copyGen('rest')">Copy</button>
-                    </div>
-                    <pre><code class="language-abap" id="rest-code"></code></pre>
-                </div>
-            </div>
-        </div>
-
-    </main>
 </div>
 
 <script>
 /* ============================================================
-   CORE UI LOGIC
+   CORE STATE & INITIALIZATION
    ============================================================ */
-function switchTab(evt, panelId) {
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active'));
-    document.getElementById(panelId).classList.add('active');
-    evt.currentTarget.classList.add('active');
+let ruleCount = 0;
+
+window.addEventListener('DOMContentLoaded', () => {
+    addRule('zz_database', 'zz_finance', true, false);
+    addRule('wa_header', 'ls_header', true, false);
+    loadSample();
+});
+
+/* ============================================================
+   RULE MANAGEMENT
+   ============================================================ */
+function addRule(findVal = '', replaceVal = '', wholeWord = true, matchCase = false) {
+    ruleCount++;
+    const id = ruleCount;
+    const container = document.getElementById('rules-container');
+    
+    const div = document.createElement('div');
+    div.className = 'rule-card';
+    div.id = `rule-${id}`;
+    div.innerHTML = `
+        <button class="btn-remove" onclick="removeRule(${id})" title="Remove rule">×</button>
+        <div class="rule-row">
+            <input type="text" class="rule-input find-input" placeholder="Find..." value="${findVal}">
+            <span style="color:var(--text-secondary)">→</span>
+            <input type="text" class="rule-input replace-input" placeholder="Replace..." value="${replaceVal}">
+        </div>
+        <div class="rule-options">
+            <label title="Only match complete words (e.g., 'IN' won't match 'INITIAL')">
+                <input type="checkbox" class="whole-word" ${wholeWord ? 'checked' : ''}> Whole Word
+            </label>
+            <label title="Match exact uppercase/lowercase">
+                <input type="checkbox" class="match-case" ${matchCase ? 'checked' : ''}> Match Case
+            </label>
+        </div>
+    `;
+    container.appendChild(div);
 }
 
-function writeOutput(key, code) {
-    const out = document.getElementById(key + '-out');
-    const el = document.getElementById(key + '-code');
-    el.textContent = code;
-    if (window.Prism) Prism.highlightElement(el);
-    out.style.display = 'flex';
+function removeRule(id) {
+    const el = document.getElementById(`rule-${id}`);
+    if (el) el.remove();
 }
 
-function copyGen(key) {
-    const el = document.getElementById(key + '-code');
-    navigator.clipboard.writeText(el.textContent).then(() => {
-        const btn = document.querySelector(`#${key}-out .btn-secondary`);
+function clearRules() {
+    document.getElementById('rules-container').innerHTML = '';
+    ruleCount = 0;
+}
+
+/* ============================================================
+   PRESETS
+   ============================================================ */
+function applyPreset(type) {
+    clearRules();
+    if (type === 'modern_vars') {
+        addRule('wa_', 'ls_', true, false);
+        addRule('it_', 'lt_', true, false);
+        addRule('g_', 'gv_', true, false);
+    } else if (type === 'prefix_change') {
+        addRule('ZOLD_', 'ZNEW_', true, true); // Case sensitive for prefixes
+    } else if (type === 'commit_work') {
+        addRule('COMMIT WORK', 'COMMIT ENTITIES', true, true);
+        addRule('COMMIT WORK AND WAIT', 'COMMIT ENTITIES', true, true);
+    } else if (type === 'sy_subrc') {
+        // This is a simplified preset. Real SY-SUBRC removal requires AST parsing, 
+        // but we can at least flag or replace common patterns.
+        addRule('IF sy-subrc <> 0.', '" TODO: Modernize exception handling', false, true);
+    }
+    applyRefactoring();
+}
+
+/* ============================================================
+   REFACTORING ENGINE
+   ============================================================ */
+function escapeRegExp(string) {
+    // Escapes special regex characters so user input is treated as literal text
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function applyRefactoring() {
+    let code = document.getElementById('input-code').value;
+    let totalReplacements = 0;
+    const ruleCards = document.querySelectorAll('.rule-card');
+
+    ruleCards.forEach(card => {
+        const findText = card.querySelector('.find-input').value;
+        const replaceText = card.querySelector('.replace-input').value;
+        const wholeWord = card.querySelector('.whole-word').checked;
+        const matchCase = card.querySelector('.match-case').checked;
+
+        if (!findText) return;
+
+        // Build Regex
+        let pattern = escapeRegExp(findText);
+        if (wholeWord) {
+            pattern = `\\b${pattern}\\b`; // \b ensures we don't replace "IN" inside "INITIAL"
+        }
+        const flags = matchCase ? 'g' : 'gi';
+        const regex = new RegExp(pattern, flags);
+
+        // Count replacements (simple approximation)
+        const matches = code.match(regex);
+        if (matches) {
+            totalReplacements += matches.length;
+        }
+
+        // Apply replacement
+        code = code.replace(regex, replaceText);
+    });
+
+    // Update Output
+    const outputEl = document.getElementById('output-code');
+    outputEl.textContent = code;
+    
+    // Re-highlight with Prism
+    if (window.Prism) {
+        Prism.highlightElement(outputEl);
+    }
+
+    // Update Stats
+    document.getElementById('stats').textContent = `${totalReplacements} replacement(s) made across ${ruleCards.length} rule(s).`;
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+function copyOutput() {
+    const code = document.getElementById('output-code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+        const btn = document.querySelector('.pane-output .btn-secondary');
         const prev = btn.innerText;
         btn.innerText = 'Copied!';
         btn.style.background = 'var(--success)';
         btn.style.color = 'white';
-        btn.style.borderColor = 'var(--success)';
         setTimeout(() => { 
             btn.innerText = prev; 
             btn.style.background = ''; 
             btn.style.color = ''; 
-            btn.style.borderColor = ''; 
         }, 1500);
     });
 }
 
-/* ============================================================
-   1. CDS VIEW GENERATOR
-   ============================================================ */
-function genCDS() {
-    const name = document.getElementById('cds-name').value.trim().toUpperCase() || 'ZI_VIEW';
-    const base = document.getElementById('cds-base').value.trim().toUpperCase() || 'I_TABLE';
-    const key = document.getElementById('cds-key').value.trim() || 'KEY_FIELD';
-    const fields = document.getElementById('cds-fields').value.split(',').map(f => f.trim()).filter(Boolean);
-    
-    const auth = document.getElementById('cds-anno-auth').checked;
-    const search = document.getElementById('cds-anno-search').checked;
-    const ui = document.getElementById('cds-anno-ui').checked;
+function loadSample() {
+    const sample = `REPORT zold_database_report.
 
-    let annotations = '@AccessControl.authorizationCheck: #CHECK\n';
-    if (search) annotations += '@Search.searchable: true\n';
-    if (ui) annotations += "@UI.headerInfo.typeName: 'Document'\n";
+DATA: wa_header TYPE zold_header,
+      it_items  TYPE TABLE OF zold_item,
+      wa_items  TYPE zold_item.
 
-    const fieldsBlock = fields.map(f => {
-        const isKey = f.toLowerCase() === key.toLowerCase() ? 'key ' : '    ';
-        return `  ${isKey}${f},`;
-    }).join('\n').slice(0, -1);
+SELECT * FROM zz_database
+  INTO CORRESPONDING FIELDS OF TABLE it_items
+  WHERE bukrs = '1000'.
 
-    const code = `@AbapCatalog.viewEnhancementCategory: [#NONE]
-${annotations}@EndUserText.label: 'Generated CDS View'
-define root view entity ${name}
-  as select from ${base}
-{
-${fieldsBlock}
-}`;
-    writeOutput('cds', code);
+IF sy-subrc <> 0.
+  WRITE: / 'No data found'.
+ENDIF.
+
+LOOP AT it_items INTO wa_items.
+  wa_header-zz_db_ref = wa_items-ref.
+  MODIFY zz_database FROM wa_header.
+ENDLOOP.
+
+COMMIT WORK AND WAIT.`;
+    document.getElementById('input-code').value = sample;
+    applyRefactoring();
 }
 
-function resetCDS() {
-    document.getElementById('cds-name').value = 'ZI_BillingDocument';
-    document.getElementById('cds-base').value = 'I_BillingDocument';
-    document.getElementById('cds-key').value = 'BillingDocument';
-    document.getElementById('cds-fields').value = 'BillingDocument, CompanyCode, CreationDate, TotalNetAmount, Currency';
-    document.getElementById('cds-out').style.display = 'none';
-}
+// Auto-apply on typing (with slight debounce for performance)
+let timeout;
+document.getElementById('input-code').addEventListener('input', () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(applyRefactoring, 300);
+});
 
-/* ============================================================
-   2. ABAP OO GENERATOR
-   ============================================================ */
-function genOO() {
-    const name = document.getElementById('oo-name').value.trim().toUpperCase() || 'ZCL_CLASS';
-    const desc = document.getElementById('oo-desc').value.trim() || 'Description';
-    const isRun = document.getElementById('oo-if-run').checked;
-    const isSerial = document.getElementById('oo-if-serial').checked;
-    const method = document.getElementById('oo-method').value.trim().toUpperCase() || 'EXECUTE';
-
-    let interfaces = '';
-    let mainMethod = '';
-    
-    if (isRun) {
-        interfaces += '  INTERFACES if_oo_adt_classrun.\n';
-        mainMethod = `
-  METHOD if_oo_adt_classrun~main.
-    TRY.
-        NEW ${name}( )->${method}( ).
-      CATCH cx_root INTO DATA(lx_error).
-        out->write( lx_error->get_text( ) ).
-    ENDTRY.
-  ENDMETHOD.`;
-    }
-    if (isSerial) interfaces += '  INTERFACES if_serializable_object.\n';
-
-    const code = `CLASS ${name} DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PUBLIC.
-
-  PUBLIC SECTION.
-${interfaces}
-    METHODS ${method}
-      RAISING cx_root.
-
-  PRIVATE SECTION.
-ENDCLASS.
-
-CLASS ${name} IMPLEMENTATION.
-${mainMethod}
-
-  METHOD ${method}.
-    " Modern ABAP: Inline declarations, no SY-SUBRC checks
-    DATA(lv_timestamp) = cl_abap_context_info=>get_system_time( ).
-    
-    " Your business logic here
-    " RAISE EXCEPTION TYPE cx_no_check IF condition IS INITIAL.
-  ENDMETHOD.
-ENDCLASS.`;
-    writeOutput('oo', code);
-}
-
-function resetOO() {
-    document.getElementById('oo-name').value = 'ZCL_DOCUMENT_PROCESSOR';
-    document.getElementById('oo-desc').value = 'Document Processing Logic';
-    document.getElementById('oo-method').value = 'PROCESS_DOCUMENT';
-    document.getElementById('oo-out').style.display = 'none';
-}
-
-/* ============================================================
-   3. RAP BEHAVIOR GENERATOR
-   ============================================================ */
-function genRAP() {
-    const entity = document.getElementById('rap-entity').value.trim().toUpperCase() || 'ZI_ENTITY';
-    const key = document.getElementById('rap-key').value.trim() || 'KEY_FIELD';
-    const type = document.getElementById('rap-type').value;
-    const draft = document.getElementById('rap-draft').checked;
-    
-    const create = document.getElementById('rap-create').checked ? 'create;' : '';
-    const update = document.getElementById('rap-update').checked ? 'update;' : '';
-    const deleteFeat = document.getElementById('rap-delete').checked ? 'delete;' : '';
-
-    const managedStr = type === 'managed' ? 'managed implementation in class zbp_' + entity.toLowerCase() + ' unique;' : 'unmanaged implementation in class zbp_' + entity.toLowerCase() + ' unique;';
-    const draftStr = draft ? '\n  with draft' : '';
-
-    const code = `define behavior for ${entity}
-  ${managedStr}${draftStr}
-{
-  field ( readonly ) ${key};
-  
-  ${create}
-  ${update}
-  ${deleteFeat}
-  
-  mapping for ${entity} corresponding
-  {
-    ${key} = ${key};
-  }
-}`;
-    writeOutput('rap', code);
-}
-
-function resetRAP() {
-    document.getElementById('rap-entity').value = 'ZI_BillingDocument';
-    document.getElementById('rap-key').value = 'BillingDocument';
-    document.getElementById('rap-out').style.display = 'none';
-}
-
-/* ============================================================
-   4. REST / HTTP CLIENT GENERATOR (ABAP CLOUD)
-   ============================================================ */
-function genREST() {
-    const methodName = document.getElementById('rest-method-name').value.trim().toUpperCase() || 'FETCH_DATA';
-    const httpMethod = document.getElementById('rest-http-method').value;
-    const url = document.getElementById('rest-url').value.trim() || 'https://api.example.com';
-    const auth = document.getElementById('rest-auth').value;
-
-    let authCode = '';
-    if (auth === 'basic') {
-        authCode = `    " Note: In ABAP Cloud, use Communication Arrangements / Destinations instead of hardcoded credentials
-    " client->set_authorization( iv_username = 'user' iv_password = 'pwd' ).`;
-    } else if (auth === 'oauth2') {
-        authCode = `    " Authentication is handled automatically by the destination service in ABAP Environment`;
-    }
-
-    const code = `  METHOD ${methodName}.
-    " Modern ABAP Cloud: Use CL_WEB_HTTP_CLIENT (not CL_HTTP_CLIENT)
-    TRY.
-        " 1. Create client (In real scenarios, use CL_WEB_HTTP_CLIENT=>CREATE_BY_DESTINATION)
-        DATA(client) = cl_web_http_client=>create_by_url( '${url}' ).
-
-        " 2. Set HTTP Method
-        client->get_http_request( )->set_method( if_web_http_client=>${httpMethod} ).
-        
-        " 3. Set Headers
-        client->get_http_request( )->set_header_fields( VALUE #(
-          ( name = 'Content-Type' value = 'application/json' )
-          ( name = 'Accept'        value = 'application/json' )
-        ) ).
-
-${authCode}
-
-        " 4. Execute Request
-        DATA(response) = client->execute( ).
-        
-        " 5. Handle Response
-        DATA(lv_status) = response->get_status( ).
-        IF lv_status-code = 200.
-          DATA(lv_json) = response->get_text( ).
-          " Deserialize using /UI2/CL_JSON or CL_SXML_STRING_READER
-        ELSE.
-          RAISE EXCEPTION TYPE cx_web_http_client_error
-            EXPORTING
-              textid = cx_web_http_client_error=>http_error
-              status = lv_status-code.
-        ENDIF.
-
-      CATCH cx_web_http_client_error INTO DATA(lx_err).
-        " Log error using CL_MESSAGE_HELPER or raise
-        RAISE EXCEPTION lx_err.
-    ENDTRY.
-  ENDMETHOD.`;
-    writeOutput('rest', code);
-}
-
-function resetREST() {
-    document.getElementById('rest-method-name').value = 'FETCH_EXTERNAL_DATA';
-    document.getElementById('rest-url').value = 'https://api.example.com/v1/documents';
-    document.getElementById('rest-out').style.display = 'none';
-}
-
-// Initialize
-window.addEventListener('DOMContentLoaded', () => {
-    // Auto-generate first view for immediate feedback
-    genCDS();
+// Attach event listeners to dynamically added rule inputs
+document.getElementById('rules-container').addEventListener('input', () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(applyRefactoring, 300);
 });
 </script>
 </body>
