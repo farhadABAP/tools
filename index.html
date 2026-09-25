@@ -14,81 +14,171 @@
     --accent-glow: rgba(88, 166, 255, 0.15); --border: #30363d;
     --success: #238636; --danger: #da3633; --warn: #d29922; --purple: #a371f7;
     --code-bg: #1e1e1e;
+    --sidebar-width: 260px;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.5; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.5; min-height: 100vh; display: flex; flex-direction: column; }
 
-nav { background: var(--bg-secondary); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-.logo { font-size: 1.1rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+/* NAV */
+nav { background: var(--bg-secondary); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; position: sticky; top: 0; z-index: 50; }
+.logo { font-size: 1.1rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
 .version { background: var(--bg-tertiary); color: var(--text-secondary); padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
 
+/* HAMBURGER - hidden on desktop */
+.hamburger { display: none; background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-primary); width: 40px; height: 40px; border-radius: 6px; cursor: pointer; font-size: 1.2rem; align-items: center; justify-content: center; margin-right: 0.75rem; }
+
+/* APP LAYOUT */
 .app-container { display: flex; flex: 1; overflow: hidden; }
-.sidebar { width: 260px; background: var(--bg-secondary); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
+
+/* SIDEBAR */
+.sidebar { width: var(--sidebar-width); background: var(--bg-secondary); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; height: calc(100vh - 57px); position: sticky; top: 57px; }
 .nav-section { padding: 1rem 0; border-bottom: 1px solid var(--border); }
 .nav-title { padding: 0 1.5rem; font-size: 0.7rem; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
-.nav-item { padding: 0.6rem 1.5rem; cursor: pointer; color: var(--text-secondary); font-size: 0.85rem; display: flex; align-items: center; gap: 0.75rem; transition: all 0.2s; border-left: 3px solid transparent; }
+.nav-item { padding: 0.75rem 1.5rem; cursor: pointer; color: var(--text-secondary); font-size: 0.85rem; display: flex; align-items: center; gap: 0.75rem; transition: all 0.2s; border-left: 3px solid transparent; min-height: 44px; }
 .nav-item:hover { background: var(--bg-tertiary); color: var(--text-primary); }
 .nav-item.active { background: var(--accent-glow); color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
 .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
 
-.main-content { flex: 1; overflow-y: auto; padding: 2rem; }
+/* BACKDROP - mobile only */
+.backdrop { display: none; position: fixed; top: 57px; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 40; }
+.backdrop.show { display: block; }
+
+/* MAIN */
+.main-content { flex: 1; overflow-y: auto; padding: 2rem; min-width: 0; }
 .panel { display: none; max-width: 1100px; margin: 0 auto; }
 .panel.active { display: block; }
 
-.module-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+.module-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
 .module-header h2 { font-size: 1.5rem; }
 .module-content { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; }
 .module-content h3 { color: var(--accent); margin: 1.5rem 0 0.75rem; font-size: 1.1rem; }
 .module-content h3:first-child { margin-top: 0; }
-.module-content p { margin-bottom: 1rem; color: var(--text-primary); }
+.module-content p { margin-bottom: 1rem; color: var(--text-primary); word-wrap: break-word; }
 .module-content ul { margin-bottom: 1rem; padding-left: 1.5rem; }
 .module-content li { margin-bottom: 0.5rem; color: var(--text-secondary); }
-.module-content code:not([class*="language-"]) { background: var(--bg-tertiary); padding: 0.1rem 0.4rem; border-radius: 4px; font-family: "Fira Code", monospace; font-size: 0.85rem; color: var(--warn); }
-.module-content pre { margin-bottom: 1.5rem; border-radius: 6px; border: 1px solid var(--border); }
+.module-content code:not([class*="language-"]) { background: var(--bg-tertiary); padding: 0.1rem 0.4rem; border-radius: 4px; font-family: "Fira Code", monospace; font-size: 0.85rem; color: var(--warn); word-break: break-all; }
+.module-content pre { margin-bottom: 1.5rem; border-radius: 6px; border: 1px solid var(--border); overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .module-content pre code { font-size: 0.82rem !important; }
 
 .task-card { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid var(--accent); }
-.task-card h4 { color: var(--accent); margin-bottom: 0.5rem; }
+.task-card h4 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.05rem; }
 .task-card .grading { background: rgba(218, 54, 51, 0.1); border: 1px solid var(--danger); padding: 0.75rem; border-radius: 4px; margin-top: 1rem; font-size: 0.85rem; color: var(--danger); }
 .task-card .grading strong { display: block; margin-bottom: 0.25rem; }
 
 .gotcha-card { background: var(--bg-secondary); border: 1px solid var(--warn); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
-.gotcha-card h4 { color: var(--warn); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+.gotcha-card h4 { color: var(--warn); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
 
 .info-box { background: rgba(88, 166, 255, 0.1); border-left: 3px solid var(--accent); padding: 1rem; border-radius: 0 6px 6px 0; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-primary); }
 .info-box strong { color: var(--accent); }
 
 .search-bar { position: sticky; top: 0; z-index: 10; background: var(--bg-primary); padding-bottom: 1rem; margin-bottom: 1rem; }
-.search-input { width: 100%; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; color: var(--text-primary); font-size: 1rem; outline: none; }
+.search-input { width: 100%; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; color: var(--text-primary); font-size: 1rem; outline: none; min-height: 44px; }
 
 .snippet-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1.5rem; overflow: hidden; }
-.snippet-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-tertiary); }
+.snippet-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-tertiary); gap: 0.5rem; flex-wrap: wrap; }
 .snippet-header h3 { font-size: 1rem; color: var(--accent); }
+.snippet-body { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .snippet-body pre { margin: 0 !important; border-radius: 0 !important; max-height: 400px; overflow: auto; }
 .snippet-body code { font-family: "Fira Code", "Consolas", monospace !important; font-size: 0.82rem !important; }
-.copy-btn { background: var(--bg-primary); border: 1px solid var(--border); color: var(--text-secondary); padding: 0.3rem 0.7rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
+.copy-btn { background: var(--bg-primary); border: 1px solid var(--border); color: var(--text-secondary); padding: 0.5rem 0.9rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; min-height: 36px; white-space: nowrap; }
 .copy-btn:hover { border-color: var(--success); color: var(--success); }
 
 .tag { display: inline-block; background: var(--accent-glow); color: var(--accent); padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; margin-left: 0.5rem; }
 
 .learning-path { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; }
-.learning-path h4 { color: var(--purple); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+.learning-path h4 { color: var(--purple); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
 .learning-path .priority { background: var(--danger); color: white; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; }
 .learning-path .hours { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem; }
 
 pre { margin: 0 !important; border-radius: 0 !important; background: var(--code-bg) !important; }
 code { font-family: "Fira Code", "Consolas", monospace !important; }
+
+/* ============================================
+   MOBILE RESPONSIVE STYLES
+   ============================================ */
+
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+    nav { padding: 0.75rem 1rem; }
+    .logo { font-size: 1rem; }
+    .hamburger { display: inline-flex; }
+    
+    .sidebar {
+        position: fixed;
+        top: 57px;
+        left: 0;
+        bottom: 0;
+        width: var(--sidebar-width);
+        z-index: 45;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        height: calc(100vh - 57px);
+    }
+    .sidebar.open { transform: translateX(0); }
+    
+    .main-content { padding: 1.25rem; }
+    .module-content { padding: 1.25rem; }
+    .task-card, .gotcha-card, .learning-path { padding: 1.25rem; }
+    .module-header h2 { font-size: 1.25rem; }
+}
+
+/* Phone (480px and below) */
+@media (max-width: 480px) {
+    nav { padding: 0.6rem 0.75rem; }
+    .logo { font-size: 0.9rem; gap: 0.35rem; }
+    .logo span { display: none; }
+    .version { font-size: 0.65rem; padding: 0.15rem 0.5rem; }
+    
+    .sidebar { width: 85%; max-width: 300px; }
+    
+    .main-content { padding: 1rem; }
+    .module-content { padding: 1rem; border-radius: 6px; }
+    .task-card, .gotcha-card, .learning-path { padding: 1rem; border-radius: 6px; }
+    .module-header h2 { font-size: 1.1rem; }
+    .module-header { margin-bottom: 1rem; padding-bottom: 0.75rem; }
+    
+    .info-box { padding: 0.75rem; font-size: 0.85rem; }
+    .snippet-header { padding: 0.75rem 1rem; }
+    .snippet-header h3 { font-size: 0.9rem; }
+    .copy-btn { padding: 0.4rem 0.7rem; font-size: 0.7rem; }
+    
+    .module-content code:not([class*="language-"]) { font-size: 0.78rem; }
+    .module-content pre code { font-size: 0.75rem !important; }
+    
+    .nav-item { padding: 0.75rem 1.25rem; min-height: 48px; }
+    
+    .learning-path h4 { font-size: 0.95rem; }
+    .task-card h4 { font-size: 1rem; }
+    .gotcha-card h4 { font-size: 1rem; }
+}
+
+/* Very small phones (360px and below) */
+@media (max-width: 360px) {
+    .main-content { padding: 0.75rem; }
+    .module-content { padding: 0.85rem; }
+    .task-card, .gotcha-card, .learning-path { padding: 0.85rem; }
+    .module-content pre code { font-size: 0.7rem !important; }
+}
+
+/* Landscape phone optimization */
+@media (max-height: 500px) and (orientation: landscape) {
+    .sidebar { height: 100vh; top: 0; }
+    .nav-item { padding: 0.5rem 1.25rem; min-height: 36px; }
+}
 </style>
 </head>
 <body>
 
 <nav>
+    <button class="hamburger" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
     <a href="#" class="logo">⚡ ABAP Code Patterns <span style="font-weight:400; color:var(--text-secondary); font-size:0.9rem;">& Reference</span></a>
-    <span class="version">v3.0</span>
+    <span class="version">v4.0</span>
 </nav>
 
 <div class="app-container">
-    <aside class="sidebar">
+    <div class="backdrop" id="backdrop" onclick="toggleSidebar()"></div>
+    
+    <aside class="sidebar" id="sidebar">
         <div class="nav-section">
             <div class="nav-title">Learning Path</div>
             <div class="nav-item active" onclick="showPanel('learning', this)">
@@ -150,7 +240,6 @@ code { font-family: "Fira Code", "Consolas", monospace !important; }
                 <h4><span class="priority">PRIORITY 3</span> S4D426: Clean Core Extensibility</h4>
                 <div class="hours">7 hours</div>
                 <p><strong>Focus on:</strong> Key user extensibility vs developer extensibility, side-by-side extensions, and in-app extensions for S/4HANA Cloud.</p>
-                <p><strong>Why:</strong> Understanding Clean Core principles is critical for modern SAP development.</p>
             </div>
 
             <div class="learning-path">
@@ -171,7 +260,7 @@ code { font-family: "Fira Code", "Consolas", monospace !important; }
             </div>
         </div>
 
-        <!-- PRACTICAL SCENARIOS (MOCK EXAMS) -->
+        <!-- PRACTICAL SCENARIOS -->
         <div class="panel" id="panel-tasks">
             <div class="module-header">
                 <h2>🎯 Practical Implementation Scenarios</h2>
@@ -195,7 +284,6 @@ code { font-family: "Fira Code", "Consolas", monospace !important; }
                         <li>Use <code>@Search.defaultSearchElement: true</code> on the searchable field</li>
                         <li>Set <code>@AccessControl.authorizationCheck: #CHECK</code> (requires DCL)</li>
                         <li>Activate the view before testing</li>
-                        <li>Verify the view appears in the ABAP Dictionary</li>
                     </ul>
                 </div>
             </div>
@@ -215,7 +303,6 @@ code { font-family: "Fira Code", "Consolas", monospace !important; }
                         <li>Use <code>field ( readonly ) BusinessPartner;</code> in BDEF</li>
                         <li>Map determination to <code>on modify { create; }</code></li>
                         <li>Generate and activate Behavior Implementation class</li>
-                        <li>Test with "Preview" in the Service Binding</li>
                     </ul>
                 </div>
             </div>
@@ -236,7 +323,6 @@ code { font-family: "Fira Code", "Consolas", monospace !important; }
                         <li>Provide <code>%cid</code> in CREATE operations</li>
                         <li>Check <code>FAILED</code> and <code>REPORTED</code> tables for errors</li>
                         <li>Use <code>COMMIT ENTITIES</code> to persist changes</li>
-                        <li>Output results using <code>out->write()</code></li>
                     </ul>
                 </div>
             </div>
@@ -558,21 +644,21 @@ ENDCLASS.</code></pre>
 
             <div class="snippet-card">
                 <div class="snippet-header"><h3>Prompt: Generate RAP BDEF</h3><button class="copy-btn" onclick="copyText(this, 'joule1')">Copy</button></div>
-                <div class="snippet-body" style="padding: 1rem; font-family: monospace; color: var(--success);" id="joule1">
+                <div class="snippet-body" style="padding: 1rem; font-family: monospace; color: var(--success); overflow-x: auto;" id="joule1">
                     Create a managed RAP behavior definition for the CDS view entity ZI_MyEntity. Make it draft enabled. Allow create, update, and delete. Make the field 'ID' readonly. Add a determination named 'setDefaultStatus' that triggers on modify for create.
                 </div>
             </div>
 
             <div class="snippet-card">
                 <div class="snippet-header"><h3>Prompt: Generate EML Test Class</h3><button class="copy-btn" onclick="copyText(this, 'joule2')">Copy</button></div>
-                <div class="snippet-body" style="padding: 1rem; font-family: monospace; color: var(--success);" id="joule2">
+                <div class="snippet-body" style="padding: 1rem; font-family: monospace; color: var(--success); overflow-x: auto;" id="joule2">
                     Write an executable ABAP class implementing IF_OO_ADT_CLASSRUN. In the main method, use EML IN LOCAL MODE to create a new record in ZI_MyEntity with the Name 'Test'. Commit the entities and output the mapped key or any reported errors to the console.
                 </div>
             </div>
 
             <div class="snippet-card">
                 <div class="snippet-header"><h3>Prompt: Generate CDS View</h3><button class="copy-btn" onclick="copyText(this, 'joule3')">Copy</button></div>
-                <div class="snippet-body" style="padding: 1rem; font-family: monospace; color: var(--success);" id="joule3">
+                <div class="snippet-body" style="padding: 1rem; font-family: monospace; color: var(--success); overflow-x: auto;" id="joule3">
                     Create a CDS view entity named ZI_MyEntity based on I_BusinessPartner. Expose BusinessPartner, BusinessPartnerFullName, and CreationDate. Add @UI.lineItem annotations for all fields and make BusinessPartnerFullName searchable.
                 </div>
             </div>
@@ -582,17 +668,36 @@ ENDCLASS.</code></pre>
 </div>
 
 <script>
+/* SIDEBAR TOGGLE (mobile) */
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('backdrop');
+    sidebar.classList.toggle('open');
+    backdrop.classList.toggle('show');
+}
+
+/* Close sidebar when clicking nav item on mobile */
 function showPanel(panelId, navItem) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById('panel-' + panelId).classList.add('active');
     if (navItem) navItem.classList.add('active');
     
+    // Close sidebar on mobile after selection
+    if (window.innerWidth <= 768) {
+        toggleSidebar();
+    }
+    
     setTimeout(() => {
         document.querySelectorAll('#panel-' + panelId + ' pre code').forEach(block => {
             Prism.highlightElement(block);
         });
     }, 50);
+    
+    // Scroll to top on mobile
+    if (window.innerWidth <= 768) {
+        document.querySelector('.main-content').scrollTop = 0;
+    }
 }
 
 function filterSnippets(query) {
@@ -626,6 +731,16 @@ function copyText(btn, id) {
         setTimeout(() => { btn.innerText = original; }, 1500);
     });
 }
+
+/* Close sidebar on ESC key */
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && window.innerWidth <= 768) {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar.classList.contains('open')) {
+            toggleSidebar();
+        }
+    }
+});
 
 window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
