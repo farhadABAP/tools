@@ -3,315 +3,606 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ABAP Code Refactorer</title>
+<title>C_ABAPD Exam Prep | ABAP Cloud & RAP</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-abap.min.js"></script>
 <style>
 :root {
-    --bg-primary: #0d1117;
-    --bg-secondary: #161b22;
-    --bg-tertiary: #21262d;
-    --text-primary: #c9d1d9;
-    --text-secondary: #8b949e;
-    --accent: #58a6ff;
-    --accent-glow: rgba(88, 166, 255, 0.15);
-    --border: #30363d;
-    --success: #238636;
-    --danger: #da3633;
-    --warn: #d29922;
+    --bg-primary: #0d1117; --bg-secondary: #161b22; --bg-tertiary: #21262d;
+    --text-primary: #c9d1d9; --text-secondary: #8b949e; --accent: #58a6ff;
+    --accent-glow: rgba(88, 166, 255, 0.15); --border: #30363d;
+    --success: #238636; --danger: #da3633; --warn: #d29922; --purple: #a371f7;
     --code-bg: #1e1e1e;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.5; height: 100vh; display: flex; flex-direction: column; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
 /* NAV */
 nav { background: var(--bg-secondary); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
 .logo { font-size: 1.1rem; font-weight: 700; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+.exam-badge { background: var(--purple); color: white; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.7rem; font-weight: 700; }
 
-/* APP LAYOUT */
+/* LAYOUT */
 .app-container { display: flex; flex: 1; overflow: hidden; }
+.sidebar { width: 260px; background: var(--bg-secondary); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
+.nav-section { padding: 1rem 0; border-bottom: 1px solid var(--border); }
+.nav-title { padding: 0 1.5rem; font-size: 0.7rem; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+.nav-item { padding: 0.6rem 1.5rem; cursor: pointer; color: var(--text-secondary); font-size: 0.85rem; display: flex; align-items: center; gap: 0.75rem; transition: all 0.2s; border-left: 3px solid transparent; }
+.nav-item:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+.nav-item.active { background: var(--accent-glow); color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
+.nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+.check-mark { margin-left: auto; color: var(--success); font-size: 0.9rem; display: none; }
+.nav-item.completed .check-mark { display: block; }
 
-/* LEFT: INPUT */
- pane-input { width: 40%; display: flex; flex-direction: column; border-right: 1px solid var(--border); background: var(--bg-secondary); }
-.pane-header { padding: 0.75rem 1rem; background: var(--bg-tertiary); border-bottom: 1px solid var(--border); font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; display: flex; justify-content: space-between; align-items: center; }
-.code-area { flex: 1; width: 100%; background: var(--code-bg); color: var(--text-primary); border: none; padding: 1rem; font-family: "Fira Code", "Consolas", monospace; font-size: 0.85rem; resize: none; outline: none; line-height: 1.6; }
-.code-area::placeholder { color: var(--text-secondary); opacity: 0.5; }
+/* MAIN */
+.main-content { flex: 1; overflow-y: auto; padding: 2rem; }
+.panel { display: none; max-width: 1000px; margin: 0 auto; }
+.panel.active { display: block; }
 
-/* MIDDLE: RULES */
-.pane-rules { width: 30%; display: flex; flex-direction: column; border-right: 1px solid var(--border); background: var(--bg-primary); }
-.rules-container { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
-.rule-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; padding: 0.75rem; position: relative; transition: border-color 0.2s; }
-.rule-card:hover { border-color: var(--accent); }
-.rule-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: center; }
-.rule-input { flex: 1; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; padding: 0.4rem 0.6rem; color: var(--text-primary); font-family: "Fira Code", monospace; font-size: 0.8rem; }
-.rule-input:focus { outline: none; border-color: var(--accent); }
-.rule-options { display: flex; gap: 0.75rem; font-size: 0.75rem; color: var(--text-secondary); }
-.rule-options label { display: flex; align-items: center; gap: 0.3rem; cursor: pointer; }
-.rule-options input { accent-color: var(--accent); }
-.btn-remove { position: absolute; top: 0.5rem; right: 0.5rem; background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1rem; padding: 0.2rem; }
-.btn-remove:hover { color: var(--danger); }
+/* DASHBOARD */
+.dash-header { background: linear-gradient(135deg, #1f242e 0%, #161b22 100%); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; }
+.dash-header h1 { font-size: 2rem; margin-bottom: 0.5rem; background: linear-gradient(90deg, var(--accent), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.dash-header p { color: var(--text-secondary); }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.stat-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; }
+.stat-card h4 { font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem; }
+.stat-card .val { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+.progress-bar { width: 100%; height: 8px; background: var(--bg-tertiary); border-radius: 4px; margin-top: 0.75rem; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--purple)); transition: width 0.5s; }
 
-.btn-add { width: 100%; padding: 0.6rem; background: var(--bg-tertiary); border: 1px dashed var(--border); color: var(--accent); border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; margin-top: 0.5rem; }
-.btn-add:hover { background: var(--accent-glow); border-color: var(--accent); }
+/* MODULES */
+.module-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+.module-header h2 { font-size: 1.5rem; }
+.btn-complete { background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-primary); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+.btn-complete:hover { border-color: var(--success); color: var(--success); }
+.btn-complete.done { background: var(--success); border-color: var(--success); color: white; }
 
-.preset-bar { padding: 0.75rem 1rem; border-top: 1px solid var(--border); background: var(--bg-secondary); }
-.preset-title { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: 600; }
-.preset-btns { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.preset-btn { background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-primary); padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer; }
-.preset-btn:hover { border-color: var(--warn); color: var(--warn); }
+.module-content { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; }
+.module-content h3 { color: var(--accent); margin: 1.5rem 0 0.75rem; font-size: 1.1rem; }
+.module-content h3:first-child { margin-top: 0; }
+.module-content p { margin-bottom: 1rem; color: var(--text-primary); }
+.module-content ul { margin-bottom: 1rem; padding-left: 1.5rem; }
+.module-content li { margin-bottom: 0.5rem; color: var(--text-secondary); }
+.module-content code:not([class*="language-"]) { background: var(--bg-tertiary); padding: 0.1rem 0.4rem; border-radius: 4px; font-family: "Fira Code", monospace; font-size: 0.85rem; color: var(--warn); }
+.module-content pre { margin-bottom: 1.5rem; border-radius: 6px; border: 1px solid var(--border); }
+.module-content pre code { font-size: 0.82rem !important; }
 
-/* RIGHT: OUTPUT */
-.pane-output { width: 30%; display: flex; flex-direction: column; background: var(--bg-secondary); }
-.output-container { flex: 1; overflow: auto; position: relative; }
-.output-container pre { margin: 0 !important; min-height: 100%; }
-.output-container code { font-family: "Fira Code", "Consolas", monospace !important; font-size: 0.82rem !important; }
+/* FLASHCARDS */
+.flashcard-container { perspective: 1000px; height: 300px; margin-bottom: 1.5rem; }
+.flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s; cursor: pointer; }
+.flashcard.flipped { transform: rotateY(180deg); }
+.card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2rem; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
+.card-front { background: linear-gradient(135deg, #1f242e, #161b22); }
+.card-back { background: linear-gradient(135deg, #161b22, #0d1117); transform: rotateY(180deg); }
+.card-face h3 { font-size: 1.25rem; margin-bottom: 1rem; color: var(--accent); }
+.card-face p { font-size: 1rem; color: var(--text-primary); }
+.card-controls { display: flex; justify-content: center; gap: 1rem; }
+
+/* QUIZ */
+.quiz-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; margin-bottom: 1.5rem; }
+.quiz-card h4 { margin-bottom: 1rem; font-size: 1.1rem; }
+.quiz-options { display: flex; flex-direction: column; gap: 0.75rem; }
+.quiz-opt { background: var(--bg-tertiary); border: 1px solid var(--border); padding: 0.75rem 1rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+.quiz-opt:hover { border-color: var(--accent); }
+.quiz-opt.correct { border-color: var(--success); background: rgba(35, 134, 54, 0.15); color: var(--success); }
+.quiz-opt.wrong { border-color: var(--danger); background: rgba(218, 54, 51, 0.15); color: var(--danger); }
+.quiz-explanation { margin-top: 1rem; padding: 1rem; background: var(--bg-tertiary); border-left: 3px solid var(--accent); border-radius: 4px; display: none; font-size: 0.9rem; color: var(--text-secondary); }
+
+/* TOOLS (Joule) */
+.tool-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
+.tool-card h4 { color: var(--purple); margin-bottom: 1rem; }
+.tool-row { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.tool-field { flex: 1; min-width: 200px; }
+.tool-field label { display: block; font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 0.3rem; }
+.tool-field select, .tool-field input { width: 100%; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; padding: 0.5rem; color: var(--text-primary); font-size: 0.9rem; }
+.tool-output { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; font-family: "Fira Code", monospace; font-size: 0.85rem; color: var(--success); min-height: 60px; white-space: pre-wrap; }
 
 /* UTILS */
-.btn { padding: 0.4rem 0.8rem; border-radius: 4px; border: none; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
-.btn-primary { background: var(--success); color: white; }
-.btn-primary:hover { background: #2ea043; }
-.btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border); }
-.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
-
-.stats { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem; text-align: right; }
+pre { margin: 0 !important; border-radius: 0 !important; background: var(--code-bg) !important; }
+code { font-family: "Fira Code", "Consolas", monospace !important; }
+.tag { display: inline-block; background: var(--accent-glow); color: var(--accent); padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; margin-left: 0.5rem; }
 </style>
 </head>
 <body>
 
 <nav>
-    <a href="#" class="logo">🔄 farhadABAP <span style="font-weight:400; color:var(--text-secondary); font-size:0.9rem;">/ Code Refactorer</span></a>
-    <button class="btn btn-primary" onclick="applyRefactoring()">⚡ Apply All Rules</button>
+    <a href="#" class="logo">🎓 farhadABAP <span style="font-weight:400; color:var(--text-secondary); font-size:0.9rem;">/ C_ABAPD Prep</span></a>
+    <span class="exam-badge">BETA EXAM</span>
 </nav>
 
 <div class="app-container">
-    
-    <!-- LEFT: INPUT CODE -->
-    <div class="pane-input">
-        <div class="pane-header">
-            <span>📝 Source ABAP Code</span>
-            <button class="btn btn-secondary" style="font-size:0.7rem; padding:0.2rem 0.5rem;" onclick="loadSample()">Load Sample</button>
-        </div>
-        <textarea class="code-area" id="input-code" placeholder="Paste your ABAP code here..."></textarea>
-    </div>
-
-    <!-- MIDDLE: RULES -->
-    <div class="pane-rules">
-        <div class="pane-header">
-            <span>⚙️ Replacement Rules</span>
-            <button class="btn btn-secondary" style="font-size:0.7rem; padding:0.2rem 0.5rem;" onclick="clearRules()">Clear All</button>
-        </div>
-        <div class="rules-container" id="rules-container">
-            <!-- Rules will be injected here -->
-        </div>
-        <button class="btn-add" onclick="addRule()">+ Add Replacement Rule</button>
-        
-        <div class="preset-bar">
-            <div class="preset-title">⚡ Quick ABAP Modernization Presets</div>
-            <div class="preset-btns">
-                <button class="preset-btn" onclick="applyPreset('modern_vars')">wa_ → ls_ / it_ → lt_</button>
-                <button class="preset-btn" onclick="applyPreset('prefix_change')">ZOLD_ → ZNEW_</button>
-                <button class="preset-btn" onclick="applyPreset('commit_work')">COMMIT WORK → COMMIT ENTITIES</button>
-                <button class="preset-btn" onclick="applyPreset('sy_subrc')">Remove SY-SUBRC checks</button>
+    <aside class="sidebar">
+        <div class="nav-section">
+            <div class="nav-title">Overview</div>
+            <div class="nav-item active" onclick="showPanel('dashboard', this)">
+                <span class="nav-icon">📊</span> Dashboard
             </div>
         </div>
-    </div>
-
-    <!-- RIGHT: OUTPUT CODE -->
-    <div class="pane-output">
-        <div class="pane-header">
-            <span>✅ Refactored Code</span>
-            <button class="btn btn-secondary" style="font-size:0.7rem; padding:0.2rem 0.5rem;" onclick="copyOutput()">Copy</button>
+        <div class="nav-section">
+            <div class="nav-title">Learning Modules</div>
+            <div class="nav-item" onclick="showPanel('mod1', this)" id="nav-mod1">
+                <span class="nav-icon">☁️</span> 1. ABAP Cloud <span class="check-mark">✓</span>
+            </div>
+            <div class="nav-item" onclick="showPanel('mod2', this)" id="nav-mod2">
+                <span class="nav-icon">🧱</span> 2. ABAP OO <span class="check-mark">✓</span>
+            </div>
+            <div class="nav-item" onclick="showPanel('mod3', this)" id="nav-mod3">
+                <span class="nav-icon">🗄️</span> 3. CDS Views <span class="check-mark">✓</span>
+            </div>
+            <div class="nav-item" onclick="showPanel('mod4', this)" id="nav-mod4">
+                <span class="nav-icon">⚡</span> 4. RAP Model <span class="check-mark">✓</span>
+            </div>
+            <div class="nav-item" onclick="showPanel('mod5', this)" id="nav-mod5">
+                <span class="nav-icon">🤖</span> 5. Joule & AI <span class="check-mark">✓</span>
+            </div>
         </div>
-        <div class="output-container">
-            <pre><code class="language-abap" id="output-code">" Refactored code will appear here...</code></pre>
+        <div class="nav-section">
+            <div class="nav-title">Practice</div>
+            <div class="nav-item" onclick="showPanel('flashcards', this)">
+                <span class="nav-icon">🃏</span> Flashcards
+            </div>
+            <div class="nav-item" onclick="showPanel('quiz', this)">
+                <span class="nav-icon">📝</span> Practice Quiz
+            </div>
+            <div class="nav-item" onclick="showPanel('tools', this)">
+                <span class="nav-icon">🛠️</span> Joule Prompt Tool
+            </div>
         </div>
-        <div class="stats" id="stats">0 replacements made.</div>
-    </div>
+    </aside>
 
+    <main class="main-content">
+        
+        <!-- DASHBOARD -->
+        <div class="panel active" id="panel-dashboard">
+            <div class="dash-header">
+                <h1>SAP Certified - Backend Developer - ABAP Cloud</h1>
+                <p>Exam Code: <strong>C_ABAPD</strong> | Duration: 3 Hours | Pass Score: 67% | Type: System-Based (Practical)</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>Study Progress</h4>
+                    <div class="val" id="progress-val">0%</div>
+                    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 0%"></div></div>
+                </div>
+                <div class="stat-card">
+                    <h4>Modules Completed</h4>
+                    <div class="val" id="modules-done">0 / 5</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Quiz Score</h4>
+                    <div class="val" id="quiz-score">Not taken</div>
+                </div>
+            </div>
+            <div class="module-content">
+                <h3>🎯 Exam Strategy for System-Based Assessment</h3>
+                <p>Unlike multiple-choice exams, this exam requires you to <strong>write actual ABAP code</strong> in an SAP BTP ABAP Environment (Steampunk) system using Eclipse ADT or SAP Business Application Studio (BAS).</p>
+                <ul>
+                    <li><strong>Focus on Syntax:</strong> You must know the exact syntax for CDS annotations, Behavior Definitions (BDEF), and EML (Entity Manipulation Language).</li>
+                    <li><strong>Use Joule:</strong> The exam explicitly tests your ability to use SAP's AI assistant, Joule. Learn how to prompt it to generate RAP boilerplate.</li>
+                    <li><strong>ABAP Cloud Restrictions:</strong> Remember that classic ABAP (like <code>COMMIT WORK</code> or direct <code>SELECT</code> from standard tables) is forbidden. You must use released APIs and CDS views.</li>
+                    <li><strong>Time Management:</strong> 3 hours is tight. Use Joule to generate the heavy boilerplate, and focus your time on the business logic and troubleshooting.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- MODULE 1: ABAP CLOUD -->
+        <div class="panel" id="panel-mod1">
+            <div class="module-header">
+                <h2>Module 1: ABAP Cloud Fundamentals <span class="tag">STEAMPUNK</span></h2>
+                <button class="btn-complete" onclick="toggleComplete('mod1', this)">Mark Complete</button>
+            </div>
+            <div class="module-content">
+                <h3>What is ABAP Cloud?</h3>
+                <p>ABAP Cloud (formerly Steampunk) is the development model for the SAP BTP ABAP Environment. It enforces a strict subset of ABAP to ensure cloud compatibility, multi-tenancy, and upgrade stability.</p>
+                
+                <h3>🚫 Key Restrictions (Exam Favorites)</h3>
+                <ul>
+                    <li><strong>No Direct DB Access:</strong> You cannot use <code>SELECT * FROM mara</code>. You must read data via CDS View Entities or released APIs.</li>
+                    <li><strong>No Classic Commits:</strong> <code>COMMIT WORK</code> is forbidden. Use <code>COMMIT ENTITIES</code> or let the RAP framework handle it.</li>
+                    <li><strong>No Classic UI:</strong> <code>WRITE</code>, <code>ALV</code>, and <code>SELECTION-SCREEN</code> are not allowed. UI is handled by Fiori Elements.</li>
+                    <li><strong>Whitelists:</strong> Only "released" SAP objects (classes, interfaces, CDS views) can be used. Check the "Released Objects" app in BAS.</li>
+                </ul>
+
+                <h3>✅ Modern ABAP Syntax (Clean ABAP)</h3>
+                <pre><code class="language-abap">" Inline declarations (Mandatory in Cloud)
+DATA(lv_count) = 0.
+DATA(ls_struct) = VALUE zstruc( ).
+
+" Modern loops
+LOOP AT lt_data INTO DATA(ls_item).
+  " ...
+ENDLOOP.
+
+" String templates
+DATA(lv_text) = |Hello { sy-uname }, today is { sy-datum DATE = ISO }|.</code></pre>
+            </div>
+        </div>
+
+        <!-- MODULE 2: ABAP OO -->
+        <div class="panel" id="panel-mod2">
+            <div class="module-header">
+                <h2>Module 2: ABAP Object-Oriented <span class="tag">CLEAN CODE</span></h2>
+                <button class="btn-complete" onclick="toggleComplete('mod2', this)">Mark Complete</button>
+            </div>
+            <div class="module-content">
+                <h3>Executable Classes (Class Run)</h3>
+                <p>In ABAP Cloud, you test your code using executable classes that implement <code>IF_OO_ADT_CLASSRUN</code>. This replaces the old <code>REPORT</code> and <code>START-OF-SELECTION</code>.</p>
+                <pre><code class="language-abap">CLASS zcl_my_test IMPLEMENTATION.
+  METHOD if_oo_adt_classrun~main.
+    out->write( 'Hello ABAP Cloud!' ).
+    
+    " Call your business logic
+    DATA(lo_proc) = NEW zcl_processor( ).
+    lo_proc->run( ).
+  ENDMETHOD.
+ENDCLASS.</code></pre>
+
+                <h3>Exception Handling</h3>
+                <p>Forget <code>SY-SUBRC</code>. ABAP Cloud uses class-based exceptions. You must catch them or declare them in the method signature.</p>
+                <pre><code class="language-abap">METHOD process_data.
+  TRY.
+      DATA(lv_result) = calculate( iv_input ).
+    CATCH cx_root INTO DATA(lx_error).
+      " Log or re-raise
+      RAISE EXCEPTION TYPE zcx_custom_error
+        EXPORTING
+          previous = lx_error.
+  ENDTRY.
+ENDMETHOD.</code></pre>
+            </div>
+        </div>
+
+        <!-- MODULE 3: CDS VIEWS -->
+        <div class="panel" id="panel-mod3">
+            <div class="module-header">
+                <h2>Module 3: CDS View Engineering <span class="tag">FOUNDATION</span></h2>
+                <button class="btn-complete" onclick="toggleComplete('mod3', this)">Mark Complete</button>
+            </div>
+            <div class="module-content">
+                <h3>Why CDS in ABAP Cloud?</h3>
+                <p>CDS (Core Data Services) is the virtual data model. In ABAP Cloud, it's the <strong>only</strong> way to access standard SAP database tables. It also drives the Fiori UI via annotations.</p>
+
+                <h3>Essential Annotations for Fiori</h3>
+                <pre><code class="language-abap">@EndUserText.label: 'Billing Document'
+@Search.searchable: true
+define root view entity ZI_BillingDoc
+  as select from I_BillingDocument
+{
+      @UI.hidden: true
+  key BillingDocument,
+      
+      @UI.lineItem: [{ position: 10, label: 'Customer' }]
+      @Search.defaultSearchElement: true
+      CustomerName,
+      
+      @UI.lineItem: [{ position: 20, label: 'Net Amount' }]
+      TotalNetAmount,
+      
+      @UI.lineItem: [{ position: 30, label: 'Currency' }]
+      TransactionCurrency
+}</code></pre>
+
+                <h3>Associations & Path Expressions</h3>
+                <p>Use associations to navigate between entities without writing complex JOINs.</p>
+                <pre><code class="language-abap">association [0..1] to I_CompanyCode as _CompanyCode 
+  on $projection.CompanyCode = _CompanyCode.CompanyCode
+
+" In the select list, use path expressions:
+  _CompanyCode-CompanyName as CompanyText,</code></pre>
+            </div>
+        </div>
+
+        <!-- MODULE 4: RAP -->
+        <div class="panel" id="panel-mod4">
+            <div class="module-header">
+                <h2>Module 4: RAP (RESTful ABAP Programming) <span class="tag">CORE</span></h2>
+                <button class="btn-complete" onclick="toggleComplete('mod4', this)">Mark Complete</button>
+            </div>
+            <div class="module-content">
+                <h3>The 3 Pillars of RAP</h3>
+                <ul>
+                    <li><strong>Data Model:</strong> CDS View Entities (Interface & Consumption views).</li>
+                    <li><strong>Business Logic:</strong> Behavior Definition (BDEF) & Behavior Implementation (BIL).</li>
+                    <li><strong>Service Exposure:</strong> Service Binding (OData V2/V4).</li>
+                </ul>
+
+                <h3>Behavior Definition (BDEF) Syntax</h3>
+                <pre><code class="language-abap">define behavior for ZI_BillingDoc
+  implementation in class zbp_i_billingdoc unique
+  persistent table zbillingdoc
+  draft enabled
+{
+  " CRUD Operations
+  create;
+  update;
+  delete;
+
+  " Field Properties
+  field ( readonly ) BillingDocument;
+  field ( mandatory ) CustomerName;
+
+  " Validations & Determinations
+  validation validateCustomer on save { create; update; }
+  determination setDefaults on modify { create; }
+}</code></pre>
+
+                <h3>EML (Entity Manipulation Language)</h3>
+                <p>How to read or modify RAP entities from within ABAP code (e.g., in a behavior implementation or a separate class).</p>
+                <pre><code class="language-abap">" READ
+READ ENTITIES OF zsb_billingdoc
+  ENTITY ZI_BillingDoc
+  ALL FIELDS WITH VALUE #( ( BillingDocument = '0001' ) )
+  RESULT DATA(lt_result).
+
+" MODIFY
+MODIFY ENTITIES OF zsb_billingdoc
+  ENTITY ZI_BillingDoc
+  SET FIELDS WITH VALUE #( ( BillingDocument = '0001'
+                             CustomerName = 'New Name' ) )
+  REPORTED DATA(DATA(lt_reported)).
+
+" COMMIT
+COMMIT ENTITIES.</code></pre>
+            </div>
+        </div>
+
+        <!-- MODULE 5: JOULE -->
+        <div class="panel" id="panel-mod5">
+            <div class="module-header">
+                <h2>Module 5: Joule & AI-Augmented Dev <span class="tag">NEW</span></h2>
+                <button class="btn-complete" onclick="toggleComplete('mod5', this)">Mark Complete</button>
+            </div>
+            <div class="module-content">
+                <h3>What is Joule?</h3>
+                <p>Joule is SAP's generative AI assistant. In the C_ABAPD exam, you will be tested on your ability to use Joule to <strong>accelerate development</strong>, not replace your understanding of the code.</p>
+
+                <h3>Top Joule Use Cases for the Exam</h3>
+                <ul>
+                    <li><strong>Generate RAP Boilerplate:</strong> "Create a RAP business service for entity ZI_MyEntity."</li>
+                    <li><strong>Explain Code:</strong> Highlight code and ask, "Explain this ABAP code."</li>
+                    <li><strong>Optimize SQL:</strong> "Optimize this CDS view for better performance."</li>
+                    <li><strong>Generate Test Data:</strong> "Create an ABAP OO class to generate test data for ZI_MyEntity."</li>
+                </ul>
+
+                <h3>💡 Exam Tip: Prompt Engineering</h3>
+                <p>Be specific. Instead of "Write ABAP code", use:</p>
+                <p><code>"Write an ABAP class that implements IF_OO_ADT_CLASSRUN. It should read data from CDS view ZI_MyView using EML and output the result using out->write()."</code></p>
+            </div>
+        </div>
+
+        <!-- FLASHCARDS -->
+        <div class="panel" id="panel-flashcards">
+            <div class="module-header">
+                <h2>🃏 Quick Revision Flashcards</h2>
+            </div>
+            <div class="flashcard-container" onclick="flipCard()">
+                <div class="flashcard" id="flashcard">
+                    <div class="card-face card-front">
+                        <h3 id="card-q">Loading...</h3>
+                        <p style="color:var(--text-secondary); font-size:0.8rem;">Click to reveal answer</p>
+                    </div>
+                    <div class="card-face card-back">
+                        <p id="card-a">Loading...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-controls">
+                <button class="btn-complete" onclick="prevCard()">← Previous</button>
+                <button class="btn-complete" onclick="nextCard()">Next →</button>
+            </div>
+        </div>
+
+        <!-- QUIZ -->
+        <div class="panel" id="panel-quiz">
+            <div class="module-header">
+                <h2>📝 Practice Quiz (System-Based Concepts)</h2>
+            </div>
+            <div id="quiz-container"></div>
+        </div>
+
+        <!-- TOOLS -->
+        <div class="panel" id="panel-tools">
+            <div class="module-header">
+                <h2>🛠️ Joule Prompt Generator</h2>
+            </div>
+            <div class="tool-card">
+                <h4>Generate the perfect prompt for Joule</h4>
+                <div class="tool-row">
+                    <div class="tool-field">
+                        <label>I want to...</label>
+                        <select id="joule-action">
+                            <option value="rap">Create a RAP Business Service</option>
+                            <option value="cds">Create a CDS View with Annotations</option>
+                            <option value="eml">Write EML to read/modify data</option>
+                            <option value="class">Create an Executable ABAP Class</option>
+                            <option value="http">Create an HTTP Client (Cloud)</option>
+                        </select>
+                    </div>
+                    <div class="tool-field">
+                        <label>Target Entity / Table / Context</label>
+                        <input type="text" id="joule-context" placeholder="e.g., ZI_BillingDocument" value="ZI_BillingDocument">
+                    </div>
+                </div>
+                <button class="btn-complete" style="background:var(--purple); border-color:var(--purple); color:white;" onclick="generateJoulePrompt()">✨ Generate Prompt</button>
+                <div class="tool-output" id="joule-output" style="margin-top:1rem;">"Your generated prompt will appear here..."</div>
+            </div>
+        </div>
+
+    </main>
 </div>
 
 <script>
 /* ============================================================
-   CORE STATE & INITIALIZATION
+   NAVIGATION & PROGRESS
    ============================================================ */
-let ruleCount = 0;
+function showPanel(panelId, navItem) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('panel-' + panelId).classList.add('active');
+    if (navItem) navItem.classList.add('active');
+    
+    // Re-highlight code blocks when panel becomes visible
+    setTimeout(() => {
+        document.querySelectorAll('#panel-' + panelId + ' pre code').forEach(block => {
+            Prism.highlightElement(block);
+        });
+    }, 50);
+}
 
+function toggleComplete(modId, btn) {
+    let completed = JSON.parse(localStorage.getItem('abapd_progress') || '[]');
+    if (completed.includes(modId)) {
+        completed = completed.filter(id => id !== modId);
+        btn.classList.remove('done');
+        btn.innerText = 'Mark Complete';
+        document.getElementById('nav-' + modId).classList.remove('completed');
+    } else {
+        completed.push(modId);
+        btn.classList.add('done');
+        btn.innerText = '✓ Completed';
+        document.getElementById('nav-' + modId).classList.add('completed');
+    }
+    localStorage.setItem('abapd_progress', JSON.stringify(completed));
+    updateDashboard();
+}
+
+function updateDashboard() {
+    const completed = JSON.parse(localStorage.getItem('abapd_progress') || '[]');
+    const total = 5;
+    const pct = Math.round((completed.length / total) * 100);
+    
+    document.getElementById('progress-val').innerText = pct + '%';
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('modules-done').innerText = `${completed.length} / ${total}`;
+    
+    // Restore UI state on load
+    completed.forEach(modId => {
+        const nav = document.getElementById('nav-' + modId);
+        if (nav) nav.classList.add('completed');
+    });
+}
+
+/* ============================================================
+   FLASHCARDS
+   ============================================================ */
+const flashcards = [
+    { q: "What replaces COMMIT WORK in ABAP Cloud?", a: "COMMIT ENTITIES (or it's handled automatically by the RAP framework)." },
+    { q: "How do you read data from a standard SAP table in ABAP Cloud?", a: "You cannot use direct SELECT. You must use a CDS View Entity or a released SAP API." },
+    { q: "Which annotation makes a CDS field searchable in Fiori?", a: "@Search.defaultSearchElement: true" },
+    { q: "What is EML used for in RAP?", a: "Entity Manipulation Language. It's used to read, create, update, or delete RAP entities from within ABAP code." },
+    { q: "What interface makes an ABAP class executable in BAS/ADT?", a: "IF_OO_ADT_CLASSRUN (specifically the method if_oo_adt_classrun~main)." },
+    { q: "What is the 'Whitelist' in ABAP Cloud?", a: "The list of released SAP objects (classes, interfaces, CDS views) that you are allowed to use in your custom code." }
+];
+let currentCard = 0;
+
+function renderCard() {
+    document.getElementById('card-q').innerText = flashcards[currentCard].q;
+    document.getElementById('card-a').innerText = flashcards[currentCard].a;
+    document.getElementById('flashcard').classList.remove('flipped');
+}
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { currentCard = (currentCard + 1) % flashcards.length; renderCard(); }
+function prevCard() { currentCard = (currentCard - 1 + flashcards.length) % flashcards.length; renderCard(); }
+
+/* ============================================================
+   QUIZ
+   ============================================================ */
+const quizData = [
+    {
+        q: "1. You are developing in ABAP Cloud and need to read data from the standard table MARA. What is the correct approach?",
+        opts: ["SELECT * FROM mara INTO TABLE @DATA(lt_data).", "Create a CDS View Entity that selects from I_Material and read from that.", "Use CL_GUI_FRONTEND_SERVICES to read the table.", "Use the RAP EML statement READ ENTITIES OF I_Material."],
+        ans: 1,
+        exp: "In ABAP Cloud, direct SELECT statements on standard tables are forbidden. You must consume released CDS views (like I_Material) or create your own CDS view on top of released APIs."
+    },
+    {
+        q: "2. Which statement is used to trigger a database commit in a RAP transaction?",
+        opts: ["COMMIT WORK.", "COMMIT WORK AND WAIT.", "COMMIT ENTITIES.", "CALL FUNCTION 'DB_COMMIT'."],
+        ans: 2,
+        exp: "COMMIT WORK is a classic ABAP statement and is not released for ABAP Cloud. In RAP, you use COMMIT ENTITIES to persist changes to the database."
+    },
+    {
+        q: "3. You want to expose a CDS view as an OData V4 service for a Fiori app. Which RAP artifact do you create?",
+        opts: ["Behavior Definition (BDEF)", "Service Binding", "Behavior Implementation (BIL)", "Data Definition (DDLS)"],
+        ans: 1,
+        exp: "The Service Binding is the RAP artifact that exposes your CDS entities as an OData V2 or V4 service, making it consumable by Fiori Elements."
+    },
+    {
+        q: "4. How do you ask Joule to generate a RAP business service?",
+        opts: ["'Write ABAP code for a service.'", "'Create a RAP business service for entity ZI_MyEntity.'", "'Generate OData from table ZTABLE.'", "'Make a Fiori app for ZI_MyEntity.'"],
+        ans: 1,
+        exp: "Joule responds best to specific, context-rich prompts. Mentioning 'RAP business service' and the exact entity name yields the best boilerplate code."
+    }
+];
+
+function renderQuiz() {
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = '';
+    quizData.forEach((q, i) => {
+        const card = document.createElement('div');
+        card.className = 'quiz-card';
+        card.innerHTML = `
+            <h4>${q.q}</h4>
+            <div class="quiz-options">
+                ${q.opts.map((opt, j) => `<div class="quiz-opt" onclick="checkAnswer(${i}, ${j}, this)">${opt}</div>`).join('')}
+            </div>
+            <div class="quiz-explanation" id="exp-${i}">${q.exp}</div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function checkAnswer(qIdx, optIdx, el) {
+    const q = quizData[qIdx];
+    const opts = el.parentElement.querySelectorAll('.quiz-opt');
+    opts.forEach(o => o.style.pointerEvents = 'none');
+    
+    if (optIdx === q.ans) {
+        el.classList.add('correct');
+    } else {
+        el.classList.add('wrong');
+        opts[q.ans].classList.add('correct');
+    }
+    document.getElementById('exp-' + qIdx).style.display = 'block';
+}
+
+/* ============================================================
+   JOULE PROMPT TOOL
+   ============================================================ */
+function generateJoulePrompt() {
+    const action = document.getElementById('joule-action').value;
+    const context = document.getElementById('joule-context').value.trim() || 'ZI_MyEntity';
+    let prompt = '';
+
+    if (action === 'rap') {
+        prompt = `Create a RAP business service for the CDS view entity ${context}. \nInclude draft functionality, and generate the Behavior Definition, Behavior Projection, and Service Binding (OData V4).`;
+    } else if (action === 'cds') {
+        prompt = `Create a CDS View Entity named ${context} based on the standard SAP view I_BusinessPartner. \nExpose the fields: BusinessPartner, FirstName, LastName, and CreationDate. \nAdd Fiori annotations: @UI.lineItem for all fields, and make FirstName and LastName searchable using @Search.defaultSearchElement.`;
+    } else if (action === 'eml') {
+        prompt = `Write an ABAP method using EML (Entity Manipulation Language) to read all records from the RAP entity ${context}. \nOutput the result using cl_demo_output or out->write(). \nInclude proper exception handling for cx_web_http_client_error or similar RAP exceptions.`;
+    } else if (action === 'class') {
+        prompt = `Create an executable ABAP class named ZCL_TEST_${context.replace(/[^A-Z0-9]/g, '')}. \nIt should implement IF_OO_ADT_CLASSRUN. \nIn the main method, instantiate a local class and call a method to read data from ${context} using EML.`;
+    } else if (action === 'http') {
+        prompt = `Create an ABAP Cloud compliant HTTP client method to call a GET request to an external API. \nUse CL_WEB_HTTP_CLIENT (not CL_HTTP_CLIENT). \nInclude destination handling and JSON deserialization using /UI2/CL_JSON.`;
+    }
+
+    document.getElementById('joule-output').innerText = prompt;
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
 window.addEventListener('DOMContentLoaded', () => {
-    addRule('zz_database', 'zz_finance', true, false);
-    addRule('wa_header', 'ls_header', true, false);
-    loadSample();
-});
-
-/* ============================================================
-   RULE MANAGEMENT
-   ============================================================ */
-function addRule(findVal = '', replaceVal = '', wholeWord = true, matchCase = false) {
-    ruleCount++;
-    const id = ruleCount;
-    const container = document.getElementById('rules-container');
+    updateDashboard();
+    renderCard();
+    renderQuiz();
     
-    const div = document.createElement('div');
-    div.className = 'rule-card';
-    div.id = `rule-${id}`;
-    div.innerHTML = `
-        <button class="btn-remove" onclick="removeRule(${id})" title="Remove rule">×</button>
-        <div class="rule-row">
-            <input type="text" class="rule-input find-input" placeholder="Find..." value="${findVal}">
-            <span style="color:var(--text-secondary)">→</span>
-            <input type="text" class="rule-input replace-input" placeholder="Replace..." value="${replaceVal}">
-        </div>
-        <div class="rule-options">
-            <label title="Only match complete words (e.g., 'IN' won't match 'INITIAL')">
-                <input type="checkbox" class="whole-word" ${wholeWord ? 'checked' : ''}> Whole Word
-            </label>
-            <label title="Match exact uppercase/lowercase">
-                <input type="checkbox" class="match-case" ${matchCase ? 'checked' : ''}> Match Case
-            </label>
-        </div>
-    `;
-    container.appendChild(div);
-}
-
-function removeRule(id) {
-    const el = document.getElementById(`rule-${id}`);
-    if (el) el.remove();
-}
-
-function clearRules() {
-    document.getElementById('rules-container').innerHTML = '';
-    ruleCount = 0;
-}
-
-/* ============================================================
-   PRESETS
-   ============================================================ */
-function applyPreset(type) {
-    clearRules();
-    if (type === 'modern_vars') {
-        addRule('wa_', 'ls_', true, false);
-        addRule('it_', 'lt_', true, false);
-        addRule('g_', 'gv_', true, false);
-    } else if (type === 'prefix_change') {
-        addRule('ZOLD_', 'ZNEW_', true, true); // Case sensitive for prefixes
-    } else if (type === 'commit_work') {
-        addRule('COMMIT WORK', 'COMMIT ENTITIES', true, true);
-        addRule('COMMIT WORK AND WAIT', 'COMMIT ENTITIES', true, true);
-    } else if (type === 'sy_subrc') {
-        // This is a simplified preset. Real SY-SUBRC removal requires AST parsing, 
-        // but we can at least flag or replace common patterns.
-        addRule('IF sy-subrc <> 0.', '" TODO: Modernize exception handling', false, true);
-    }
-    applyRefactoring();
-}
-
-/* ============================================================
-   REFACTORING ENGINE
-   ============================================================ */
-function escapeRegExp(string) {
-    // Escapes special regex characters so user input is treated as literal text
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function applyRefactoring() {
-    let code = document.getElementById('input-code').value;
-    let totalReplacements = 0;
-    const ruleCards = document.querySelectorAll('.rule-card');
-
-    ruleCards.forEach(card => {
-        const findText = card.querySelector('.find-input').value;
-        const replaceText = card.querySelector('.replace-input').value;
-        const wholeWord = card.querySelector('.whole-word').checked;
-        const matchCase = card.querySelector('.match-case').checked;
-
-        if (!findText) return;
-
-        // Build Regex
-        let pattern = escapeRegExp(findText);
-        if (wholeWord) {
-            pattern = `\\b${pattern}\\b`; // \b ensures we don't replace "IN" inside "INITIAL"
-        }
-        const flags = matchCase ? 'g' : 'gi';
-        const regex = new RegExp(pattern, flags);
-
-        // Count replacements (simple approximation)
-        const matches = code.match(regex);
-        if (matches) {
-            totalReplacements += matches.length;
-        }
-
-        // Apply replacement
-        code = code.replace(regex, replaceText);
-    });
-
-    // Update Output
-    const outputEl = document.getElementById('output-code');
-    outputEl.textContent = code;
-    
-    // Re-highlight with Prism
-    if (window.Prism) {
-        Prism.highlightElement(outputEl);
-    }
-
-    // Update Stats
-    document.getElementById('stats').textContent = `${totalReplacements} replacement(s) made across ${ruleCards.length} rule(s).`;
-}
-
-/* ============================================================
-   UTILITIES
-   ============================================================ */
-function copyOutput() {
-    const code = document.getElementById('output-code').textContent;
-    navigator.clipboard.writeText(code).then(() => {
-        const btn = document.querySelector('.pane-output .btn-secondary');
-        const prev = btn.innerText;
-        btn.innerText = 'Copied!';
-        btn.style.background = 'var(--success)';
-        btn.style.color = 'white';
-        setTimeout(() => { 
-            btn.innerText = prev; 
-            btn.style.background = ''; 
-            btn.style.color = ''; 
-        }, 1500);
-    });
-}
-
-function loadSample() {
-    const sample = `REPORT zold_database_report.
-
-DATA: wa_header TYPE zold_header,
-      it_items  TYPE TABLE OF zold_item,
-      wa_items  TYPE zold_item.
-
-SELECT * FROM zz_database
-  INTO CORRESPONDING FIELDS OF TABLE it_items
-  WHERE bukrs = '1000'.
-
-IF sy-subrc <> 0.
-  WRITE: / 'No data found'.
-ENDIF.
-
-LOOP AT it_items INTO wa_items.
-  wa_header-zz_db_ref = wa_items-ref.
-  MODIFY zz_database FROM wa_header.
-ENDLOOP.
-
-COMMIT WORK AND WAIT.`;
-    document.getElementById('input-code').value = sample;
-    applyRefactoring();
-}
-
-// Auto-apply on typing (with slight debounce for performance)
-let timeout;
-document.getElementById('input-code').addEventListener('input', () => {
-    clearTimeout(timeout);
-    timeout = setTimeout(applyRefactoring, 300);
-});
-
-// Attach event listeners to dynamically added rule inputs
-document.getElementById('rules-container').addEventListener('input', () => {
-    clearTimeout(timeout);
-    timeout = setTimeout(applyRefactoring, 300);
+    // Initial highlight
+    setTimeout(() => {
+        document.querySelectorAll('#panel-dashboard pre code, .panel.active pre code').forEach(block => {
+            Prism.highlightElement(block);
+        });
+    }, 100);
 });
 </script>
 </body>
