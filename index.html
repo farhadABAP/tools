@@ -84,7 +84,7 @@ code { font-family: "Fira Code", "Consolas", monospace !important; }
 
 <nav>
     <a href="#" class="logo">⚡ ABAP Code Patterns <span style="font-weight:400; color:var(--text-secondary); font-size:0.9rem;">& Reference</span></a>
-    <span class="version">v2.0</span>
+    <span class="version">v3.0</span>
 </nav>
 
 <div class="app-container">
@@ -96,7 +96,7 @@ code { font-family: "Fira Code", "Consolas", monospace !important; }
             </div>
         </div>
         <div class="nav-section">
-            <div class="nav-title">Implementation Patterns</div>
+            <div class="nav-title">Implementation</div>
             <div class="nav-item" onclick="showPanel('tasks', this)">
                 <span class="nav-icon">🎯</span> Practical Scenarios
             </div>
@@ -171,13 +171,13 @@ code { font-family: "Fira Code", "Consolas", monospace !important; }
             </div>
         </div>
 
-        <!-- PRACTICAL SCENARIOS -->
+        <!-- PRACTICAL SCENARIOS (MOCK EXAMS) -->
         <div class="panel" id="panel-tasks">
             <div class="module-header">
                 <h2>🎯 Practical Implementation Scenarios</h2>
             </div>
             <div class="info-box">
-                <strong>Real-world patterns:</strong> These scenarios mirror what you'll encounter in actual ABAP Cloud development projects.
+                <strong>Real-world patterns:</strong> These scenarios mirror what you'll encounter in actual ABAP Cloud development projects and practical assessments.
             </div>
 
             <div class="task-card">
@@ -195,6 +195,7 @@ code { font-family: "Fira Code", "Consolas", monospace !important; }
                         <li>Use <code>@Search.defaultSearchElement: true</code> on the searchable field</li>
                         <li>Set <code>@AccessControl.authorizationCheck: #CHECK</code> (requires DCL)</li>
                         <li>Activate the view before testing</li>
+                        <li>Verify the view appears in the ABAP Dictionary</li>
                     </ul>
                 </div>
             </div>
@@ -214,6 +215,7 @@ code { font-family: "Fira Code", "Consolas", monospace !important; }
                         <li>Use <code>field ( readonly ) BusinessPartner;</code> in BDEF</li>
                         <li>Map determination to <code>on modify { create; }</code></li>
                         <li>Generate and activate Behavior Implementation class</li>
+                        <li>Test with "Preview" in the Service Binding</li>
                     </ul>
                 </div>
             </div>
@@ -234,6 +236,25 @@ code { font-family: "Fira Code", "Consolas", monospace !important; }
                         <li>Provide <code>%cid</code> in CREATE operations</li>
                         <li>Check <code>FAILED</code> and <code>REPORTED</code> tables for errors</li>
                         <li>Use <code>COMMIT ENTITIES</code> to persist changes</li>
+                        <li>Output results using <code>out->write()</code></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="task-card">
+                <h4>Scenario 4: Implement Access Control (DCL)</h4>
+                <p><strong>Business Requirement:</strong> Restrict data access so users only see records they created or records with status 'ACTIVE'.</p>
+                <ul>
+                    <li>Create a DCL artifact for the CDS view.</li>
+                    <li>Define WHERE clause based on <code>CreatedBy</code> and <code>Status</code>.</li>
+                    <li>Test with different user contexts.</li>
+                </ul>
+                <div class="grading">
+                    <strong>🔍 Implementation Checklist:</strong>
+                    <ul style="margin-top: 0.5rem;">
+                        <li>Use <code>$user</code> system variable for current user</li>
+                        <li>Link DCL to the correct CDS view entity</li>
+                        <li>Activate both CDS view and DCL together</li>
                     </ul>
                 </div>
             </div>
@@ -285,6 +306,24 @@ MODIFY ENTITIES OF ZI_MyEntity IN LOCAL MODE
                 <h4>🚨 Pitfall 4: Using #CHECK Without DCL</h4>
                 <p>If you set <code>@AccessControl.authorizationCheck: #CHECK</code> on a CDS view, you MUST create a corresponding DCL (Data Control Language) artifact. Otherwise, the view returns empty data.</p>
                 <p><strong>Solution:</strong> Either create a DCL artifact or use <code>#NOT_ALLOWED</code> if access control is not needed.</p>
+            </div>
+
+            <div class="gotcha-card">
+                <h4>🚨 Pitfall 5: Forgetting to Check FAILED/REPORTED Tables</h4>
+                <p>After EML operations, always check the <code>FAILED</code> and <code>REPORTED</code> tables. If you don't, your code will silently fail and you won't know why.</p>
+                <pre><code class="language-abap">MODIFY ENTITIES OF ZI_MyEntity IN LOCAL MODE
+  ENTITY ZI_MyEntity
+  CREATE FIELDS ( Description )
+  WITH VALUE #( ( %cid = 'c1' Description = 'Test' ) )
+  FAILED DATA(lt_failed)
+  REPORTED DATA(lt_reported).
+
+" ✅ Always check for errors
+IF lt_failed IS NOT INITIAL.
+  out->write( 'Operation failed:' ).
+  out->write( lt_reported ).
+  RETURN.
+ENDIF.</code></pre>
             </div>
         </div>
 
